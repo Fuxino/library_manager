@@ -3,7 +3,7 @@
 # Maintainer: Daniele Fucini <dfucini@gmail.com>
 
 pkgname=query_library
-pkgver=1.5.1.r0.gf4c40ef
+pkgver=1.0.0.r0.g80e4993
 pkgrel=1
 pkgdesc="Query Library database"
 arch=("any")
