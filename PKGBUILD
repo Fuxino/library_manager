@@ -3,7 +3,7 @@
 # Maintainer: Daniele Fucini <dfucini@gmail.com>
 
 pkgname=library_manager
-pkgver=2.0.1.r0.g8b59188
+pkgver=2.0.2.r0.gded7a5f
 pkgrel=1
 pkgdesc="Manage Library database"
 arch=("any")
@@ -15,7 +15,7 @@ depends=("python3"
 makedepends=("git")
 source=("$pkgname.py"
         "Books_icon.png")
-sha256sums=('3ff05cc5501845532aed146fc661b0405836e60a62bc1b91b56d67681bb751a1'
+sha256sums=('95f970a6739235d6c8cc06118abe99e028e2288ca6b60ee1bd0e919a6953b608'
             'bc8e17d581a09b7831bf6ed83843367728a17addabca13c1e2bccfbfde8ea243')
 
 pkgver() 
