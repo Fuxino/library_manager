@@ -3,7 +3,7 @@
 # Maintainer: Daniele Fucini <dfucini@gmail.com>
 
 pkgname=library_manager
-pkgver=1.0.0.r0.g80e4993
+pkgver=1.1.0.r0.g4a0833f
 pkgrel=1
 pkgdesc="Manage Library database"
 arch=("any")
