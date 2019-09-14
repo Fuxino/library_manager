@@ -817,11 +817,106 @@ class SearchDatabase(QWidget):
     def exit_program(self):
         exit(0)
 
+# Form to insert books
+class InsertBookForm(QWidget):
+
+    def __init__(self, insert_record, *args, **kwargs):
+        super(InsertBookForm, self).__init__(*args, **kwargs)
+
+# Form to insert authors
+class InsertAuthorForm(QWidget):
+
+    def __init__(self, insert_record, *args, **kwargs):
+        super(InsertAuthorForm, self).__init__(*args, **kwargs)
+
+# Form to insert publishers
+class InsertPublisherForm(QWidget):
+
+    def __init__(self, insert_record, *args, **kwargs):
+        super(InsertPublisherForm, self).__init__(*args, **kwargs)
+
+# Form to insert series
+class InsertSeriesForm(QWidget):
+
+    def __init__(self, insert_record, *args, **kwargs):
+        super(InsertSeriesForm, self).__init__(*args, **kwargs)
+
 # Insert into database widget
 class InsertDatabase(QWidget):
 
     def __init__(self, *args, **kwargs):
         super(InsertDatabase, self).__init__(*args, **kwargs)
+
+        # Define main layout
+        layout = QVBoxLayout()
+
+        # Create menu with the database tables
+        menu = QComboBox()
+        menu.addItem('Books')
+        menu.addItem('Authors')
+        menu.addItem('Publishers')
+        menu.addItem('Series')
+        menu.currentIndexChanged[str].connect(self.change_table)
+
+        layout.addWidget(menu)
+
+        # Define stacked layout for the different tables in database
+        layout_insert = QStackedLayout()
+
+        # Create insert form for each table in database
+        self.book_insert = InsertBookForm(self.insert_record)
+        self.author_insert = InsertAuthorForm(self.insert_record)
+        self.publisher_insert = InsertPublisherForm(self.insert_record)
+        self.series_insert = InsertSeriesForm(self.insert_record)
+
+        # Add search forms to layout
+        layout_insert.addWidget(self.book_insert)
+        layout_insert.addWidget(self.author_insert)
+        layout_insert.addWidget(self.publisher_insert)
+        layout_insert.addWidget(self.series_insert)
+
+        layout.addLayout(layout_insert)
+
+        # Define layout for buttons
+        layout_button = QHBoxLayout()
+        # Create buttons
+        insert_button = QPushButton('Insert')
+        close_button = QPushButton('Exit')
+
+        # Define buttons behavior
+        insert_button.clicked.connect(self.insert_record)
+        close_button.clicked.connect(self.exit_program)
+
+        # Add buttons to layout
+        layout_button.addWidget(insert_button)
+        layout_button.addWidget(close_button)
+        layout.addLayout(layout_button)
+
+        # Set main layout
+        self.setLayout(layout)
+
+    # Function to set insert form according to database table selected
+    def change_table(self, table_name):
+        # Books
+        if table_name == 'Books':
+            pass
+        # Authors
+        elif table_name == 'Authors':
+            pass
+        # Publishers
+        elif table_name == 'Publishers':
+            pass
+        # Series
+        else:
+            pass
+
+    # Function to insert record in database
+    def insert_record(self):
+        pass
+
+    # Function to exit the program
+    def exit_program(self):
+        exit(0)
 
 # Main window
 class MainWindow(QMainWindow):
@@ -860,6 +955,6 @@ def main():
     if connection.is_connected():
         cursor.close()
         connection.close()
-       
+
 if __name__ == '__main__':
     main()
