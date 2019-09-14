@@ -9,43 +9,56 @@ from PyQt5.QtGui import QIcon
 import mysql.connector
 from mysql.connector import Error
 
+# Login dialog box
 class Login(QDialog):
 
     def __init__(self, *args, **kwargs):
         super(Login, self).__init__(*args, **kwargs)
 
+        # Set dialog title
         self.setWindowTitle('Login to Library')
 
+        # Define layouts
         layout = QVBoxLayout()
         layout_login = QFormLayout()
 
+        # Define login fields
         self.username = QLineEdit()
         self.password = QLineEdit()
+        # Hide password when typing
         self.password.setEchoMode(QLineEdit.Password)
         self.host = QComboBox()
         self.host.addItem('192.168.0.100')
         self.host.addItem('localhost')
-    
+
+        # Add fields to layout
         layout_login.addRow(QLabel('Username:'), self.username)
         layout_login.addRow(QLabel('Password:'), self.password)
         layout_login.addRow(QLabel('Hostname:'), self.host)
-        
+
+        # Create buttons
         QBtn = QDialogButtonBox.Ok | QDialogButtonBox.Cancel
 
+        # Define button behavior
         buttonBox = QDialogButtonBox(QBtn)
         buttonBox.accepted.connect(self.db_connect)
         buttonBox.rejected.connect(self.exit_program)
 
+        # Add login form and button to main layout
         layout.addLayout(layout_login)
         layout.addWidget(buttonBox)
 
+        # Set layout
         self.setLayout(layout)
 
+    # Function to connect to the database
     def db_connect(self):
         try:
+            # Global variable because we need them later
             global connection
             global cursor
 
+            # Create connection
             connection = mysql.connector.connect(host=self.host.currentText(),
                                                  database='Library',
                                                  user=self.username.text(),
@@ -53,9 +66,12 @@ class Login(QDialog):
 
             cursor = connection.cursor(prepared=True)
 
+            # Close login dialog
             self.accept()
 
+        # If error occurred during connection
         except Error as e:
+            # Create error message box
             error = QMessageBox(self)
             error.setIcon(QMessageBox.Critical)
             error.setWindowTitle('Error')
@@ -63,18 +79,24 @@ class Login(QDialog):
             error.setStandardButtons(QMessageBox.Ok)
             error.exec_()
 
+    # Function to exit the program
     def exit_program(self):
         exit(0)
 
-class SearchBook(QWidget):
+# Form to search books
+class SearchBookForm(QWidget):
 
-    def __init__(self, *args, **kwargs):
-        super(SearchBook, self).__init__(*args, **kwargs)
+    def __init__(self, query_db, *args, **kwargs):
+        super(SearchBookForm, self).__init__(*args, **kwargs)
 
+        # Define layout
         layout = QFormLayout()
         self.isbn = QLineEdit()
+        self.isbn.returnPressed.connect(query_db)
         self.title = QLineEdit()
+        self.title.returnPressed.connect(query_db)
         self.author = QLineEdit()
+        self.author.returnPressed.connect(query_db)
 
         self.author_gender = QComboBox()
         self.author_gender.addItem('')
@@ -83,8 +105,11 @@ class SearchBook(QWidget):
         self.author_gender.addItem('Other')
 
         self.author_nationality = QLineEdit()
+        self.author_nationality.returnPressed.connect(query_db)
         self.publisher = QLineEdit()
+        self.publisher.returnPressed.connect(query_db)
         self.series = QLineEdit()
+        self.series.returnPressed.connect(query_db)
 
         self.category = QComboBox()
         self.category.addItem('')
@@ -101,6 +126,7 @@ class SearchBook(QWidget):
         self.category.addItem('Children\'s book')
 
         self.language = QLineEdit()
+        self.language.returnPressed.connect(query_db)
 
         self.owner = QComboBox()
         self.owner.addItem('')
@@ -112,6 +138,7 @@ class SearchBook(QWidget):
         self.booktype.addItem('Printed')
         self.booktype.addItem('E-book')
 
+        # Add fields to layout
         layout.addRow('ISBN:', self.isbn)
         layout.addRow('Title:', self.title)
         layout.addRow('Author:', self.author)
@@ -124,66 +151,87 @@ class SearchBook(QWidget):
         layout.addRow('Owner:', self.owner)
         layout.addRow('Type:', self.booktype)
 
+        # Set layout
         self.setLayout(layout)
 
-class SearchAuthor(QWidget):
+# Form to search authors
+class SearchAuthorForm(QWidget):
 
-    def __init__(self, *args, **kwargs):
-        super(SearchAuthor, self).__init__(*args, **kwargs)
+    def __init__(self, query_db, *args, **kwargs):
+        super(SearchAuthorForm, self).__init__(*args, **kwargs)
 
+        # Define layout
         layout = QFormLayout()
         self.name = QLineEdit()
+        self.name.returnPressed.connect(query_db)
+
         self.gender = QComboBox()
         self.gender.addItem('')
         self.gender.addItem('M')
         self.gender.addItem('F')
         self.gender.addItem('Other')
+
         self.nationality = QLineEdit()
+        self.nationality.returnPressed.connect(query_db)
+
+        # Add fields to layout
         layout.addRow('Name:', self.name)
         layout.addRow('Gender:', self.gender)
         layout.addRow('Nationality:', self.nationality)
 
+        # Set layout
         self.setLayout(layout)
-        
-class SearchPublisher(QWidget):
 
-    def __init__(self, *args, **kwargs):
-        super(SearchPublisher, self).__init__(*args, **kwargs)
+# Form to search publishers
+class SearchPublisherForm(QWidget):
 
+    def __init__(self, query_db, *args, **kwargs):
+        super(SearchPublisherForm, self).__init__(*args, **kwargs)
+
+        # Define layout
         layout = QFormLayout()
         self.name = QLineEdit()
+        self.name.returnPressed.connect(query_db)
+
+        # Add field to layout
         layout.addRow('Name:', self.name)
-
+ 
+        # Set layout
         self.setLayout(layout)
 
-class SearchSeries(QWidget):
+# Form to search series
+class SearchSeriesForm(QWidget):
 
-    def __init__(self, *args, **kwargs):
-        super(SearchSeries, self).__init__(*args, **kwargs)
+    def __init__(self, query_db, *args, **kwargs):
+        super(SearchSeriesForm, self).__init__(*args, **kwargs)
 
+        # Define layout
         layout = QFormLayout()
         self.name = QLineEdit()
+        self.name.returnPressed.connect(query_db)
         self.author = QLineEdit()
+        self.author.returnPressed.connect(query_db)
+
+        # Add fields to layout
         layout.addRow('Name:', self.name)
         layout.addRow('Author:', self.author)
 
+        # Set layout
         self.setLayout(layout)
 
-class MainWindow(QWidget):
+# Search database widget
+class SearchDatabase(QWidget):
 
     def __init__(self, *args, **kwargs):
-        super(MainWindow, self).__init__(*args, **kwargs)
+        super(SearchDatabase, self).__init__(*args, **kwargs)
 
-        self.setWindowTitle('Library database')
-        self.setWindowIcon(QIcon('Books_icon.png'))
-
-        login_window = Login()
-        login_window.exec_()
-
+        # Define main layout
         layout = QHBoxLayout()
-        
+
+        # Define layout for left part of the window
         layout_left = QVBoxLayout()
 
+        # Create menu with the database tables
         menu = QComboBox()
         menu.addItem('Books')
         menu.addItem('Authors')
@@ -191,8 +239,10 @@ class MainWindow(QWidget):
         menu.addItem('Series')
         menu.currentIndexChanged[str].connect(self.change_table)
 
+        # Add menu to layout
         layout_left.addWidget(menu)
 
+        # Create table to show database queries results
         self.table = QTableWidget()
         self.table.setEditTriggers(QAbstractItemView.NoEditTriggers)
         self.table.setRowCount(0)
@@ -213,40 +263,54 @@ class MainWindow(QWidget):
         self.table.setItem(0, 12, QTableWidgetItem('Type'))
         self.table.resizeColumnsToContents()
 
+        # Add table to layout
         layout_left.addWidget(self.table)
 
+        # Add left layout to main layout
         layout.addLayout(layout_left)
 
+        # Define layout for right part of the window
         layout_right = QVBoxLayout()
-        
+
+        # Define stacked layout for the different tables in database
         self.layout_search = QStackedLayout()
 
-        self.book_search = SearchBook()
-        self.author_search = SearchAuthor()
-        self.publisher_search = SearchPublisher()
-        self.series_search = SearchSeries()
+        # Create search form for each table in database
+        self.book_search = SearchBookForm(self.query_db)
+        self.author_search = SearchAuthorForm(self.query_db)
+        self.publisher_search = SearchPublisherForm(self.query_db)
+        self.series_search = SearchSeriesForm(self.query_db)
 
+        # Add search forms to layout
         self.layout_search.addWidget(self.book_search)
         self.layout_search.addWidget(self.author_search)
         self.layout_search.addWidget(self.publisher_search)
         self.layout_search.addWidget(self.series_search)
 
+        # Add stacked layout to right layout
         layout_right.addLayout(self.layout_search)
 
+        # Define layout for buttons
         layout_button = QHBoxLayout()
+        # Create buttons
         search_button = QPushButton('Search')
-        search_button.clicked.connect(self.query_db)
         close_button = QPushButton('Exit')
-        close_button.clicked.connect(self.close)
+
+        # Define buttons behavior
+        search_button.clicked.connect(self.query_db)
+        close_button.clicked.connect(self.exit_program)
+
+        # Add buttons to layout
         layout_button.addWidget(search_button)
         layout_button.addWidget(close_button)
         layout_right.addLayout(layout_button)
 
+        # Add right layout to main layout
         layout.addLayout(layout_right)
 
+        # Set main layout
         self.setLayout(layout)
-        self.showMaximized()
-
+    
     def change_table(self, table_name):
         if table_name == 'Books':
             self.table.setRowCount(0)
@@ -267,7 +331,7 @@ class MainWindow(QWidget):
             self.table.setItem(0, 12, QTableWidgetItem('Type'))
 
             self.table.resizeColumnsToContents()
-            
+
             self.layout_search.setCurrentIndex(0)
         elif table_name == 'Authors':
             self.table.setRowCount(0)
@@ -300,7 +364,7 @@ class MainWindow(QWidget):
             self.table.setItem(0, 0, QTableWidgetItem('Id'))
             self.table.setItem(0, 1, QTableWidgetItem('Name'))
             self.table.setItem(0, 2, QTableWidgetItem('Author'))
-            
+
             self.table.resizeColumnsToContents()
 
             self.layout_search.setCurrentIndex(3)
@@ -654,6 +718,41 @@ class MainWindow(QWidget):
                 self.table.setItem(i, 2, QTableWidgetItem(Author))
 
             self.table.resizeColumnsToContents()
+
+    def exit_program(self):
+        exit(0)
+
+# Insert into database widget
+class InsertDatabase(QWidget):
+
+    def __init__(self, *args, **kwargs):
+        super(InsertDatabase, self).__init__(*args, **kwargs)
+
+# Main window
+class MainWindow(QMainWindow):
+
+    def __init__(self, *args, **kwargs):
+        super(MainWindow, self).__init__(*args, **kwargs)
+
+        # Set window title and icon
+        self.setWindowTitle('Library database')
+        self.setWindowIcon(QIcon('Books_icon.png'))
+
+        # Run the login window
+        login_window = Login()
+        login_window.exec_()
+
+        # Define main window tabs
+        tabs = QTabWidget()
+        tabs.addTab(SearchDatabase(), 'Search')
+        tabs.addTab(InsertDatabase(), 'Insert')
+        tabs.setDocumentMode(True)
+
+        # Show tabs
+        self.setCentralWidget(tabs)
+
+        # Maximize window size
+        self.showMaximized()
 
 def main():
     app = QApplication(argv)

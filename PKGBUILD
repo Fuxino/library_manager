@@ -2,10 +2,10 @@
 
 # Maintainer: Daniele Fucini <dfucini@gmail.com>
 
-pkgname=query_library
+pkgname=library_manager
 pkgver=1.0.0.r0.g80e4993
 pkgrel=1
-pkgdesc="Query Library database"
+pkgdesc="Manage Library database"
 arch=("any")
 license=("GPL")
 depends=("python3"
@@ -15,7 +15,7 @@ depends=("python3"
 makedepends=("git")
 source=("$pkgname.py"
         "Books_icon.png")
-sha256sums=('f6c89056e9c14a5f0b74173c647085ce4edefa419235846081091c2a44d5f8e5'
+sha256sums=('e8d2fd183a483db2c5493f7aba0caa2c20fde3fd591ee11afe03151912c466a8'
             'bc8e17d581a09b7831bf6ed83843367728a17addabca13c1e2bccfbfde8ea243')
 
 pkgver() 
