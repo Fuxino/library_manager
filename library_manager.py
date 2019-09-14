@@ -835,7 +835,10 @@ class InsertBookForm(QWidget):
         self.language = QLineEdit()
         self.year = QLineEdit()
         self.pages = QLineEdit()
-        self.owner = QLineEdit()
+        self.owner = QComboBox()
+        self.owner.addItem('')
+        self.owner.addItem('Daniele')
+        self.owner.addItem('Nicole')
  
         self.booktype = QComboBox()
         self.booktype.addItem('')
@@ -1008,7 +1011,7 @@ class InsertDatabase(QWidget):
             language = self.book_insert.language.text()
             year = self.book_insert.year.text()
             pages = self.book_insert.pages.text()
-            owner = self.book_insert.owner.text()
+            owner = self.book_insert.owner.currentText()
             booktype = self.book_insert.booktype.currentText()
 
             # Set values to None where strings are empty

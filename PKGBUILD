@@ -15,7 +15,7 @@ depends=("python3"
 makedepends=("git")
 source=("$pkgname.py"
         "Books_icon.png")
-sha256sums=('61ca8b297fc6a0907c065b5ea33944e365fa3a11954e89be30daaa19a8370b69'
+sha256sums=('3ff05cc5501845532aed146fc661b0405836e60a62bc1b91b56d67681bb751a1'
             'bc8e17d581a09b7831bf6ed83843367728a17addabca13c1e2bccfbfde8ea243')
 
 pkgver() 
