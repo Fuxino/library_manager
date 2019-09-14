@@ -455,7 +455,7 @@ class SearchDatabase(QWidget):
 
                     query = query + 'Author IN (' + str(author_id) + ') AND '
             if author_c != '':
-                # Get Authors' Id from Nationality
+                # Get Authors Id from Nationality
                 mySql_select_query = """SELECT Id FROM Authors WHERE Nationality LIKE %s"""
                 cursor.execute(mySql_select_query, ('%'+author_c+'%',))
                 author = cursor.fetchall()
@@ -550,7 +550,7 @@ class SearchDatabase(QWidget):
                     Owner = row[11]
                     Type = row[12]
 
-                    # Get Author's Name from Id
+                    # Get Author Name from Id
                     mySql_select_query = """SELECT Name FROM Authors WHERE Id = %s"""
                     cursor.execute(mySql_select_query, (Author,))
                     Author = cursor.fetchall()
@@ -789,7 +789,7 @@ class SearchDatabase(QWidget):
                     Name = row[1]
                     Author = row[2]
 
-                    # Get Author's Name from Id
+                    # Get Author Name from Id
                     mySql_select_query = """SELECT Name FROM Authors WHERE Id = %s"""
                     cursor.execute(mySql_select_query, (Author,))
                     Author = cursor.fetchall()
@@ -823,11 +823,73 @@ class InsertBookForm(QWidget):
     def __init__(self, insert_record, *args, **kwargs):
         super(InsertBookForm, self).__init__(*args, **kwargs)
 
+        # Define layout
+        layout = QFormLayout()
+        self.isbn = QLineEdit()
+        self.title = QLineEdit()
+        self.author = QLineEdit()
+        self.otherauthors = QLineEdit()
+        self.publisher = QLineEdit()
+        self.series = QLineEdit()
+        self.category = QLineEdit()
+        self.language = QLineEdit()
+        self.year = QLineEdit()
+        self.pages = QLineEdit()
+        self.owner = QLineEdit()
+ 
+        self.booktype = QComboBox()
+        self.booktype.addItem('')
+        self.booktype.addItem('Printed')
+        self.booktype.addItem('E-book')
+
+        # Add fields to layout
+        layout.addRow('ISBN:', self.isbn)
+        layout.addRow('Title:', self.title)
+        layout.addRow('Author:', self.author)
+        layout.addRow('OtherAuthors:', self.otherauthors)
+        layout.addRow('Publisher:', self.publisher)
+        layout.addRow('Series:', self.series)
+        layout.addRow('Category:', self.category)
+        layout.addRow('Language:', self.language)
+        layout.addRow('Year:', self.year)
+        layout.addRow('Pages:', self.pages)
+        layout.addRow('Owner:', self.owner)
+        layout.addRow('Type:', self.booktype)
+
+        # Set layout
+        self.setLayout(layout)
+
 # Form to insert authors
 class InsertAuthorForm(QWidget):
 
     def __init__(self, insert_record, *args, **kwargs):
         super(InsertAuthorForm, self).__init__(*args, **kwargs)
+
+        # Define layout
+        layout = QFormLayout()
+        self.name = QLineEdit()
+
+        self.gender = QComboBox()
+        self.gender.addItem('')
+        self.gender.addItem('M')
+        self.gender.addItem('F')
+        self.gender.addItem('TM')
+        self.gender.addItem('TW')
+        self.gender.addItem('NB')
+
+        self.nationality = QLineEdit()
+        self.birthyear = QLineEdit()
+        self.deathyear = QLineEdit()
+
+        # Add fields to layout
+        layout.addRow('Name:', self.name)
+        layout.addRow('Gender:', self.gender)
+        layout.addRow('Nationality:', self.nationality)
+        layout.addRow('BirthYear', self.birthyear)
+        layout.addRow('DeathYear:', self.deathyear)
+
+        # Set layout
+        self.setLayout(layout)
 
 # Form to insert publishers
 class InsertPublisherForm(QWidget):
@@ -835,11 +897,33 @@ class InsertPublisherForm(QWidget):
     def __init__(self, insert_record, *args, **kwargs):
         super(InsertPublisherForm, self).__init__(*args, **kwargs)
 
+        # Define layout
+        layout = QFormLayout()
+        self.name = QLineEdit()
+
+        # Add field to layout
+        layout.addRow('Name:', self.name)
+
+        # Set layout
+        self.setLayout(layout)
+
 # Form to insert series
 class InsertSeriesForm(QWidget):
 
     def __init__(self, insert_record, *args, **kwargs):
         super(InsertSeriesForm, self).__init__(*args, **kwargs)
+
+        # Define layout
+        layout = QFormLayout()
+        self.name = QLineEdit()
+        self.author = QLineEdit()
+
+        # Add fields to layout
+        layout.addRow('Name:', self.name)
+        layout.addRow('Author:', self.author)
+
+        # Set layout
+        self.setLayout(layout)
 
 # Insert into database widget
 class InsertDatabase(QWidget):
@@ -861,7 +945,7 @@ class InsertDatabase(QWidget):
         layout.addWidget(menu)
 
         # Define stacked layout for the different tables in database
-        layout_insert = QStackedLayout()
+        self.layout_insert = QStackedLayout()
 
         # Create insert form for each table in database
         self.book_insert = InsertBookForm(self.insert_record)
@@ -870,12 +954,12 @@ class InsertDatabase(QWidget):
         self.series_insert = InsertSeriesForm(self.insert_record)
 
         # Add search forms to layout
-        layout_insert.addWidget(self.book_insert)
-        layout_insert.addWidget(self.author_insert)
-        layout_insert.addWidget(self.publisher_insert)
-        layout_insert.addWidget(self.series_insert)
+        self.layout_insert.addWidget(self.book_insert)
+        self.layout_insert.addWidget(self.author_insert)
+        self.layout_insert.addWidget(self.publisher_insert)
+        self.layout_insert.addWidget(self.series_insert)
 
-        layout.addLayout(layout_insert)
+        layout.addLayout(self.layout_insert)
 
         # Define layout for buttons
         layout_button = QHBoxLayout()
@@ -899,20 +983,411 @@ class InsertDatabase(QWidget):
     def change_table(self, table_name):
         # Books
         if table_name == 'Books':
-            pass
+            self.layout_insert.setCurrentIndex(0)
         # Authors
         elif table_name == 'Authors':
-            pass
+            self.layout_insert.setCurrentIndex(1)
         # Publishers
         elif table_name == 'Publishers':
-            pass
+            self.layout_insert.setCurrentIndex(2)
         # Series
         else:
-            pass
+            self.layout_insert.setCurrentIndex(3)
 
     # Function to insert record in database
     def insert_record(self):
-        pass
+        if self.layout_insert.currentIndex() == 0:
+            # Get text from insert form
+            isbn = self.book_insert.isbn.text()
+            title = self.book_insert.title.text()
+            author = self.book_insert.author.text()
+            otherauthors = self.book_insert.otherauthors.text()
+            publisher = self.book_insert.publisher.text()
+            series = self.book_insert.series.text()
+            category = self.book_insert.category.text()
+            language = self.book_insert.language.text()
+            year = self.book_insert.year.text()
+            pages = self.book_insert.pages.text()
+            owner = self.book_insert.owner.text()
+            booktype = self.book_insert.booktype.currentText()
+
+            # Set values to None where strings are empty
+            if isbn == '':
+                isbn = None
+            if title == '':
+                # Title cannot be NULL, show error
+                error = QMessageBox(self)
+                error.setIcon(QMessageBox.Critical)
+                error.setWindowTitle('Error')
+                error.setText('Title cannot be NULL. Operation failed')
+                error.setStandardButtons(QMessageBox.Ok)
+                error.exec_()
+
+                return
+            if author == '':
+                # Author cannot be NULL, show error
+                error = QMessageBox(self)
+                error.setIcon(QMessageBox.Critical)
+                error.setWindowTitle('Error')
+                error.setText('Author cannot be NULL. Operation failed')
+                error.setStandardButtons(QMessageBox.Ok)
+                error.exec_()
+
+                return
+            if otherauthors == '':
+                otherauthors = None
+            if publisher == '':
+                publisher = None
+            if series == '':
+                series = None
+            if category == '':
+                category = None
+            if language == '':
+                language = None
+            if year == '':
+                year = None
+            if pages == '':
+                pages = None
+            if owner == '':
+                owner = None
+            if booktype == '':
+                booktype = None
+
+            # Get Author Id from Name
+            mySql_select_query = """SELECT Id FROM Authors WHERE Name LIKE %s"""
+            cursor.execute(mySql_select_query, ('%'+author+'%',))
+            author_id = cursor.fetchall()
+            if len(author_id) == 0:
+                # Author cannot be NULL, show error
+                error = QMessageBox(self)
+                error.setIcon(QMessageBox.Critical)
+                error.setWindowTitle('Error')
+                error.setText('Author not found in Authors table. Operation failed')
+                error.setStandardButtons(QMessageBox.Ok)
+                error.exec_()
+
+                return
+            elif len(author_id) == 1:
+                author = author_id[0][0]
+            else:
+                # Show warning if string matches multiple authors
+                warning = QMessageBox(self)
+                warning.setIcon(QMessageBox.Information)
+                warning.setWindowTitle('Warning')
+                warning.setText('String matches multiple authors. Using exact match')
+                warning.setStandardButtons(QMessageBox.Ok)
+                warning.exec_()
+
+                # Get Author Id from Name using exact match
+                mySql_select_query = """SELECT Id FROM Authors WHERE Name=%s"""
+                cursor.execute(mySql_select_query, (author,))
+                author_id = cursor.fetchall()
+                if len(author_id) == 0:
+                    # Author cannot be NULL, show error
+                    error = QMessageBox(self)
+                    error.setIcon(QMessageBox.Critical)
+                    error.setWindowTitle('Error')
+                    error.setText('No exact match found in table Authors. Operation failed')
+                    error.setStandardButtons(QMessageBox.Ok)
+                    error.exec_()
+
+                    return
+                elif len(author_id) == 1:
+                    author = author_id[0][0]
+
+            # Get Publisher Id from Name
+            if publisher is not None:
+                mySql_select_query = """SELECT Id FROM Publishers WHERE Name LIKE %s"""
+                cursor.execute(mySql_select_query, ('%'+publisher+'%',))
+                publisher_id = cursor.fetchall()
+                if len(publisher_id) == 0:
+                    publisher = None
+                    # Show warning if string doesn't match any Publisher
+                    warning = QMessageBox(self)
+                    warning.setIcon(QMessageBox.Warning)
+                    warning.setWindowTitle('Warning')
+                    warning.setText('Publisher not found, set to \'NULL\'')
+                    warning.setStandardButtons(QMessageBox.Ok)
+                    warning.exec_()
+                elif len(publisher_id) == 1:
+                    publisher = publisher_id[0][0]
+                else:
+                    # Show warning if string matches multiple publishers
+                    warning = QMessageBox(self)
+                    warning.setIcon(QMessageBox.Information)
+                    warning.setWindowTitle('Warning')
+                    warning.setText('String matches multiple publishers. Using exact match')
+                    warning.setStandardButtons(QMessageBox.Ok)
+                    warning.exec_()
+
+                    # Get Publisher Id from Name using exact match
+                    mySql_select_query = """SELECT Id FROM Publishers WHERE Name=%s"""
+                    cursor.execute(mySql_select_query, (publisher,))
+                    publisher_id = cursor.fetchall()
+                    if len(publisher_id) == 0:
+                        publisher = None
+                        # Show warning if exact match is not found
+                        warning = QMessageBox(self)
+                        warning.setIcon(QMessageBox.Warning)
+                        warning.setWindowTitle('Warning')
+                        warning.setText('Publisher not found, set to \'NULL\'')
+                        warning.setStandardButtons(QMessageBox.Ok)
+                        warning.exec_()
+                    elif len(publisher_id) == 1:
+                        publisher = publisher_id[0][0]
+
+            # Get Series Id from Name
+            if series is not None:
+                mySql_select_query = """SELECT Id FROM Series WHERE Name LIKE %s"""
+                cursor.execute(mySql_select_query, ('%'+series+'%',))
+                series_id = cursor.fetchall()
+                if len(series_id) == 0:
+                    series = None
+                    # Show warning if string doesn't match any Series
+                    warning = QMessageBox(self)
+                    warning.setIcon(QMessageBox.Warning)
+                    warning.setWindowTitle('Warning')
+                    warning.setText('Series not found, set to \'NULL\'')
+                    warning.setStandardButtons(QMessageBox.Ok)
+                    warning.exec_()
+                elif len(series_id) == 1:
+                    series = series_id[0][0]
+                else:
+                    # Show warning is string matches multiple Series
+                    warning = QMessageBox(self)
+                    warning.setIcon(QMessageBox.Information)
+                    warning.setWindowTitle('Warning')
+                    warning.setText('String matches multiple series. Using exact match')
+                    warning.setStandardButtons(QMessageBox.Ok)
+                    warning.exec_()
+
+                    # Get Series Id from Name using exact match
+                    mySql_select_query = """SELECT Id FROM Series WHERE Name=%s"""
+                    cursor.execute(mySql_select_query, (series,))
+                    series_id = cursor.fetchall()
+                    if len(series_id) == 0:
+                        series = None
+                        # Show warning if exact match is not found
+                        warning = QMessageBox(self)
+                        warning.setIcon(QMessageBox.Warning)
+                        warning.setWindowTitle('Warning')
+                        warning.setText('Series not found, set to \'NULL\'')
+                        warning.setStandardButtons(QMessageBox.Ok)
+                        warning.exec_()
+                    elif len(series_id) == 1:
+                        series = series_id[0][0]
+
+            mySql_insert_query = """INSERT INTO Books(Id, ISBN, Title, Author, OtherAuthors, Publisher, Series, Category,
+                                                      Language, Year, Pages, Owner,  Type)
+                                    Values(NULL, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)"""
+            values = (isbn, title, author, otherauthors, publisher, series, category, language, year, pages, owner, booktype)
+
+            # Execute the query
+            try:
+                cursor.execute(mySql_insert_query, values)
+                connection.commit()
+
+                # Show message if insertion succeeded
+                info = QMessageBox()
+                info.setIcon(QMessageBox.Information)
+                info.setWindowTitle('Success')
+                info.setText('Record inserted successfully into Books')
+                info.setStandardButtons(QMessageBox.Ok)
+                info.exec_()
+            except Error as e:
+                # Create error message box
+                error = QMessageBox(self)
+                error.setIcon(QMessageBox.Critical)
+                error.setWindowTitle('Error')
+                error.setText(str(e))
+                error.setStandardButtons(QMessageBox.Ok)
+                error.exec_()
+
+        elif self.layout_insert.currentIndex() == 1:
+            # Get text from insert form
+            name = self.author_insert.name.text()
+            gender = self.author_insert.gender.currentText()
+            nationality = self.author_insert.nationality.text()
+            birthyear = self.author_insert.birthyear.text()
+            deathyear = self.author_insert.deathyear.text()
+
+            # Set values to None where strings are empty
+            if name == '':
+                # Name cannot be NULL, show error
+                error = QMessageBox(self)
+                error.setIcon(QMessageBox.Critical)
+                error.setWindowTitle('Error')
+                error.setText('Name cannot be NULL. Operation failed')
+                error.setStandardButtons(QMessageBox.Ok)
+                error.exec_()
+
+                return
+                name = None
+            if gender == '':
+                gender = None
+            if nationality == '':
+                nationality = None
+            if birthyear == '':
+                birthyear = None
+            if deathyear == '':
+                deathyear = None
+
+            mySql_insert_query = """INSERT INTO Authors(Id, Name, Gender, Nationality, BirthYear, DeathYear) 
+                                    Values(NULL, %s, %s, %s, %s, %s)"""
+            values = (name, gender, nationality, birthyear, deathyear)
+
+            # Execute the query
+            try:
+                cursor.execute(mySql_insert_query, values)
+                connection.commit()
+
+                # Show message if insertion succeeded
+                info = QMessageBox()
+                info.setIcon(QMessageBox.Information)
+                info.setWindowTitle('Success')
+                info.setText('Record inserted successfully into Authors')
+                info.setStandardButtons(QMessageBox.Ok)
+                info.exec_()
+            except Error as e:
+                # Create error message box
+                error = QMessageBox(self)
+                error.setIcon(QMessageBox.Critical)
+                error.setWindowTitle('Error')
+                error.setText(str(e))
+                error.setStandardButtons(QMessageBox.Ok)
+                error.exec_()
+
+        elif self.layout_insert.currentIndex() == 2:
+            # Get text from insert form
+            name = self.publisher_insert.name.text()
+
+            # Set value to None if string is empty
+            if name == '':
+                # Name cannot be NULL, show error
+                error = QMessageBox(self)
+                error.setIcon(QMessageBox.Critical)
+                error.setWindowTitle('Error')
+                error.setText('Name cannot be NULL. Operation failed')
+                error.setStandardButtons(QMessageBox.Ok)
+                error.exec_()
+
+                return
+
+            mySql_insert_query = """INSERT INTO Publishers(Id, Name) Values(NULL, %s)"""
+
+            # Execute the query
+            try:
+                cursor.execute(mySql_insert_query, (name,))
+                connection.commit()
+
+                # Show message if insertion succeeded
+                info = QMessageBox()
+                info.setIcon(QMessageBox.Information)
+                info.setWindowTitle('Success')
+                info.setText('Record inserted successfully into Publishers')
+                info.setStandardButtons(QMessageBox.Ok)
+                info.exec_()
+            except Error as e:
+                # Create error message box
+                error = QMessageBox(self)
+                error.setIcon(QMessageBox.Critical)
+                error.setWindowTitle('Error')
+                error.setText(str(e))
+                error.setStandardButtons(QMessageBox.Ok)
+                error.exec_()
+
+        elif self.layout_insert.currentIndex() == 3:
+            # Get text from insert form
+            name = self.series_insert.name.text()
+            author = self.series_insert.author.text()
+
+            # Set values to None where strings are empty
+            if name == '':
+                # Name cannot be NULL, show error
+                error = QMessageBox(self)
+                error.setIcon(QMessageBox.Critical)
+                error.setWindowTitle('Error')
+                error.setText('Name cannot be NULL. Operation failed')
+                error.setStandardButtons(QMessageBox.Ok)
+                error.exec_()
+
+                return
+            if author == '':
+                # Author cannot be NULL, show error
+                error = QMessageBox(self)
+                error.setIcon(QMessageBox.Critical)
+                error.setWindowTitle('Error')
+                error.setText('Author cannot be NULL. Operation failed')
+                error.setStandardButtons(QMessageBox.Ok)
+                error.exec_()
+
+                return
+
+            # Get Author Id from Name
+            mySql_select_query = """SELECT Id FROM Authors WHERE Name LIKE %s"""
+            cursor.execute(mySql_select_query, ('%'+author+'%',))
+            author_id = cursor.fetchall()
+            if len(author_id) == 0:
+                # Author cannot be NULL, show error
+                error = QMessageBox(self)
+                error.setIcon(QMessageBox.Critical)
+                error.setWindowTitle('Error')
+                error.setText('Author not found in Authors table. Operation failed')
+                error.setStandardButtons(QMessageBox.Ok)
+                error.exec_()
+
+                return
+            elif len(author_id) == 1:
+                author = author_id[0][0]
+            else:
+                # Show warning if string matches multiple authors
+                warning = QMessageBox()
+                warning.setIcon(QMessageBox.Information)
+                warning.setWindowTitle('Warning')
+                warning.setText('String matches multiple authors. Using exact match')
+                warning.setStandardButtons(QMessageBox.Ok)
+                warning.exec_()
+
+                # Get Author Id from Name using exact match
+                mySql_select_query = """SELECT Id FROM Authors WHERE Name=%s"""
+                cursor.execute(mySql_select_query, (author,))
+                author_id = cursor.fetchall()
+                if len(author_id) == 0:
+                    # Author cannot be NULL, show error
+                    error = QMessageBox(self)
+                    error.setIcon(QMessageBox.Critical)
+                    error.setWindowTitle('Error')
+                    error.setText('No exact match found in table Authors. Operation failed')
+                    error.setStandardButtons(QMessageBox.Ok)
+                    error.exec_()
+
+                    return
+                elif len(author_id) == 1:
+                    author = author_id[0][0]
+
+            mySql_insert_query = """INSERT INTO Series(Id, Name, Author) Values(NULL, %s, %s)"""
+            values = (name, author)
+
+            # Execute the query
+            try:
+                cursor.execute(mySql_insert_query, values)
+                connection.commit()
+
+                # Show message if insertion succeeded
+                info = QMessageBox()
+                info.setIcon(QMessageBox.Information)
+                info.setWindowTitle('Success')
+                info.setText('Record inserted successfully into Series')
+                info.setStandardButtons(QMessageBox.Ok)
+                info.exec_()
+            except Error as e:
+                # Create error message box
+                error = QMessageBox(self)
+                error.setIcon(QMessageBox.Critical)
+                error.setWindowTitle('Error')
+                error.setText(str(e))
+                error.setStandardButtons(QMessageBox.Ok)
+                error.exec_()
 
     # Function to exit the program
     def exit_program(self):
