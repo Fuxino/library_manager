@@ -1,5 +1,6 @@
 #!/usr/bin/python3
 
+# Import libraries
 import sys
 from sys import exit, argv
 
@@ -310,8 +311,10 @@ class SearchDatabase(QWidget):
 
         # Set main layout
         self.setLayout(layout)
-    
+
+    # Function to set table columns according to database table selected
     def change_table(self, table_name):
+        # Books
         if table_name == 'Books':
             self.table.setRowCount(0)
             self.table.setColumnCount(13)
@@ -333,6 +336,7 @@ class SearchDatabase(QWidget):
             self.table.resizeColumnsToContents()
 
             self.layout_search.setCurrentIndex(0)
+        # Authors
         elif table_name == 'Authors':
             self.table.setRowCount(0)
             self.table.setColumnCount(6)
@@ -347,6 +351,7 @@ class SearchDatabase(QWidget):
             self.table.resizeColumnsToContents()
 
             self.layout_search.setCurrentIndex(1)
+        # Publishers
         elif table_name == 'Publishers':
             self.table.setRowCount(0)
             self.table.setColumnCount(2)
@@ -357,6 +362,7 @@ class SearchDatabase(QWidget):
             self.table.resizeColumnsToContents()
 
             self.layout_search.setCurrentIndex(2)
+        # Series
         else:
             self.table.setRowCount(0)
             self.table.setColumnCount(3)
@@ -369,11 +375,14 @@ class SearchDatabase(QWidget):
 
             self.layout_search.setCurrentIndex(3)
 
+    # Function to query the database
     def query_db(self):
+        # Query Books
         if self.layout_search.currentIndex() == 0:
             query = 'SELECT Id, ISBN, Title, Author, OtherAuthors, Publisher, Series, \
                     Category, Language, Year, Pages, Owner, Type FROM Books WHERE '
 
+            # Get text from search form
             isbn = self.book_search.isbn.text()
             title = self.book_search.title.text()
             author_n = self.book_search.author.text()
@@ -386,11 +395,13 @@ class SearchDatabase(QWidget):
             owner = self.book_search.owner.currentText()
             booktype = self.book_search.booktype.currentText()
 
+            # Prepare SQL query
             if isbn != '':
                 query = query + 'ISBN LIKE \'%' + isbn + '%\' AND '
             if title != '':
                 query = query + 'Title LIKE \'%' + title + '%\' AND '
             if author_n != '':
+                # Get Authors Id from Name
                 mySql_select_query = """SELECT Id FROM Authors WHERE Name LIKE %s"""
                 cursor.execute(mySql_select_query, ('%'+author_n+'%',))
                 author = cursor.fetchall()
@@ -408,6 +419,7 @@ class SearchDatabase(QWidget):
 
                 query = query + '(Author IN (' + str(author_id) + ') OR OtherAuthors LIKE \'%' + author_n + '%\') AND '
             if author_g != '':
+                # Get Authors Id from Gender
                 if author_g == 'Other':
                     mySql_select_query = """SELECT Id FROM Authors WHERE Gender!='M' AND Gender!='F'"""
                     cursor.execute(mySql_select_query)
@@ -443,6 +455,7 @@ class SearchDatabase(QWidget):
 
                     query = query + 'Author IN (' + str(author_id) + ') AND '
             if author_c != '':
+                # Get Authors' Id from Nationality
                 mySql_select_query = """SELECT Id FROM Authors WHERE Nationality LIKE %s"""
                 cursor.execute(mySql_select_query, ('%'+author_c+'%',))
                 author = cursor.fetchall()
@@ -460,6 +473,7 @@ class SearchDatabase(QWidget):
 
                 query = query + 'Author IN (' + str(author_id) + ') AND '
             if publisher != '':
+                # Get Publishers Id from Name
                 mySql_select_query = """SELECT Id FROM Publishers WHERE Name LIKE %s"""
                 cursor.execute(mySql_select_query, ('%'+publisher+'%',))
                 publisher = cursor.fetchall()
@@ -477,6 +491,7 @@ class SearchDatabase(QWidget):
 
                 query = query + 'Publisher IN (' + str(publisher_id) + ') AND '
             if series != '':
+                # Get Series Id from Name
                 mySql_select_query = """SELECT Id FROM Series WHERE Name LIKE %s"""
                 cursor.execute(mySql_select_query, ('%'+series+'%',))
                 series = cursor.fetchall()
@@ -502,89 +517,112 @@ class SearchDatabase(QWidget):
             if booktype != '':
                 query = query + 'Type LIKE \'%' + booktype + '%\' '
 
+            # Remove trailing 'AND' and/or 'WHERE' from query
             if query[-4:] == 'AND ':
                 query = query[:-4]
 
             if query[-6:] == 'WHERE ':
                 query = query[:-6]
-            
+
             query = query + 'ORDER BY Author, Series, Year'
 
-            cursor.execute(query)
-            results = cursor.fetchall()
+            try:
+                # Execute the query
+                cursor.execute(query)
+                results = cursor.fetchall()
 
-            self.table.setRowCount(1)
+                # Clear the results table
+                self.table.setRowCount(1)
 
-            for row in results:
-                Id = row[0]
-                ISBN = row[1]
-                Title = row[2]
-                Author = row[3]
-                OtherAuthors = row[4]
-                Publisher = row[5]
-                Series = row[6]
-                Category = row[7]
-                Language = row[8]
-                Year = row[9]
-                Pages = row[10]
-                Owner = row[11]
-                Type = row[12]
+                # Get values for each result of the query
+                for row in results:
+                    Id = row[0]
+                    ISBN = row[1]
+                    Title = row[2]
+                    Author = row[3]
+                    OtherAuthors = row[4]
+                    Publisher = row[5]
+                    Series = row[6]
+                    Category = row[7]
+                    Language = row[8]
+                    Year = row[9]
+                    Pages = row[10]
+                    Owner = row[11]
+                    Type = row[12]
+
+                    # Get Author's Name from Id
+                    mySql_select_query = """SELECT Name FROM Authors WHERE Id = %s"""
+                    cursor.execute(mySql_select_query, (Author,))
+                    Author = cursor.fetchall()
+                    Author = Author[0][0]
+           
+                    # Get Publisher Name from Id
+                    if Publisher is not None:
+                        mySql_select_query = """SELECT Name FROM Publishers WHERE Id = %s"""
+                        cursor.execute(mySql_select_query, (Publisher,))
+                        Publisher = cursor.fetchall()
+                        Publisher = Publisher[0][0]
+
+                    # Get Series Name from Id
+                    if Series is not None:
+                        mySql_select_query = """SELECT Name FROM Series WHERE Id = %s"""
+                        cursor.execute(mySql_select_query, (Series,))
+                        Series = cursor.fetchall()
+                        Series = Series[0][0]
+
+                    # If Year and/or Pages is NULL, show empty string
+                    if Year == None:
+                        Year = ''
+
+                    if Pages == None:
+                        Pages = ''
+
+                    # Insert values in table
+                    i = self.table.rowCount()
+                    self.table.insertRow(i)
             
-                mySql_select_query = """SELECT Name FROM Authors WHERE Id = %s"""
-                cursor.execute(mySql_select_query, (Author,))
-                Author = cursor.fetchall()
-                Author = Author[0][0]
-            
-                if Publisher is not None:
-                    mySql_select_query = """SELECT Name FROM Publishers WHERE Id = %s"""
-                    cursor.execute(mySql_select_query, (Publisher,))
-                    Publisher = cursor.fetchall()
-                    Publisher = Publisher[0][0]
+                    self.table.setItem(i, 0, QTableWidgetItem(str(Id)))
+                    self.table.setItem(i, 1, QTableWidgetItem(ISBN))
+                    self.table.setItem(i, 2, QTableWidgetItem(Title))
+                    self.table.setItem(i, 3, QTableWidgetItem(Author))
+                    self.table.setItem(i, 4, QTableWidgetItem(OtherAuthors))
+                    self.table.setItem(i, 5, QTableWidgetItem(Publisher))
+                    self.table.setItem(i, 6, QTableWidgetItem(Series))
+                    self.table.setItem(i, 7, QTableWidgetItem(Category))
+                    self.table.setItem(i, 8, QTableWidgetItem(Language))
+                    self.table.setItem(i, 9, QTableWidgetItem(str(Year)))
+                    self.table.setItem(i, 10, QTableWidgetItem(str(Pages)))
+                    self.table.setItem(i, 11, QTableWidgetItem(Owner))
+                    self.table.setItem(i, 12, QTableWidgetItem(Type))
 
-                if Series is not None:
-                    mySql_select_query = """SELECT Name FROM Series WHERE Id = %s"""
-                    cursor.execute(mySql_select_query, (Series,))
-                    Series = cursor.fetchall()
-                    Series = Series[0][0]
+                # Resize columns
+                self.table.resizeColumnsToContents()
 
-                if Year == None:
-                    Year = ''
+                if self.table.columnWidth(2) > 300:
+                    self.table.setColumnWidth(2, 300)
 
-                if Pages == None:
-                    Pages = ''
+                if self.table.columnWidth(4) > 300:
+                    self.table.setColumnWidth(4, 300)
 
-                i = self.table.rowCount()
-                self.table.insertRow(i)
-            
-                self.table.setItem(i, 0, QTableWidgetItem(str(Id)))
-                self.table.setItem(i, 1, QTableWidgetItem(ISBN))
-                self.table.setItem(i, 2, QTableWidgetItem(Title))
-                self.table.setItem(i, 3, QTableWidgetItem(Author))
-                self.table.setItem(i, 4, QTableWidgetItem(OtherAuthors))
-                self.table.setItem(i, 5, QTableWidgetItem(Publisher))
-                self.table.setItem(i, 6, QTableWidgetItem(Series))
-                self.table.setItem(i, 7, QTableWidgetItem(Category))
-                self.table.setItem(i, 8, QTableWidgetItem(Language))
-                self.table.setItem(i, 9, QTableWidgetItem(str(Year)))
-                self.table.setItem(i, 10, QTableWidgetItem(str(Pages)))
-                self.table.setItem(i, 11, QTableWidgetItem(Owner))
-                self.table.setItem(i, 12, QTableWidgetItem(Type))
-                
-            self.table.resizeColumnsToContents()
+            except Error as e:
+                # Create error message box
+                error = QMessageBox(self)
+                error.setIcon(QMessageBox.Critical)
+                error.setWindowTitle('Error')
+                error.setText(str(e))
+                error.setStandardButtons(QMessageBox.Ok)
+                error.exec_()
 
-            if self.table.columnWidth(2) > 300:
-                self.table.setColumnWidth(2, 300)
-
-            if self.table.columnWidth(4) > 300:
-                self.table.setColumnWidth(4, 300)
-
+        # Query Authors
         elif self.layout_search.currentIndex() == 1:
             query = 'SELECT Id, Name, Gender, Nationality, BirthYear, DeathYear FROM Authors WHERE '
 
+            # Get text from search form
             name = self.author_search.name.text()
             gender = self.author_search.gender.currentText()
             nationality = self.author_search.nationality.text()
 
+            # Prepare SQL query
             if name != '':
                 query = query + 'Name LIKE \'%' + name + '%\' AND '
             if gender != '':
@@ -595,6 +633,7 @@ class SearchDatabase(QWidget):
             if nationality != '':
                 query = query + 'Nationality LIKE \'%' + nationality + '%\' '
 
+            # Remove trailing 'AND' and/or 'WHERE' from query
             if query[-4:] == 'AND ':
                 query = query[:-4]
 
@@ -603,74 +642,113 @@ class SearchDatabase(QWidget):
 
             query = query + 'ORDER BY Name'
 
-            cursor.execute(query)
-            results = cursor.fetchall()
-            self.table.setRowCount(1)
+            try:
+                # Execute the query
+                cursor.execute(query)
+                results = cursor.fetchall()
+                
+                # Clear the results table
+                self.table.setRowCount(1)
 
-            for row in results:
-                Id = row[0]
-                Name = row[1]
-                Gender = row[2]
-                Nationality = row[3]
-                BirthYear = row[4]
-                DeathYear = row[5]
+                # Get values for each result of the query
+                for row in results:
+                    Id = row[0]
+                    Name = row[1]
+                    Gender = row[2]
+                    Nationality = row[3]
+                    BirthYear = row[4]
+                    DeathYear = row[5]
 
-                if BirthYear == None:
-                    BirthYear = ''
+                    # If BirthYear and/or DeathYear is NULL, show empty string
+                    if BirthYear == None:
+                        BirthYear = ''
 
-                if DeathYear == None:
-                    DeathYear = ''
+                    if DeathYear == None:
+                        DeathYear = ''
 
-                i = self.table.rowCount()
-                self.table.insertRow(i)
+                    # Insert values in table
+                    i = self.table.rowCount()
+                    self.table.insertRow(i)
 
-                self.table.setItem(i, 0, QTableWidgetItem(str(Id)))
-                self.table.setItem(i, 1, QTableWidgetItem(Name))
-                self.table.setItem(i, 2, QTableWidgetItem(Gender))
-                self.table.setItem(i, 3, QTableWidgetItem(Nationality))
-                self.table.setItem(i, 4, QTableWidgetItem(str(BirthYear)))
-                self.table.setItem(i, 5, QTableWidgetItem(str(DeathYear)))
+                    self.table.setItem(i, 0, QTableWidgetItem(str(Id)))
+                    self.table.setItem(i, 1, QTableWidgetItem(Name))
+                    self.table.setItem(i, 2, QTableWidgetItem(Gender))
+                    self.table.setItem(i, 3, QTableWidgetItem(Nationality))
+                    self.table.setItem(i, 4, QTableWidgetItem(str(BirthYear)))
+                    self.table.setItem(i, 5, QTableWidgetItem(str(DeathYear)))
 
-            self.table.resizeColumnsToContents()
+                # Resize columns
+                self.table.resizeColumnsToContents()
+            except Error as e:
+                # Create error message box
+                error = QMessageBox(self)
+                error.setIcon(QMessageBox.Critical)
+                error.setWindowTitle('Error')
+                error.setText(str(e))
+                error.setStandardButtons(QMessageBox.Ok)
+                error.exec_()
 
+        # Query Publishers
         elif self.layout_search.currentIndex() == 2:
             query = 'SELECT Id, Name FROM Publishers WHERE '
 
+            # Get text from search form
             name = self.publisher_search.name.text()
 
+            # Prepare SQL query
             if name != '':
                 query = query + 'Name LIKE \'%' + name + '%\' '
 
+            # Remove trailing 'WHERE' from query
             if query[-6:] == 'WHERE ':
                 query = query[:-6]
 
             query = query + 'ORDER BY Name'
 
-            cursor.execute(query)
-            results = cursor.fetchall()
-            self.table.setRowCount(1)
+            try:
+                # Execute the query
+                cursor.execute(query)
+                results = cursor.fetchall()
 
-            for row in results:
-                Id = row[0]
-                Name = row[1]
+                # Clear the results table
+                self.table.setRowCount(1)
 
-                i = self.table.rowCount()
-                self.table.insertRow(i)
+                # Get values for each result of the query
+                for row in results:
+                    Id = row[0]
+                    Name = row[1]
 
-                self.table.setItem(i, 0, QTableWidgetItem(str(Id)))
-                self.table.setItem(i, 1, QTableWidgetItem(Name))
-            
-            self.table.resizeColumnsToContents()
+                    i = self.table.rowCount()
+                    self.table.insertRow(i)
 
+                    # Insert values in table
+                    self.table.setItem(i, 0, QTableWidgetItem(str(Id)))
+                    self.table.setItem(i, 1, QTableWidgetItem(Name))
+
+                # Resize columns
+                self.table.resizeColumnsToContents()
+            except Error as e:
+                # Create error message box
+                error = QMessageBox(self)
+                error.setIcon(QMessageBox.Critical)
+                error.setWindowTitle('Error')
+                error.setText(str(e))
+                error.setStandardButtons(QMessageBox.Ok)
+                error.exec_()
+
+        # Query series
         else:
             query = 'SELECT Id, Name, Author FROM Series WHERE '
 
+            # Get text from search form
             name = self.series_search.name.text()
             author = self.series_search.author.text()
 
+            # Prepare SQL query
             if name != '':
                 query = query + 'Name LIKE \'%' + name + '%\' AND '
             if author != '':
+                # Get Authors Id from Name
                 mySql_select_query = """SELECT Id FROM Authors WHERE Name LIKE %s"""
                 cursor.execute(mySql_select_query, ('%'+author+'%',))
                 author = cursor.fetchall()
@@ -688,6 +766,7 @@ class SearchDatabase(QWidget):
 
                 query = query + 'Author IN (' + str(author_id) + ') '
         
+            # Remove trailing 'AND' and/or 'WHERE' from query
             if query[-4:] == 'AND ':
                 query = query[:-4]
 
@@ -696,28 +775,44 @@ class SearchDatabase(QWidget):
 
             query = query + 'ORDER BY Author, Name'
 
-            cursor.execute(query) 
-            results = cursor.fetchall()
-            self.table.setRowCount(1)
+            try:
+                # Execute the query
+                cursor.execute(query) 
+                results = cursor.fetchall()
 
-            for row in results:
-                Id = row[0]
-                Name = row[1]
-                Author = row[2]
+                # Clear the results table
+                self.table.setRowCount(1)
 
-                mySql_select_query = """SELECT Name FROM Authors WHERE Id = %s"""
-                cursor.execute(mySql_select_query, (Author,))
-                Author = cursor.fetchall()
-                Author = Author[0][0]
-                
-                i = self.table.rowCount()
-                self.table.insertRow(i)
+                # Get values for each result of the query
+                for row in results:
+                    Id = row[0]
+                    Name = row[1]
+                    Author = row[2]
 
-                self.table.setItem(i, 0, QTableWidgetItem(str(Id)))
-                self.table.setItem(i, 1, QTableWidgetItem(Name))
-                self.table.setItem(i, 2, QTableWidgetItem(Author))
+                    # Get Author's Name from Id
+                    mySql_select_query = """SELECT Name FROM Authors WHERE Id = %s"""
+                    cursor.execute(mySql_select_query, (Author,))
+                    Author = cursor.fetchall()
+                    Author = Author[0][0]
 
-            self.table.resizeColumnsToContents()
+                    i = self.table.rowCount()
+                    self.table.insertRow(i)
+
+                    # Insert values in table
+                    self.table.setItem(i, 0, QTableWidgetItem(str(Id)))
+                    self.table.setItem(i, 1, QTableWidgetItem(Name))
+                    self.table.setItem(i, 2, QTableWidgetItem(Author))
+
+                # Resize columns
+                self.table.resizeColumnsToContents()
+            except Error as e:
+                # Create error message box
+                error = QMessageBox(self)
+                error.setIcon(QMessageBox.Critical)
+                error.setWindowTitle('Error')
+                error.setText(str(e))
+                error.setStandardButtons(QMessageBox.Ok)
+                error.exec_()
 
     def exit_program(self):
         exit(0)
