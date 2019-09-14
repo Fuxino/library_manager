@@ -968,22 +968,54 @@ class InsertDatabase(QWidget):
         layout_button = QHBoxLayout()
         # Create buttons
         insert_button = QPushButton('Insert')
+        clear_button = QPushButton('Clear')
         close_button = QPushButton('Exit')
 
         # Define buttons behavior
         insert_button.clicked.connect(self.insert_record)
+        clear_button.clicked.connect(self.clear_text)
         close_button.clicked.connect(self.exit_program)
 
         # Add buttons to layout
         layout_button.addWidget(insert_button)
+        layout_button.addWidget(clear_button)
         layout_button.addWidget(close_button)
         layout.addLayout(layout_button)
 
         # Set main layout
         self.setLayout(layout)
 
+    # Function to clear all insert fields
+    def clear_text(self):
+        self.book_insert.isbn.clear()
+        self.book_insert.title.clear()
+        self.book_insert.author.clear()
+        self.book_insert.otherauthors.clear()
+        self.book_insert.publisher.clear()
+        self.book_insert.series.clear()
+        self.book_insert.category.clear()
+        self.book_insert.language.clear()
+        self.book_insert.year.clear()
+        self.book_insert.pages.clear()
+        self.book_insert.owner.setCurrentIndex(0)
+        self.book_insert.booktype.setCurrentIndex(0)
+
+        self.author_insert.name.clear()
+        self.author_insert.gender.setCurrentIndex(0)
+        self.author_insert.nationality.clear()
+        self.author_insert.birthyear.clear()
+        self.author_insert.deathyear.clear()
+
+        self.publisher_insert.name.clear()
+
+        self.series_insert.name.clear()
+        self.series_insert.author.clear()
+
     # Function to set insert form according to database table selected
     def change_table(self, table_name):
+        # Clear all fields
+        self.clear_text()
+
         # Books
         if table_name == 'Books':
             self.layout_insert.setCurrentIndex(0)
