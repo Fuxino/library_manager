@@ -1436,7 +1436,7 @@ class MainWindow(QMainWindow):
 
         # Set window title and icon
         self.setWindowTitle('Library database')
-        self.setWindowIcon(QIcon('Books_icon.png'))
+        self.setWindowIcon(QIcon('Icon.ico'))
 
         # Run the login window
         login_window = Login()
