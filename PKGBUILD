@@ -3,20 +3,20 @@
 # Maintainer: Daniele Fucini <dfucini@gmail.com>
 
 pkgname=library_manager
-pkgver=2.0.2.r2.g31c39d6
+pkgver=2.0.2.r5.g2dc1983
 pkgrel=1
 pkgdesc="Manage Library database"
 arch=("any")
-license=("GPL")
+license=("GPL3")
 depends=("python3"
          "mariadb"
          "python-mysql-connector"
          "python-pyqt5")
 makedepends=("git")
-source=("$pkgname.py"
-        "Icon.ico")
-sha256sums=('27bc25751e59548d4c59ebc76a9beae966ba9029a450c860941863f927dedd53'
-            'c5f66c0c3b7aa8e2517107aa14734b723341824a75d99687cd2ccf78148829e8')
+source=("${pkgname}.py"
+        "Icon.png")
+sha256sums=('65da832bfa77f7ca483d3c63e08de70bf2b85cef7354c6d677abbed361df7f14'
+            'a75190bd2440b95842b2c9b16024f64b4cf448967d1936b60234371a0a7a5bb6')
 
 pkgver() 
 {  
@@ -26,4 +26,5 @@ pkgver()
 package()
 {
    install -Dm755 "${srcdir}/${pkgname}.py" "${pkgdir}/usr/bin/${pkgname}"
+   install -Dm644 "${srcdir}/Icon.png" "${pkgdir}/usr/share/icons/hicolor/32x32/apps/${pkgname}.png"
 }
