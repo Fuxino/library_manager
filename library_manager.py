@@ -267,6 +267,15 @@ class SearchDatabase(QWidget):
         # Add table to layout
         layout_left.addWidget(self.table)
 
+        # Add save to file button
+        save_button = QPushButton('Save to file')
+
+        # Define button behavior
+        save_button.clicked.connect(self.save_to_file)
+
+        # Add button to layout
+        layout_left.addWidget(save_button)
+
         # Add left layout to main layout
         layout.addLayout(layout_left)
 
@@ -813,6 +822,36 @@ class SearchDatabase(QWidget):
                 error.setText(str(e))
                 error.setStandardButtons(QMessageBox.Ok)
                 error.exec_()
+
+    # Function to save query result to file
+    def save_to_file(self):
+        file_dialog = QFileDialog()
+        file_dialog.setDefaultSuffix('.csv')
+        filename = file_dialog.getSaveFileName(self, 'Save query results', 'Results.csv')
+
+        try:
+            file_p = open(filename[0], 'w')
+
+            for row in range(self.table.rowCount()):
+                for col in range(self.table.columnCount()):
+                    text = str(self.table.item(row, col).text());
+                    if text.find(',') != -1:
+                        text = '\"' + text + '\"'
+                    text = text + ','
+                    file_p.write(text)
+                file_p.write('\n')
+
+            file_p.close()
+        except PermissionError as e:
+            # Create error message box
+            error = QMessageBox(self)
+            error.setIcon(QMessageBox.Critical)
+            error.setWindowTitle('Error')
+            error.setText(e.strerror)
+            error.setStandardButtons(QMessageBox.Ok)
+            error.exec_()
+        except FileNotFoundError:
+            pass
 
     def exit_program(self):
         exit(0)
