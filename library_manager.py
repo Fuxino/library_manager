@@ -4,6 +4,8 @@
 import sys
 from sys import exit, argv
 
+import subprocess
+
 from PyQt5.QtWidgets import *
 from PyQt5.QtGui import QIcon
 
@@ -58,12 +60,19 @@ class Login(QDialog):
             # Global variable because we need them later
             global connection
             global cursor
+            global hostname
+            global user
+            global pwd
+
+            hostname = self.host.currentText()
+            user = self.username.text()
+            pwd = self.password.text()
 
             # Create connection
-            connection = mysql.connector.connect(host=self.host.currentText(),
+            connection = mysql.connector.connect(host=hostname,
                                                  database='Library',
-                                                 user=self.username.text(),
-                                                 password=self.password.text())
+                                                 user=user,
+                                                 password=pwd)
 
             cursor = connection.cursor(prepared=True)
 
@@ -267,14 +276,21 @@ class SearchDatabase(QWidget):
         # Add table to layout
         layout_left.addWidget(self.table)
 
-        # Add save to file button
+        # Add buttons
+        layout_button_l = QHBoxLayout()
+
+        # Add backup and save buttons
+        backup_button = QPushButton('Backup database')
         save_button = QPushButton('Save to file')
 
-        # Define button behavior
+        # Define buttons behavior
+        backup_button.clicked.connect(self.backup_db)
         save_button.clicked.connect(self.save_to_file)
 
-        # Add button to layout
-        layout_left.addWidget(save_button)
+        # Add buttons to layout
+        layout_button_l.addWidget(backup_button)
+        layout_button_l.addWidget(save_button)
+        layout_left.addLayout(layout_button_l)
 
         # Add left layout to main layout
         layout.addLayout(layout_left)
@@ -301,7 +317,7 @@ class SearchDatabase(QWidget):
         layout_right.addLayout(self.layout_search)
 
         # Define layout for buttons
-        layout_button = QHBoxLayout()
+        layout_button_r = QHBoxLayout()
         # Create buttons
         search_button = QPushButton('Search')
         close_button = QPushButton('Exit')
@@ -311,9 +327,9 @@ class SearchDatabase(QWidget):
         close_button.clicked.connect(self.exit_program)
 
         # Add buttons to layout
-        layout_button.addWidget(search_button)
-        layout_button.addWidget(close_button)
-        layout_right.addLayout(layout_button)
+        layout_button_r.addWidget(search_button)
+        layout_button_r.addWidget(close_button)
+        layout_right.addLayout(layout_button_r)
 
         # Add right layout to main layout
         layout.addLayout(layout_right)
@@ -852,6 +868,26 @@ class SearchDatabase(QWidget):
             error.exec_()
         except FileNotFoundError:
             pass
+
+    def backup_db(self):
+        file_dialog = QFileDialog()
+        file_dialog.setDefaultSuffix('.gz')
+        filename = file_dialog.getSaveFileName(self, 'Backup database', 'Library.sql.gz')
+
+        # Define backup command
+        cmd = 'mysqldump --single-transaction --master-data=2 --host={} Library -u {} -p{} | gzip > {}'.format(hostname, user, pwd, filename[0])
+
+        # Execute the backup command
+        try:
+            subprocess.run(cmd, shell=True)
+        except:
+            # Create error message box
+            error = QMessageBox(self)
+            error.setIcon(QMessageBox.Critical)
+            error.setWindowTitle('Error')
+            error.setText('Unknown error')
+            error.setStandardButtons(QMessageBox.Ok)
+            error.exec_()
 
     def exit_program(self):
         exit(0)
