@@ -256,7 +256,6 @@ class SearchDatabase(QWidget):
 
         # Create table to show database queries results
         self.table = QTableWidget()
-#        self.table.setEditTriggers(QAbstractItemView.NoEditTriggers)
         self.table.setRowCount(0)
         self.table.setColumnCount(13)
         self.table.insertRow(0)
