@@ -5,6 +5,7 @@ import sys
 from sys import exit, argv
 
 import subprocess
+from subprocess import CalledProcessError, PIPE
 
 from PyQt5.QtWidgets import *
 from PyQt5.QtGui import QIcon
@@ -879,13 +880,20 @@ class SearchDatabase(QWidget):
 
         # Execute the backup command
         try:
-            subprocess.run(cmd, shell=True)
-        except:
+            subprocess.run(cmd, shell=True, check=True, stdout=PIPE).stdout
+            # Show message if backup succeeded
+            info = QMessageBox()
+            info.setIcon(QMessageBox.Information)
+            info.setWindowTitle('Success')
+            info.setText('Backup completed successfully')
+            info.setStandardButtons(QMessageBox.Ok)
+            info.exec_()
+        except CalledProcessError as e:
             # Create error message box
             error = QMessageBox(self)
             error.setIcon(QMessageBox.Critical)
             error.setWindowTitle('Error')
-            error.setText('Unknown error')
+            error.setText('Backup failed: {}'.format(e))
             error.setStandardButtons(QMessageBox.Ok)
             error.exec_()
 
