@@ -207,7 +207,7 @@ class SearchPublisherForm(QWidget):
 
         # Add field to layout
         layout.addRow('Name:', self.name)
- 
+
         # Set layout
         self.setLayout(layout)
 
@@ -444,7 +444,7 @@ class SearchDatabase(QWidget):
             type_item = QTableWidgetItem('Type')
             type_item.setFlags(type_item.flags() & ~Qt.ItemIsEditable)
             self.table.setItem(0, 12, type_item)
-            
+
             self.table.resizeColumnsToContents()
 
             self.layout_search.setCurrentIndex(0)
@@ -704,7 +704,7 @@ class SearchDatabase(QWidget):
                     cursor.execute(mySql_select_query, (Author,))
                     Author = cursor.fetchall()
                     Author = Author[0][0]
-           
+
                     # Get Publisher Name from Id
                     if Publisher is not None:
                         mySql_select_query = """SELECT Name FROM Publishers WHERE Id = %s"""
@@ -729,7 +729,7 @@ class SearchDatabase(QWidget):
                     # Insert values in table
                     i = self.table.rowCount()
                     self.table.insertRow(i)
-            
+
                     id_item = QTableWidgetItem(str(Id))
                     id_item.setFlags(id_item.flags() & ~Qt.ItemIsEditable)
                     self.table.setItem(i, 0, id_item)
@@ -763,7 +763,7 @@ class SearchDatabase(QWidget):
                 error.setText(str(e))
                 error.setStandardButtons(QMessageBox.Ok)
                 error.exec_()
-                
+
                 self.table.blockSignals(False)
 
         # Query Authors
@@ -799,7 +799,7 @@ class SearchDatabase(QWidget):
                 # Execute the query
                 cursor.execute(query)
                 results = cursor.fetchall()
-                
+
                 # Clear the results table
                 self.table.setRowCount(1)
 
@@ -926,7 +926,7 @@ class SearchDatabase(QWidget):
                     author_id = author_id[:-2]
 
                 query = query + 'Author IN (' + str(author_id) + ') '
-        
+
             # Remove trailing 'AND' and/or 'WHERE' from query
             if query[-4:] == 'AND ':
                 query = query[:-4]
@@ -1023,7 +1023,7 @@ class SearchDatabase(QWidget):
                 error.setText('Author not found in Authors table. Operation failed')
                 error.setStandardButtons(QMessageBox.Ok)
                 error.exec_()
-                
+
                 self.table.blockSignals(True)
 
                 self.table.removeCellWidget(record_index, field_index)
@@ -1049,7 +1049,7 @@ class SearchDatabase(QWidget):
                 self.table.setItem(record_index, field_index, QTableWidgetItem(self.current_item))
 
                 self.table.blockSignals(False)
-                
+
                 return
         elif field == 'Publisher':
             if value != '':
@@ -1070,7 +1070,7 @@ class SearchDatabase(QWidget):
                     self.table.setItem(record_index, field_index, QTableWidgetItem(self.current_item))
 
                     self.table.blockSignals(False)
-                    
+
                     return
                 elif len(publisher) == 1:
                     value = publisher[0][0]
@@ -1089,7 +1089,7 @@ class SearchDatabase(QWidget):
                     self.table.setItem(record_index, field_index, QTableWidgetItem(self.current_item))
 
                     self.table.blockSignals(False)
-                    
+
                     return
         elif field == 'Series':
             if value != '':
@@ -1110,7 +1110,7 @@ class SearchDatabase(QWidget):
                     self.table.setItem(record_index, field_index, QTableWidgetItem(self.current_item))
 
                     self.table.blockSignals(False)
-                    
+
                     return
                 elif len(series) == 1:
                     value = series[0][0]
@@ -1129,7 +1129,7 @@ class SearchDatabase(QWidget):
                     self.table.setItem(record_index, field_index, QTableWidgetItem(self.current_item))
 
                     self.table.blockSignals(False)
-                    
+
                     return
 
         if self.layout_search.currentIndex() == 0:
@@ -1162,7 +1162,7 @@ class SearchDatabase(QWidget):
                 cursor.execute(mySql_select_query, (value,))
                 author = cursor.fetchall()
                 value = author[0][0]
-                    
+
                 self.table.blockSignals(True)
 
                 self.table.removeCellWidget(record_index, field_index)
@@ -1298,7 +1298,7 @@ class InsertBookForm(QWidget):
         self.owner.addItem('')
         self.owner.addItem('Daniele')
         self.owner.addItem('Nicole')
- 
+
         self.booktype = QComboBox()
         self.booktype.addItem('')
         self.booktype.addItem('Printed')
