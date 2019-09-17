@@ -9,6 +9,7 @@ from subprocess import CalledProcessError, PIPE
 
 from PyQt5.QtWidgets import *
 from PyQt5.QtGui import QIcon
+from PyQt5.QtCore import Qt
 
 import mysql.connector
 from mysql.connector import Error
@@ -83,7 +84,7 @@ class Login(QDialog):
         # If error occurred during connection
         except Error as e:
             # Create error message box
-            error = QMessageBox(self)
+            error = QMessageBox()
             error.setIcon(QMessageBox.Critical)
             error.setWindowTitle('Error')
             error.setText(str(e))
@@ -255,24 +256,69 @@ class SearchDatabase(QWidget):
 
         # Create table to show database queries results
         self.table = QTableWidget()
-        self.table.setEditTriggers(QAbstractItemView.NoEditTriggers)
+#        self.table.setEditTriggers(QAbstractItemView.NoEditTriggers)
         self.table.setRowCount(0)
         self.table.setColumnCount(13)
         self.table.insertRow(0)
-        self.table.setItem(0, 0, QTableWidgetItem('Id'))
-        self.table.setItem(0, 1, QTableWidgetItem('ISBN'))
-        self.table.setItem(0, 2, QTableWidgetItem('Title'))
-        self.table.setItem(0, 3, QTableWidgetItem('Author'))
-        self.table.setItem(0, 4, QTableWidgetItem('OtherAuthors'))
-        self.table.setItem(0, 5, QTableWidgetItem('Publisher'))
-        self.table.setItem(0, 6, QTableWidgetItem('Series'))
-        self.table.setItem(0, 7, QTableWidgetItem('Category'))
-        self.table.setItem(0, 8, QTableWidgetItem('Language'))
-        self.table.setItem(0, 9, QTableWidgetItem('Year'))
-        self.table.setItem(0, 10, QTableWidgetItem('Pages'))
-        self.table.setItem(0, 11, QTableWidgetItem('Owner'))
-        self.table.setItem(0, 12, QTableWidgetItem('Type'))
+
+        id_item = QTableWidgetItem('Id')
+        id_item.setFlags(id_item.flags() & ~Qt.ItemIsEditable)
+        self.table.setItem(0, 0, id_item)
+
+        isbn_item = QTableWidgetItem('ISBN')
+        isbn_item.setFlags(isbn_item.flags() & ~Qt.ItemIsEditable)
+        self.table.setItem(0, 1, isbn_item)
+
+        title_item = QTableWidgetItem('Title')
+        title_item.setFlags(title_item.flags() & ~Qt.ItemIsEditable)
+        self.table.setItem(0, 2, title_item)
+
+        author_item = QTableWidgetItem('Author')
+        author_item.setFlags(author_item.flags() & ~Qt.ItemIsEditable)
+        self.table.setItem(0, 3, author_item)
+
+        otherauthors_item = QTableWidgetItem('OtherAuthors')
+        otherauthors_item.setFlags(otherauthors_item.flags() & ~Qt.ItemIsEditable)
+        self.table.setItem(0, 4, otherauthors_item)
+
+        publisher_item = QTableWidgetItem('Publisher')
+        publisher_item.setFlags(publisher_item.flags() & ~Qt.ItemIsEditable)
+        self.table.setItem(0, 5, publisher_item)
+
+        series_item = QTableWidgetItem('Series')
+        series_item.setFlags(series_item.flags() & ~Qt.ItemIsEditable)
+        self.table.setItem(0, 6, series_item)
+
+        category_item = QTableWidgetItem('Category')
+        category_item.setFlags(category_item.flags() & ~Qt.ItemIsEditable)
+        self.table.setItem(0, 7, category_item)
+
+        language_item = QTableWidgetItem('Language')
+        language_item.setFlags(language_item.flags() & ~Qt.ItemIsEditable)
+        self.table.setItem(0, 8, language_item)
+
+        year_item = QTableWidgetItem('Year')
+        year_item.setFlags(year_item.flags() & ~Qt.ItemIsEditable)
+        self.table.setItem(0, 9, year_item)
+
+        pages_item = QTableWidgetItem('Pages')
+        pages_item.setFlags(pages_item.flags() & ~Qt.ItemIsEditable)
+        self.table.setItem(0, 10, pages_item)
+
+        owner_item = QTableWidgetItem('Owner')
+        owner_item.setFlags(owner_item.flags() & ~Qt.ItemIsEditable)
+        self.table.setItem(0, 11, owner_item)
+
+        type_item = QTableWidgetItem('Type')
+        type_item.setFlags(type_item.flags() & ~Qt.ItemIsEditable)
+        self.table.setItem(0, 12, type_item)
+
         self.table.resizeColumnsToContents()
+
+        self.current_item = None
+
+        self.table.cellDoubleClicked.connect(self.get_current_item)
+        self.table.cellChanged.connect(self.update_db)
 
         # Add table to layout
         layout_left.addWidget(self.table)
@@ -340,25 +386,66 @@ class SearchDatabase(QWidget):
 
     # Function to set table columns according to database table selected
     def change_table(self, table_name):
+        self.table.blockSignals(True)
+
         # Books
         if table_name == 'Books':
             self.table.setRowCount(0)
             self.table.setColumnCount(13)
             self.table.insertRow(0)
-            self.table.setItem(0, 0, QTableWidgetItem('Id'))
-            self.table.setItem(0, 1, QTableWidgetItem('ISBN'))
-            self.table.setItem(0, 2, QTableWidgetItem('Title'))
-            self.table.setItem(0, 3, QTableWidgetItem('Author'))
-            self.table.setItem(0, 4, QTableWidgetItem('OtherAuthors'))
-            self.table.setItem(0, 5, QTableWidgetItem('Publisher'))
-            self.table.setItem(0, 6, QTableWidgetItem('Series'))
-            self.table.setItem(0, 7, QTableWidgetItem('Category'))
-            self.table.setItem(0, 8, QTableWidgetItem('Language'))
-            self.table.setItem(0, 9, QTableWidgetItem('Year'))
-            self.table.setItem(0, 10, QTableWidgetItem('Pages'))
-            self.table.setItem(0, 11, QTableWidgetItem('Owner'))
-            self.table.setItem(0, 12, QTableWidgetItem('Type'))
 
+            id_item = QTableWidgetItem('Id')
+            id_item.setFlags(id_item.flags() & ~Qt.ItemIsEditable)
+            self.table.setItem(0, 0, id_item)
+
+            isbn_item = QTableWidgetItem('ISBN')
+            isbn_item.setFlags(isbn_item.flags() & ~Qt.ItemIsEditable)
+            self.table.setItem(0, 1, isbn_item)
+
+            title_item = QTableWidgetItem('Title')
+            title_item.setFlags(title_item.flags() & ~Qt.ItemIsEditable)
+            self.table.setItem(0, 2, title_item)
+
+            author_item = QTableWidgetItem('Author')
+            author_item.setFlags(author_item.flags() & ~Qt.ItemIsEditable)
+            self.table.setItem(0, 3, author_item)
+
+            otherauthors_item = QTableWidgetItem('OtherAuthors')
+            otherauthors_item.setFlags(otherauthors_item.flags() & ~Qt.ItemIsEditable)
+            self.table.setItem(0, 4, otherauthors_item)
+
+            publisher_item = QTableWidgetItem('Publisher')
+            publisher_item.setFlags(publisher_item.flags() & ~Qt.ItemIsEditable)
+            self.table.setItem(0, 5, publisher_item)
+
+            series_item = QTableWidgetItem('Series')
+            series_item.setFlags(series_item.flags() & ~Qt.ItemIsEditable)
+            self.table.setItem(0, 6, series_item)
+
+            category_item = QTableWidgetItem('Category')
+            category_item.setFlags(category_item.flags() & ~Qt.ItemIsEditable)
+            self.table.setItem(0, 7, category_item)
+
+            language_item = QTableWidgetItem('Language')
+            language_item.setFlags(language_item.flags() & ~Qt.ItemIsEditable)
+            self.table.setItem(0, 8, language_item)
+
+            year_item = QTableWidgetItem('Year')
+            year_item.setFlags(year_item.flags() & ~Qt.ItemIsEditable)
+            self.table.setItem(0, 9, year_item)
+
+            pages_item = QTableWidgetItem('Pages')
+            pages_item.setFlags(pages_item.flags() & ~Qt.ItemIsEditable)
+            self.table.setItem(0, 10, pages_item)
+
+            owner_item = QTableWidgetItem('Owner')
+            owner_item.setFlags(owner_item.flags() & ~Qt.ItemIsEditable)
+            self.table.setItem(0, 11, owner_item)
+
+            type_item = QTableWidgetItem('Type')
+            type_item.setFlags(type_item.flags() & ~Qt.ItemIsEditable)
+            self.table.setItem(0, 12, type_item)
+            
             self.table.resizeColumnsToContents()
 
             self.layout_search.setCurrentIndex(0)
@@ -367,12 +454,30 @@ class SearchDatabase(QWidget):
             self.table.setRowCount(0)
             self.table.setColumnCount(6)
             self.table.insertRow(0)
-            self.table.setItem(0, 0, QTableWidgetItem('Id'))
-            self.table.setItem(0, 1, QTableWidgetItem('Name'))
-            self.table.setItem(0, 2, QTableWidgetItem('Gender'))
-            self.table.setItem(0, 3, QTableWidgetItem('Nationality'))
-            self.table.setItem(0, 4, QTableWidgetItem('BirthYear'))
-            self.table.setItem(0, 5, QTableWidgetItem('DeathYear'))
+
+            id_item = QTableWidgetItem('Id')
+            id_item.setFlags(id_item.flags() & ~Qt.ItemIsEditable)
+            self.table.setItem(0, 0, id_item)
+
+            name_item = QTableWidgetItem('Name')
+            name_item.setFlags(name_item.flags() & ~Qt.ItemIsEditable)
+            self.table.setItem(0, 1, name_item)
+
+            gender_item = QTableWidgetItem('Gender')
+            gender_item.setFlags(gender_item.flags() & ~Qt.ItemIsEditable)
+            self.table.setItem(0, 2, gender_item)
+
+            nationality_item = QTableWidgetItem('Nationality')
+            nationality_item.setFlags(nationality_item.flags() & ~Qt.ItemIsEditable)
+            self.table.setItem(0, 3, nationality_item)
+
+            birthyear_item = QTableWidgetItem('BirthYear')
+            birthyear_item.setFlags(birthyear_item.flags() & ~Qt.ItemIsEditable)
+            self.table.setItem(0, 4, birthyear_item)
+
+            deathyear_item = QTableWidgetItem('DeathYear')
+            deathyear_item.setFlags(deathyear_item.flags() & ~Qt.ItemIsEditable)
+            self.table.setItem(0, 5, deathyear_item)
 
             self.table.resizeColumnsToContents()
 
@@ -382,8 +487,14 @@ class SearchDatabase(QWidget):
             self.table.setRowCount(0)
             self.table.setColumnCount(2)
             self.table.insertRow(0)
-            self.table.setItem(0, 0, QTableWidgetItem('Id'))
-            self.table.setItem(0, 1, QTableWidgetItem('Name'))
+
+            id_item = QTableWidgetItem('Id')
+            id_item.setFlags(id_item.flags() & ~Qt.ItemIsEditable)
+            self.table.setItem(0, 0, id_item)
+
+            name_item = QTableWidgetItem('Name')
+            name_item.setFlags(name_item.flags() & ~Qt.ItemIsEditable)
+            self.table.setItem(0, 1, name_item)
 
             self.table.resizeColumnsToContents()
 
@@ -393,16 +504,29 @@ class SearchDatabase(QWidget):
             self.table.setRowCount(0)
             self.table.setColumnCount(3)
             self.table.insertRow(0)
-            self.table.setItem(0, 0, QTableWidgetItem('Id'))
-            self.table.setItem(0, 1, QTableWidgetItem('Name'))
-            self.table.setItem(0, 2, QTableWidgetItem('Author'))
+
+            id_item = QTableWidgetItem('Id')
+            id_item.setFlags(id_item.flags() & ~Qt.ItemIsEditable)
+            self.table.setItem(0, 0, id_item)
+
+            name_item = QTableWidgetItem('Name')
+            name_item.setFlags(name_item.flags() & ~Qt.ItemIsEditable)
+            self.table.setItem(0, 1, name_item)
+
+            author_item = QTableWidgetItem('Author')
+            author_item.setFlags(author_item.flags() & ~Qt.ItemIsEditable)
+            self.table.setItem(0, 2, author_item)
 
             self.table.resizeColumnsToContents()
 
             self.layout_search.setCurrentIndex(3)
 
+        self.table.blockSignals(False)
+
     # Function to query the database
     def query_db(self):
+        self.table.blockSignals(True)
+
         # Query Books
         if self.layout_search.currentIndex() == 0:
             query = 'SELECT Id, ISBN, Title, Author, OtherAuthors, Publisher, Series, \
@@ -607,7 +731,9 @@ class SearchDatabase(QWidget):
                     i = self.table.rowCount()
                     self.table.insertRow(i)
             
-                    self.table.setItem(i, 0, QTableWidgetItem(str(Id)))
+                    id_item = QTableWidgetItem(str(Id))
+                    id_item.setFlags(id_item.flags() & ~Qt.ItemIsEditable)
+                    self.table.setItem(i, 0, id_item)
                     self.table.setItem(i, 1, QTableWidgetItem(ISBN))
                     self.table.setItem(i, 2, QTableWidgetItem(Title))
                     self.table.setItem(i, 3, QTableWidgetItem(Author))
@@ -632,12 +758,14 @@ class SearchDatabase(QWidget):
 
             except Error as e:
                 # Create error message box
-                error = QMessageBox(self)
+                error = QMessageBox()
                 error.setIcon(QMessageBox.Critical)
                 error.setWindowTitle('Error')
                 error.setText(str(e))
                 error.setStandardButtons(QMessageBox.Ok)
                 error.exec_()
+                
+                self.table.blockSignals(False)
 
         # Query Authors
         elif self.layout_search.currentIndex() == 1:
@@ -696,7 +824,9 @@ class SearchDatabase(QWidget):
                     i = self.table.rowCount()
                     self.table.insertRow(i)
 
-                    self.table.setItem(i, 0, QTableWidgetItem(str(Id)))
+                    id_item = QTableWidgetItem(str(Id))
+                    id_item.setFlags(id_item.flags() & ~Qt.ItemIsEditable)
+                    self.table.setItem(i, 0, id_item)
                     self.table.setItem(i, 1, QTableWidgetItem(Name))
                     self.table.setItem(i, 2, QTableWidgetItem(Gender))
                     self.table.setItem(i, 3, QTableWidgetItem(Nationality))
@@ -707,12 +837,14 @@ class SearchDatabase(QWidget):
                 self.table.resizeColumnsToContents()
             except Error as e:
                 # Create error message box
-                error = QMessageBox(self)
+                error = QMessageBox()
                 error.setIcon(QMessageBox.Critical)
                 error.setWindowTitle('Error')
                 error.setText(str(e))
                 error.setStandardButtons(QMessageBox.Ok)
                 error.exec_()
+
+                self.table.blockSignals(False)
 
         # Query Publishers
         elif self.layout_search.currentIndex() == 2:
@@ -748,19 +880,23 @@ class SearchDatabase(QWidget):
                     self.table.insertRow(i)
 
                     # Insert values in table
-                    self.table.setItem(i, 0, QTableWidgetItem(str(Id)))
+                    id_item = QTableWidgetItem(str(Id))
+                    id_item.setFlags(id_item.flags() & ~Qt.ItemIsEditable)
+                    self.table.setItem(i, 0, id_item)
                     self.table.setItem(i, 1, QTableWidgetItem(Name))
 
                 # Resize columns
                 self.table.resizeColumnsToContents()
             except Error as e:
                 # Create error message box
-                error = QMessageBox(self)
+                error = QMessageBox()
                 error.setIcon(QMessageBox.Critical)
                 error.setWindowTitle('Error')
                 error.setText(str(e))
                 error.setStandardButtons(QMessageBox.Ok)
                 error.exec_()
+
+                self.table.blockSignals(False)
 
         # Query series
         else:
@@ -825,7 +961,9 @@ class SearchDatabase(QWidget):
                     self.table.insertRow(i)
 
                     # Insert values in table
-                    self.table.setItem(i, 0, QTableWidgetItem(str(Id)))
+                    id_item = QTableWidgetItem(str(Id))
+                    id_item.setFlags(id_item.flags() & ~Qt.ItemIsEditable)
+                    self.table.setItem(i, 0, id_item)
                     self.table.setItem(i, 1, QTableWidgetItem(Name))
                     self.table.setItem(i, 2, QTableWidgetItem(Author))
 
@@ -833,12 +971,251 @@ class SearchDatabase(QWidget):
                 self.table.resizeColumnsToContents()
             except Error as e:
                 # Create error message box
-                error = QMessageBox(self)
+                error = QMessageBox()
                 error.setIcon(QMessageBox.Critical)
                 error.setWindowTitle('Error')
                 error.setText(str(e))
                 error.setStandardButtons(QMessageBox.Ok)
                 error.exec_()
+
+                self.table.blockSignals(False)
+
+        self.table.blockSignals(False)
+
+    # Function to save current cell item
+    def get_current_item(self):
+        self.current_item = self.table.currentItem().text()
+
+    # Function to update database
+    def update_db(self):
+        field_index = self.table.currentColumn()
+        field = self.table.item(0, field_index).text()
+        value = self.table.currentItem().text()
+        record_index = self.table.currentRow()
+        id_n = self.table.item(record_index, 0).text()
+
+        if field == 'Author':
+            if value == '':
+                # Author cannot be NULL, show error
+                error = QMessageBox()
+                error.setIcon(QMessageBox.Critical)
+                error.setWindowTitle('Error')
+                error.setText('Author cannot be NULL. Operation failed')
+                error.setStandardButtons(QMessageBox.Ok)
+                error.exec_()
+
+                self.table.blockSignals(True)
+
+                self.table.removeCellWidget(record_index, field_index)
+                self.table.setItem(record_index, field_index, QTableWidgetItem(self.current_item))
+
+                self.table.blockSignals(False)
+
+                return
+
+            mySql_select_query = """SELECT Id FROM Authors WHERE Name LIKE %s"""
+            cursor.execute(mySql_select_query, ('%'+value+'%',))
+            author = cursor.fetchall()
+            if len(author) == 0:
+                # Author cannot be NULL, show error
+                error = QMessageBox()
+                error.setIcon(QMessageBox.Critical)
+                error.setWindowTitle('Error')
+                error.setText('Author not found in Authors table. Operation failed')
+                error.setStandardButtons(QMessageBox.Ok)
+                error.exec_()
+                
+                self.table.blockSignals(True)
+
+                self.table.removeCellWidget(record_index, field_index)
+                self.table.setItem(record_index, field_index, QTableWidgetItem(self.current_item))
+
+                self.table.blockSignals(False)
+
+                return
+            elif len(author) == 1:
+                value = author[0][0]
+            else:
+                # Create error message box
+                error = QMessageBox()
+                error.setIcon(QMessageBox.Critical)
+                error.setWindowTitle('Error')
+                error.setText('Multiple authors match name string. Operation failed')
+                error.setStandardButtons(QMessageBox.Ok)
+                error.exec_()
+
+                self.table.blockSignals(True)
+
+                self.table.removeCellWidget(record_index, field_index)
+                self.table.setItem(record_index, field_index, QTableWidgetItem(self.current_item))
+
+                self.table.blockSignals(False)
+                
+                return
+        elif field == 'Publisher':
+            if value != '':
+                mySql_select_query = """SELECT Id FROM Publishers WHERE Name LIKE %s"""
+                cursor.execute(mySql_select_query, ('%'+value+'%',))
+                publisher = cursor.fetchall()
+                if len(publisher) == 0:
+                    error = QMessageBox()
+                    error.setIcon(QMessageBox.Critical)
+                    error.setWindowTitle('Error')
+                    error.setText('No publisher matches name string. Operation failed')
+                    error.setStandardButtons(QMessageBox.Ok)
+                    error.exec_()
+
+                    self.table.blockSignals(True)
+
+                    self.table.removeCellWidget(record_index, field_index)
+                    self.table.setItem(record_index, field_index, QTableWidgetItem(self.current_item))
+
+                    self.table.blockSignals(False)
+                    
+                    return
+                elif len(publisher) == 1:
+                    value = publisher[0][0]
+                else:
+                    # Create error message box
+                    error = QMessageBox()
+                    error.setIcon(QMessageBox.Critical)
+                    error.setWindowTitle('Error')
+                    error.setText('Multiple publishers match name string. Operation failed')
+                    error.setStandardButtons(QMessageBox.Ok)
+                    error.exec_()
+
+                    self.table.blockSignals(True)
+
+                    self.table.removeCellWidget(record_index, field_index)
+                    self.table.setItem(record_index, field_index, QTableWidgetItem(self.current_item))
+
+                    self.table.blockSignals(False)
+                    
+                    return
+        elif field == 'Series':
+            if value != '':
+                mySql_select_query = """SELECT Id FROM Series WHERE Name LIKE %s"""
+                cursor.execute(mySql_select_query, ('%'+value+'%',))
+                series = cursor.fetchall()
+                if len(series) == 0:
+                    error = QMessageBox()
+                    error.setIcon(QMessageBox.Critical)
+                    error.setWindowTitle('Error')
+                    error.setText('No series matches name string. Operation failed')
+                    error.setStandardButtons(QMessageBox.Ok)
+                    error.exec_()
+
+                    self.table.blockSignals(True)
+
+                    self.table.removeCellWidget(record_index, field_index)
+                    self.table.setItem(record_index, field_index, QTableWidgetItem(self.current_item))
+
+                    self.table.blockSignals(False)
+                    
+                    return
+                elif len(series) == 1:
+                    value = series[0][0]
+                else:
+                    # Create error message box
+                    error = QMessageBox()
+                    error.setIcon(QMessageBox.Critical)
+                    error.setWindowTitle('Error')
+                    error.setText('Multiple series match name string. Operation failed')
+                    error.setStandardButtons(QMessageBox.Ok)
+                    error.exec_()
+
+                    self.table.blockSignals(True)
+
+                    self.table.removeCellWidget(record_index, field_index)
+                    self.table.setItem(record_index, field_index, QTableWidgetItem(self.current_item))
+
+                    self.table.blockSignals(False)
+                    
+                    return
+
+        if self.layout_search.currentIndex() == 0:
+            if value != '':
+                query = 'UPDATE Books SET {}="{}" WHERE Id={}'.format(field, value, id_n)
+            else:
+                query = 'UPDATE Books SET {}=NULL WHERE Id={}'.format(field, id_n)
+        elif self.layout_search.currentIndex() == 1:
+            if value != '':
+                query = 'UPDATE Authors SET {}="{}" WHERE Id={}'.format(field, value, id_n)
+            else:
+                query = 'UPDATE Authors SET {}=NULL WHERE Id={}'.format(field, id_n)
+        elif self.layout_search.currentIndex() == 2:
+            if value != '':
+                query = 'UPDATE Publishers SET {}="{}" WHERE Id={}'.format(field, value, id_n)
+            else:
+                query = 'UPDATE Publishers SET {}=NULL WHERE Id={}'.format(field, id_n)
+        else:
+            if value != '':
+                query = 'UPDATE Series SET {}="{}" WHERE Id={}'.format(field, value, id_n)
+            else:
+                query = 'UPDATE Series SET {}=NULL WHERE Id={}'.format(field, id_n)
+
+        try:
+            cursor.execute(query)
+            connection.commit()
+
+            if field == 'Author':
+                mySql_select_query = """SELECT Name FROM Authors WHERE Id=%s"""
+                cursor.execute(mySql_select_query, (value,))
+                author = cursor.fetchall()
+                value = author[0][0]
+                    
+                self.table.blockSignals(True)
+
+                self.table.removeCellWidget(record_index, field_index)
+                self.table.setItem(record_index, field_index, QTableWidgetItem(value))
+
+                self.table.blockSignals(False)
+            elif field == 'Publisher':
+                mySql_select_query = """SELECT Name FROM Publishers WHERE Id=%s"""
+                cursor.execute(mySql_select_query, (value,))
+                publisher = cursor.fetchall()
+                value = publisher[0][0]
+
+                self.table.blockSignals(True)
+
+                self.table.removeCellWidget(record_index, field_index)
+                self.table.setItem(record_index, field_index, QTableWidgetItem(value))
+
+                self.table.blockSignals(False)
+            elif field == 'Series':
+                mySql_select_query = """SELECT Name FROM Series WHERE Id=%s"""
+                cursor.execute(mySql_select_query, (value,))
+                series = cursor.fetchall()
+                value = series[0][0]
+
+                self.table.blockSignals(True)
+
+                self.table.removeCellWidget(record_index, field_index)
+                self.table.setItem(record_index, field_index, QTableWidgetItem(value))
+
+                self.table.blockSignals(False)
+
+            info = QMessageBox()
+            info.setIcon(QMessageBox.Information)
+            info.setWindowTitle('Success')
+            info.setText('Record modified successfully')
+            info.setStandardButtons(QMessageBox.Ok)
+            info.exec_()
+        except Error as e:
+            # Create error message box
+            error = QMessageBox()
+            error.setIcon(QMessageBox.Critical)
+            error.setWindowTitle('Error')
+            error.setText(str(e))
+            error.setStandardButtons(QMessageBox.Ok)
+            error.exec_()
+
+            self.table.blockSignals(True)
+
+            self.table.removeCellWidget(record_index, field_index)
+            self.table.setItem(record_index, field_index, QTableWidgetItem(self.current_item))
+
+            self.table.blockSignals(False)
 
     # Function to save query result to file
     def save_to_file(self):
@@ -861,7 +1238,7 @@ class SearchDatabase(QWidget):
             file_p.close()
         except PermissionError as e:
             # Create error message box
-            error = QMessageBox(self)
+            error = QMessageBox()
             error.setIcon(QMessageBox.Critical)
             error.setWindowTitle('Error')
             error.setText(e.strerror)
@@ -890,7 +1267,7 @@ class SearchDatabase(QWidget):
             info.exec_()
         except CalledProcessError as e:
             # Create error message box
-            error = QMessageBox(self)
+            error = QMessageBox()
             error.setIcon(QMessageBox.Critical)
             error.setWindowTitle('Error')
             error.setText('Backup failed: {}'.format(e))
@@ -1134,7 +1511,7 @@ class InsertDatabase(QWidget):
                 isbn = None
             if title == '':
                 # Title cannot be NULL, show error
-                error = QMessageBox(self)
+                error = QMessageBox()
                 error.setIcon(QMessageBox.Critical)
                 error.setWindowTitle('Error')
                 error.setText('Title cannot be NULL. Operation failed')
@@ -1144,7 +1521,7 @@ class InsertDatabase(QWidget):
                 return
             if author == '':
                 # Author cannot be NULL, show error
-                error = QMessageBox(self)
+                error = QMessageBox()
                 error.setIcon(QMessageBox.Critical)
                 error.setWindowTitle('Error')
                 error.setText('Author cannot be NULL. Operation failed')
@@ -1177,7 +1554,7 @@ class InsertDatabase(QWidget):
             author_id = cursor.fetchall()
             if len(author_id) == 0:
                 # Author cannot be NULL, show error
-                error = QMessageBox(self)
+                error = QMessageBox()
                 error.setIcon(QMessageBox.Critical)
                 error.setWindowTitle('Error')
                 error.setText('Author not found in Authors table. Operation failed')
@@ -1189,7 +1566,7 @@ class InsertDatabase(QWidget):
                 author = author_id[0][0]
             else:
                 # Show warning if string matches multiple authors
-                warning = QMessageBox(self)
+                warning = QMessageBox()
                 warning.setIcon(QMessageBox.Information)
                 warning.setWindowTitle('Warning')
                 warning.setText('String matches multiple authors. Using exact match')
@@ -1202,7 +1579,7 @@ class InsertDatabase(QWidget):
                 author_id = cursor.fetchall()
                 if len(author_id) == 0:
                     # Author cannot be NULL, show error
-                    error = QMessageBox(self)
+                    error = QMessageBox()
                     error.setIcon(QMessageBox.Critical)
                     error.setWindowTitle('Error')
                     error.setText('No exact match found in table Authors. Operation failed')
@@ -1221,7 +1598,7 @@ class InsertDatabase(QWidget):
                 if len(publisher_id) == 0:
                     publisher = None
                     # Show warning if string doesn't match any Publisher
-                    warning = QMessageBox(self)
+                    warning = QMessageBox()
                     warning.setIcon(QMessageBox.Warning)
                     warning.setWindowTitle('Warning')
                     warning.setText('Publisher not found, set to \'NULL\'')
@@ -1231,7 +1608,7 @@ class InsertDatabase(QWidget):
                     publisher = publisher_id[0][0]
                 else:
                     # Show warning if string matches multiple publishers
-                    warning = QMessageBox(self)
+                    warning = QMessageBox()
                     warning.setIcon(QMessageBox.Information)
                     warning.setWindowTitle('Warning')
                     warning.setText('String matches multiple publishers. Using exact match')
@@ -1245,7 +1622,7 @@ class InsertDatabase(QWidget):
                     if len(publisher_id) == 0:
                         publisher = None
                         # Show warning if exact match is not found
-                        warning = QMessageBox(self)
+                        warning = QMessageBox()
                         warning.setIcon(QMessageBox.Warning)
                         warning.setWindowTitle('Warning')
                         warning.setText('Publisher not found, set to \'NULL\'')
@@ -1262,7 +1639,7 @@ class InsertDatabase(QWidget):
                 if len(series_id) == 0:
                     series = None
                     # Show warning if string doesn't match any Series
-                    warning = QMessageBox(self)
+                    warning = QMessageBox()
                     warning.setIcon(QMessageBox.Warning)
                     warning.setWindowTitle('Warning')
                     warning.setText('Series not found, set to \'NULL\'')
@@ -1272,7 +1649,7 @@ class InsertDatabase(QWidget):
                     series = series_id[0][0]
                 else:
                     # Show warning is string matches multiple Series
-                    warning = QMessageBox(self)
+                    warning = QMessageBox()
                     warning.setIcon(QMessageBox.Information)
                     warning.setWindowTitle('Warning')
                     warning.setText('String matches multiple series. Using exact match')
@@ -1286,7 +1663,7 @@ class InsertDatabase(QWidget):
                     if len(series_id) == 0:
                         series = None
                         # Show warning if exact match is not found
-                        warning = QMessageBox(self)
+                        warning = QMessageBox()
                         warning.setIcon(QMessageBox.Warning)
                         warning.setWindowTitle('Warning')
                         warning.setText('Series not found, set to \'NULL\'')
@@ -1314,7 +1691,7 @@ class InsertDatabase(QWidget):
                 info.exec_()
             except Error as e:
                 # Create error message box
-                error = QMessageBox(self)
+                error = QMessageBox()
                 error.setIcon(QMessageBox.Critical)
                 error.setWindowTitle('Error')
                 error.setText(str(e))
@@ -1332,7 +1709,7 @@ class InsertDatabase(QWidget):
             # Set values to None where strings are empty
             if name == '':
                 # Name cannot be NULL, show error
-                error = QMessageBox(self)
+                error = QMessageBox()
                 error.setIcon(QMessageBox.Critical)
                 error.setWindowTitle('Error')
                 error.setText('Name cannot be NULL. Operation failed')
@@ -1368,7 +1745,7 @@ class InsertDatabase(QWidget):
                 info.exec_()
             except Error as e:
                 # Create error message box
-                error = QMessageBox(self)
+                error = QMessageBox()
                 error.setIcon(QMessageBox.Critical)
                 error.setWindowTitle('Error')
                 error.setText(str(e))
@@ -1382,7 +1759,7 @@ class InsertDatabase(QWidget):
             # Set value to None if string is empty
             if name == '':
                 # Name cannot be NULL, show error
-                error = QMessageBox(self)
+                error = QMessageBox()
                 error.setIcon(QMessageBox.Critical)
                 error.setWindowTitle('Error')
                 error.setText('Name cannot be NULL. Operation failed')
@@ -1407,7 +1784,7 @@ class InsertDatabase(QWidget):
                 info.exec_()
             except Error as e:
                 # Create error message box
-                error = QMessageBox(self)
+                error = QMessageBox()
                 error.setIcon(QMessageBox.Critical)
                 error.setWindowTitle('Error')
                 error.setText(str(e))
@@ -1422,7 +1799,7 @@ class InsertDatabase(QWidget):
             # Set values to None where strings are empty
             if name == '':
                 # Name cannot be NULL, show error
-                error = QMessageBox(self)
+                error = QMessageBox()
                 error.setIcon(QMessageBox.Critical)
                 error.setWindowTitle('Error')
                 error.setText('Name cannot be NULL. Operation failed')
@@ -1432,7 +1809,7 @@ class InsertDatabase(QWidget):
                 return
             if author == '':
                 # Author cannot be NULL, show error
-                error = QMessageBox(self)
+                error = QMessageBox()
                 error.setIcon(QMessageBox.Critical)
                 error.setWindowTitle('Error')
                 error.setText('Author cannot be NULL. Operation failed')
@@ -1447,7 +1824,7 @@ class InsertDatabase(QWidget):
             author_id = cursor.fetchall()
             if len(author_id) == 0:
                 # Author cannot be NULL, show error
-                error = QMessageBox(self)
+                error = QMessageBox()
                 error.setIcon(QMessageBox.Critical)
                 error.setWindowTitle('Error')
                 error.setText('Author not found in Authors table. Operation failed')
@@ -1472,7 +1849,7 @@ class InsertDatabase(QWidget):
                 author_id = cursor.fetchall()
                 if len(author_id) == 0:
                     # Author cannot be NULL, show error
-                    error = QMessageBox(self)
+                    error = QMessageBox()
                     error.setIcon(QMessageBox.Critical)
                     error.setWindowTitle('Error')
                     error.setText('No exact match found in table Authors. Operation failed')
@@ -1500,7 +1877,7 @@ class InsertDatabase(QWidget):
                 info.exec_()
             except Error as e:
                 # Create error message box
-                error = QMessageBox(self)
+                error = QMessageBox()
                 error.setIcon(QMessageBox.Critical)
                 error.setWindowTitle('Error')
                 error.setText(str(e))
