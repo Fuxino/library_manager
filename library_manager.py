@@ -1,6 +1,8 @@
 #!/usr/bin/python3
 
 # Import libraries
+import os
+
 import sys
 from sys import exit, argv
 
@@ -14,6 +16,9 @@ from PyQt5.QtCore import Qt
 import mysql.connector
 from mysql.connector import Error
 
+if os.name == 'nt':
+    from fbs_runtime.application_context.PyQt5 import ApplicationContext
+
 # Login dialog box
 class Login(QDialog):
 
@@ -22,7 +27,11 @@ class Login(QDialog):
 
         # Set dialog title
         self.setWindowTitle('Login to Library')
-        self.setWindowIcon(QIcon('/usr/share/icons/hicolor/32x32/apps/library_manager.png'))
+
+        if os.name == 'nt':
+            self.setWindowIcon(QIcon('Icon.ico'))
+        elif os.name == 'posix':
+            self.setWindowIcon(QIcon('/usr/share/icons/hicolor/32x32/apps/library_manager.png'))
 
         # Define layouts
         layout = QVBoxLayout()
@@ -1192,11 +1201,19 @@ class SearchDatabase(QWidget):
 
     def backup_db(self):
         file_dialog = QFileDialog()
-        file_dialog.setDefaultSuffix('.gz')
-        filename = file_dialog.getSaveFileName(self, 'Backup database', 'Library.sql.gz')
 
-        # Define backup command
-        cmd = 'mysqldump --single-transaction --master-data=2 --host={} Library -u {} -p{} | gzip > {}'.format(hostname, user, pwd, filename[0])
+        if os.name == 'nt':
+            file_dialog.setDefaultSuffix('.sql')
+            filename = file_dialog.getSaveFileName(self, 'Backup database', 'Library.sql')
+
+            # Define backup command
+            cmd = 'mysqldump.exe --single-transaction --master-data=2 --host={} Library -u {} -p{} > {}'.format(hostname, user, pwd, filename[0])
+        elif os.name == 'posix':
+            file_dialog.setDefaultSuffix('.gz')
+            filename = file_dialog.getSaveFileName(self, 'Backup database', 'Library.sql.gz')
+
+            # Define backup command
+            cmd = 'mysqldump --single-transaction --master-data=2 --host={} Library -u {} -p{} | gzip > {}'.format(hostname, user, pwd, filename[0])
 
         # Execute the backup command
         try:
@@ -1848,7 +1865,11 @@ class MainWindow(QMainWindow):
             window_title = 'Library database - Raspberry Pi'
 
         self.setWindowTitle(window_title)
-        self.setWindowIcon(QIcon('/usr/share/icons/hicolor/32x32/apps/library_manager.png'))
+
+        if os.name == 'nt':
+            self.setWindowIcon(QIcon('Icon.ico'))
+        elif os.name == 'posix':
+            self.setWindowIcon(QIcon('/usr/share/icons/hicolor/32x32/apps/library_manager.png'))
 
         # Define main window tabs
         tabs = QTabWidget()
