@@ -22,6 +22,7 @@ class Login(QDialog):
 
         # Set dialog title
         self.setWindowTitle('Login to Library')
+        self.setWindowIcon(QIcon('/usr/share/icons/hicolor/32x32/apps/library_manager.png'))
 
         # Define layouts
         layout = QVBoxLayout()
@@ -258,59 +259,34 @@ class SearchDatabase(QWidget):
         self.table = QTableWidget()
         self.table.setRowCount(0)
         self.table.setColumnCount(13)
-        self.table.insertRow(0)
 
-        id_item = QTableWidgetItem('Id')
-        id_item.setFlags(id_item.flags() & ~Qt.ItemIsEditable)
-        self.table.setItem(0, 0, id_item)
-
-        isbn_item = QTableWidgetItem('ISBN')
-        isbn_item.setFlags(isbn_item.flags() & ~Qt.ItemIsEditable)
-        self.table.setItem(0, 1, isbn_item)
-
-        title_item = QTableWidgetItem('Title')
-        title_item.setFlags(title_item.flags() & ~Qt.ItemIsEditable)
-        self.table.setItem(0, 2, title_item)
-
-        author_item = QTableWidgetItem('Author')
-        author_item.setFlags(author_item.flags() & ~Qt.ItemIsEditable)
-        self.table.setItem(0, 3, author_item)
-
-        otherauthors_item = QTableWidgetItem('OtherAuthors')
-        otherauthors_item.setFlags(otherauthors_item.flags() & ~Qt.ItemIsEditable)
-        self.table.setItem(0, 4, otherauthors_item)
-
-        publisher_item = QTableWidgetItem('Publisher')
-        publisher_item.setFlags(publisher_item.flags() & ~Qt.ItemIsEditable)
-        self.table.setItem(0, 5, publisher_item)
-
-        series_item = QTableWidgetItem('Series')
-        series_item.setFlags(series_item.flags() & ~Qt.ItemIsEditable)
-        self.table.setItem(0, 6, series_item)
-
-        category_item = QTableWidgetItem('Category')
-        category_item.setFlags(category_item.flags() & ~Qt.ItemIsEditable)
-        self.table.setItem(0, 7, category_item)
-
-        language_item = QTableWidgetItem('Language')
-        language_item.setFlags(language_item.flags() & ~Qt.ItemIsEditable)
-        self.table.setItem(0, 8, language_item)
-
-        year_item = QTableWidgetItem('Year')
-        year_item.setFlags(year_item.flags() & ~Qt.ItemIsEditable)
-        self.table.setItem(0, 9, year_item)
-
-        pages_item = QTableWidgetItem('Pages')
-        pages_item.setFlags(pages_item.flags() & ~Qt.ItemIsEditable)
-        self.table.setItem(0, 10, pages_item)
-
-        owner_item = QTableWidgetItem('Owner')
-        owner_item.setFlags(owner_item.flags() & ~Qt.ItemIsEditable)
-        self.table.setItem(0, 11, owner_item)
-
-        type_item = QTableWidgetItem('Type')
-        type_item.setFlags(type_item.flags() & ~Qt.ItemIsEditable)
-        self.table.setItem(0, 12, type_item)
+        id_header = QTableWidgetItem('Id')
+        isbn_header = QTableWidgetItem('ISBN')
+        title_header = QTableWidgetItem('Title')
+        author_header = QTableWidgetItem('Author')
+        otherauthors_header = QTableWidgetItem('OtherAuthors')
+        publisher_header = QTableWidgetItem('Publisher')
+        series_header = QTableWidgetItem('Series')
+        category_header = QTableWidgetItem('Category')
+        language_header = QTableWidgetItem('Language')
+        year_header = QTableWidgetItem('Year')
+        pages_header = QTableWidgetItem('Pages')
+        owner_header = QTableWidgetItem('Owner')
+        type_header = QTableWidgetItem('Type')
+        
+        self.table.setHorizontalHeaderItem(0, id_header)
+        self.table.setHorizontalHeaderItem(1, isbn_header)
+        self.table.setHorizontalHeaderItem(2, title_header)
+        self.table.setHorizontalHeaderItem(3, author_header)
+        self.table.setHorizontalHeaderItem(4, otherauthors_header)
+        self.table.setHorizontalHeaderItem(5, publisher_header)
+        self.table.setHorizontalHeaderItem(6, series_header)
+        self.table.setHorizontalHeaderItem(7, category_header)
+        self.table.setHorizontalHeaderItem(8, language_header)
+        self.table.setHorizontalHeaderItem(9, year_header)
+        self.table.setHorizontalHeaderItem(10, pages_header)
+        self.table.setHorizontalHeaderItem(11, owner_header)
+        self.table.setHorizontalHeaderItem(12, type_header)
 
         self.table.resizeColumnsToContents()
 
@@ -391,59 +367,34 @@ class SearchDatabase(QWidget):
         if table_name == 'Books':
             self.table.setRowCount(0)
             self.table.setColumnCount(13)
-            self.table.insertRow(0)
 
-            id_item = QTableWidgetItem('Id')
-            id_item.setFlags(id_item.flags() & ~Qt.ItemIsEditable)
-            self.table.setItem(0, 0, id_item)
-
-            isbn_item = QTableWidgetItem('ISBN')
-            isbn_item.setFlags(isbn_item.flags() & ~Qt.ItemIsEditable)
-            self.table.setItem(0, 1, isbn_item)
-
-            title_item = QTableWidgetItem('Title')
-            title_item.setFlags(title_item.flags() & ~Qt.ItemIsEditable)
-            self.table.setItem(0, 2, title_item)
-
-            author_item = QTableWidgetItem('Author')
-            author_item.setFlags(author_item.flags() & ~Qt.ItemIsEditable)
-            self.table.setItem(0, 3, author_item)
-
-            otherauthors_item = QTableWidgetItem('OtherAuthors')
-            otherauthors_item.setFlags(otherauthors_item.flags() & ~Qt.ItemIsEditable)
-            self.table.setItem(0, 4, otherauthors_item)
-
-            publisher_item = QTableWidgetItem('Publisher')
-            publisher_item.setFlags(publisher_item.flags() & ~Qt.ItemIsEditable)
-            self.table.setItem(0, 5, publisher_item)
-
-            series_item = QTableWidgetItem('Series')
-            series_item.setFlags(series_item.flags() & ~Qt.ItemIsEditable)
-            self.table.setItem(0, 6, series_item)
-
-            category_item = QTableWidgetItem('Category')
-            category_item.setFlags(category_item.flags() & ~Qt.ItemIsEditable)
-            self.table.setItem(0, 7, category_item)
-
-            language_item = QTableWidgetItem('Language')
-            language_item.setFlags(language_item.flags() & ~Qt.ItemIsEditable)
-            self.table.setItem(0, 8, language_item)
-
-            year_item = QTableWidgetItem('Year')
-            year_item.setFlags(year_item.flags() & ~Qt.ItemIsEditable)
-            self.table.setItem(0, 9, year_item)
-
-            pages_item = QTableWidgetItem('Pages')
-            pages_item.setFlags(pages_item.flags() & ~Qt.ItemIsEditable)
-            self.table.setItem(0, 10, pages_item)
-
-            owner_item = QTableWidgetItem('Owner')
-            owner_item.setFlags(owner_item.flags() & ~Qt.ItemIsEditable)
-            self.table.setItem(0, 11, owner_item)
-
-            type_item = QTableWidgetItem('Type')
-            type_item.setFlags(type_item.flags() & ~Qt.ItemIsEditable)
-            self.table.setItem(0, 12, type_item)
+            id_header = QTableWidgetItem('Id')
+            isbn_header = QTableWidgetItem('ISBN')
+            title_header = QTableWidgetItem('Title')
+            author_header = QTableWidgetItem('Author')
+            otherauthors_header = QTableWidgetItem('OtherAuthors')
+            publisher_header = QTableWidgetItem('Publisher')
+            series_header = QTableWidgetItem('Series')
+            category_header = QTableWidgetItem('Category')
+            language_header = QTableWidgetItem('Language')
+            year_header = QTableWidgetItem('Year')
+            pages_header = QTableWidgetItem('Pages')
+            owner_header = QTableWidgetItem('Owner')
+            type_header = QTableWidgetItem('Type')
+        
+            self.table.setHorizontalHeaderItem(0, id_header)
+            self.table.setHorizontalHeaderItem(1, isbn_header)
+            self.table.setHorizontalHeaderItem(2, title_header)
+            self.table.setHorizontalHeaderItem(3, author_header)
+            self.table.setHorizontalHeaderItem(4, otherauthors_header)
+            self.table.setHorizontalHeaderItem(5, publisher_header)
+            self.table.setHorizontalHeaderItem(6, series_header)
+            self.table.setHorizontalHeaderItem(7, category_header)
+            self.table.setHorizontalHeaderItem(8, language_header)
+            self.table.setHorizontalHeaderItem(9, year_header)
+            self.table.setHorizontalHeaderItem(10, pages_header)
+            self.table.setHorizontalHeaderItem(11, owner_header)
+            self.table.setHorizontalHeaderItem(12, type_header)
 
             self.table.resizeColumnsToContents()
 
@@ -452,31 +403,20 @@ class SearchDatabase(QWidget):
         elif table_name == 'Authors':
             self.table.setRowCount(0)
             self.table.setColumnCount(6)
-            self.table.insertRow(0)
 
-            id_item = QTableWidgetItem('Id')
-            id_item.setFlags(id_item.flags() & ~Qt.ItemIsEditable)
-            self.table.setItem(0, 0, id_item)
-
-            name_item = QTableWidgetItem('Name')
-            name_item.setFlags(name_item.flags() & ~Qt.ItemIsEditable)
-            self.table.setItem(0, 1, name_item)
-
-            gender_item = QTableWidgetItem('Gender')
-            gender_item.setFlags(gender_item.flags() & ~Qt.ItemIsEditable)
-            self.table.setItem(0, 2, gender_item)
-
-            nationality_item = QTableWidgetItem('Nationality')
-            nationality_item.setFlags(nationality_item.flags() & ~Qt.ItemIsEditable)
-            self.table.setItem(0, 3, nationality_item)
-
-            birthyear_item = QTableWidgetItem('BirthYear')
-            birthyear_item.setFlags(birthyear_item.flags() & ~Qt.ItemIsEditable)
-            self.table.setItem(0, 4, birthyear_item)
-
-            deathyear_item = QTableWidgetItem('DeathYear')
-            deathyear_item.setFlags(deathyear_item.flags() & ~Qt.ItemIsEditable)
-            self.table.setItem(0, 5, deathyear_item)
+            id_header = QTableWidgetItem('Id')
+            name_header = QTableWidgetItem('Name')
+            gender_header = QTableWidgetItem('Gender')
+            nationality_header = QTableWidgetItem('Nationality')
+            birthyear_header = QTableWidgetItem('BirthYear')
+            deathyear_header = QTableWidgetItem('DeathYear')
+            
+            self.table.setHorizontalHeaderItem(0, id_header)
+            self.table.setHorizontalHeaderItem(1, name_header)
+            self.table.setHorizontalHeaderItem(2, gender_header)
+            self.table.setHorizontalHeaderItem(3, nationality_header)
+            self.table.setHorizontalHeaderItem(4, birthyear_header)
+            self.table.setHorizontalHeaderItem(5, deathyear_header)
 
             self.table.resizeColumnsToContents()
 
@@ -485,15 +425,12 @@ class SearchDatabase(QWidget):
         elif table_name == 'Publishers':
             self.table.setRowCount(0)
             self.table.setColumnCount(2)
-            self.table.insertRow(0)
 
-            id_item = QTableWidgetItem('Id')
-            id_item.setFlags(id_item.flags() & ~Qt.ItemIsEditable)
-            self.table.setItem(0, 0, id_item)
-
-            name_item = QTableWidgetItem('Name')
-            name_item.setFlags(name_item.flags() & ~Qt.ItemIsEditable)
-            self.table.setItem(0, 1, name_item)
+            id_header = QTableWidgetItem('Id')
+            name_header = QTableWidgetItem('Name')
+            
+            self.table.setHorizontalHeaderItem(0, id_header)
+            self.table.setHorizontalHeaderItem(1, name_header)
 
             self.table.resizeColumnsToContents()
 
@@ -502,19 +439,14 @@ class SearchDatabase(QWidget):
         else:
             self.table.setRowCount(0)
             self.table.setColumnCount(3)
-            self.table.insertRow(0)
 
-            id_item = QTableWidgetItem('Id')
-            id_item.setFlags(id_item.flags() & ~Qt.ItemIsEditable)
-            self.table.setItem(0, 0, id_item)
+            id_header = QTableWidgetItem('Id')
+            name_header = QTableWidgetItem('Name')
+            author_header = QTableWidgetItem('Author')
 
-            name_item = QTableWidgetItem('Name')
-            name_item.setFlags(name_item.flags() & ~Qt.ItemIsEditable)
-            self.table.setItem(0, 1, name_item)
-
-            author_item = QTableWidgetItem('Author')
-            author_item.setFlags(author_item.flags() & ~Qt.ItemIsEditable)
-            self.table.setItem(0, 2, author_item)
+            self.table.setHorizontalHeaderItem(0, id_header)
+            self.table.setHorizontalHeaderItem(1, name_header)
+            self.table.setHorizontalHeaderItem(2, author_header)
 
             self.table.resizeColumnsToContents()
 
@@ -673,15 +605,13 @@ class SearchDatabase(QWidget):
             if query[-6:] == 'WHERE ':
                 query = query[:-6]
 
-            query = query + 'ORDER BY Author, Series, Year'
-
             try:
                 # Execute the query
                 cursor.execute(query)
                 results = cursor.fetchall()
 
                 # Clear the results table
-                self.table.setRowCount(1)
+                self.table.setRowCount(0)
 
                 # Get values for each result of the query
                 for row in results:
@@ -755,6 +685,10 @@ class SearchDatabase(QWidget):
                 if self.table.columnWidth(4) > 300:
                     self.table.setColumnWidth(4, 300)
 
+                # Sort table
+                self.table.sortItems(9)
+                self.table.sortItems(6)
+                self.table.sortItems(3)
             except Error as e:
                 # Create error message box
                 error = QMessageBox()
@@ -793,15 +727,13 @@ class SearchDatabase(QWidget):
             if query[-6:] == 'WHERE ':
                 query = query[:-6]
 
-            query = query + 'ORDER BY Name'
-
             try:
                 # Execute the query
                 cursor.execute(query)
                 results = cursor.fetchall()
 
                 # Clear the results table
-                self.table.setRowCount(1)
+                self.table.setRowCount(0)
 
                 # Get values for each result of the query
                 for row in results:
@@ -834,6 +766,9 @@ class SearchDatabase(QWidget):
 
                 # Resize columns
                 self.table.resizeColumnsToContents()
+                
+                # Sort table
+                self.table.sortItems(1)
             except Error as e:
                 # Create error message box
                 error = QMessageBox()
@@ -860,15 +795,13 @@ class SearchDatabase(QWidget):
             if query[-6:] == 'WHERE ':
                 query = query[:-6]
 
-            query = query + 'ORDER BY Name'
-
             try:
                 # Execute the query
                 cursor.execute(query)
                 results = cursor.fetchall()
 
                 # Clear the results table
-                self.table.setRowCount(1)
+                self.table.setRowCount(0)
 
                 # Get values for each result of the query
                 for row in results:
@@ -886,6 +819,9 @@ class SearchDatabase(QWidget):
 
                 # Resize columns
                 self.table.resizeColumnsToContents()
+
+                # Sort table
+                self.table.sortItems(1)
             except Error as e:
                 # Create error message box
                 error = QMessageBox()
@@ -934,15 +870,13 @@ class SearchDatabase(QWidget):
             if query[-6:] == 'WHERE ':
                 query = query[:-6]
 
-            query = query + 'ORDER BY Author, Name'
-
             try:
                 # Execute the query
                 cursor.execute(query) 
                 results = cursor.fetchall()
 
                 # Clear the results table
-                self.table.setRowCount(1)
+                self.table.setRowCount(0)
 
                 # Get values for each result of the query
                 for row in results:
@@ -968,6 +902,10 @@ class SearchDatabase(QWidget):
 
                 # Resize columns
                 self.table.resizeColumnsToContents()
+
+                # Sort table
+                self.table.sortItems(1)
+                self.table.sortItems(2)
             except Error as e:
                 # Create error message box
                 error = QMessageBox()
@@ -988,7 +926,7 @@ class SearchDatabase(QWidget):
     # Function to update database
     def update_db(self):
         field_index = self.table.currentColumn()
-        field = self.table.item(0, field_index).text()
+        field = self.table.horizontalHeaderItem(field_index).text()
         value = self.table.currentItem().text()
         record_index = self.table.currentRow()
         id_n = self.table.item(record_index, 0).text()
@@ -1388,10 +1326,10 @@ class InsertSeriesForm(QWidget):
         self.setLayout(layout)
 
 # Insert into database widget
-class InsertDatabase(QWidget):
+class InsertRecord(QWidget):
 
     def __init__(self, *args, **kwargs):
-        super(InsertDatabase, self).__init__(*args, **kwargs)
+        super(InsertRecord, self).__init__(*args, **kwargs)
 
         # Define main layout
         layout = QVBoxLayout()
@@ -1893,18 +1831,23 @@ class MainWindow(QMainWindow):
     def __init__(self, *args, **kwargs):
         super(MainWindow, self).__init__(*args, **kwargs)
 
-        # Set window title and icon
-        self.setWindowTitle('Library database')
-        self.setWindowIcon(QIcon('/usr/share/icons/hicolor/32x32/apps/library_manager.png'))
-
         # Run the login window
         login_window = Login()
         login_window.exec_()
+        
+        # Set window title and icon
+        if hostname == 'localhost':
+            window_title = 'Library database - Local'
+        else:
+            window_title = 'Library database - Raspberry Pi'
+
+        self.setWindowTitle(window_title)
+        self.setWindowIcon(QIcon('/usr/share/icons/hicolor/32x32/apps/library_manager.png'))
 
         # Define main window tabs
         tabs = QTabWidget()
         tabs.addTab(SearchDatabase(), 'Search')
-        tabs.addTab(InsertDatabase(), 'Insert')
+        tabs.addTab(InsertRecord(), 'Insert')
         tabs.setDocumentMode(True)
 
         # Show tabs
