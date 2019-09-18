@@ -1163,6 +1163,12 @@ class SearchDatabase(QWidget):
         try:
             file_p = open(filename[0], 'w')
 
+            for col in range(self.table.columnCount()):
+                header = self.table.horizontalHeaderItem(col).text() + ','
+                file_p.write(header)
+
+            file_p.write('\n')
+
             for row in range(self.table.rowCount()):
                 for col in range(self.table.columnCount()):
                     text = str(self.table.item(row, col).text());
