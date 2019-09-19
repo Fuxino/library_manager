@@ -147,8 +147,10 @@ class SearchBookForm(QWidget):
         self.category.addItem('Chronicle')
         self.category.addItem('Children\'s book')
 
-        self.language = QLineEdit()
-        self.language.returnPressed.connect(query_db)
+        self.language = QComboBox()
+        self.language.addItem('')
+        self.language.addItem('English')
+        self.language.addItem('Italian')
 
         self.owner = QComboBox()
         self.owner.addItem('')
@@ -312,15 +314,18 @@ class SearchDatabase(QWidget):
 
         # Add backup and save buttons
         backup_button = QPushButton('Backup database')
+        clear_button = QPushButton('Clear')
         save_button = QPushButton('Save to file')
 
         # Define buttons behavior
         backup_button.clicked.connect(self.backup_db)
         save_button.clicked.connect(self.save_to_file)
+        clear_button.clicked.connect(self.clear)
 
         # Add buttons to layout
         layout_button_l.addWidget(backup_button)
         layout_button_l.addWidget(save_button)
+        layout_button_l.addWidget(clear_button)
         layout_left.addLayout(layout_button_l)
 
         # Add left layout to main layout
@@ -368,13 +373,43 @@ class SearchDatabase(QWidget):
         # Set main layout
         self.setLayout(layout)
 
+    # Function to clear all query result table and search fields 
+    def clear(self):
+        self.table.blockSignals(True)
+
+        self.table.setRowCount(0)
+        
+        self.book_search.isbn.clear()
+        self.book_search.title.clear()
+        self.book_search.author.clear()
+        self.book_search.author_gender.setCurrentIndex(0)
+        self.book_search.author_nationality.clear()
+        self.book_search.publisher.clear()
+        self.book_search.series.clear()
+        self.book_search.category.setCurrentIndex(0)
+        self.book_search.language.setCurrentIndex(0)
+        self.book_search.owner.setCurrentIndex(0)
+        self.book_search.booktype.setCurrentIndex(0)
+
+        self.author_search.name.clear()
+        self.author_search.gender.setCurrentIndex(0)
+        self.author_search.nationality.clear()
+
+        self.publisher_search.name.clear()
+
+        self.series_search.name.clear()
+        self.series_search.author.clear()
+
+        self.table.blockSignals(False)
+
     # Function to set table columns according to database table selected
     def change_table(self, table_name):
+        self.clear()
+
         self.table.blockSignals(True)
 
         # Books
         if table_name == 'Books':
-            self.table.setRowCount(0)
             self.table.setColumnCount(13)
 
             id_header = QTableWidgetItem('Id')
@@ -410,7 +445,6 @@ class SearchDatabase(QWidget):
             self.layout_search.setCurrentIndex(0)
         # Authors
         elif table_name == 'Authors':
-            self.table.setRowCount(0)
             self.table.setColumnCount(6)
 
             id_header = QTableWidgetItem('Id')
@@ -432,7 +466,6 @@ class SearchDatabase(QWidget):
             self.layout_search.setCurrentIndex(1)
         # Publishers
         elif table_name == 'Publishers':
-            self.table.setRowCount(0)
             self.table.setColumnCount(2)
 
             id_header = QTableWidgetItem('Id')
@@ -446,7 +479,6 @@ class SearchDatabase(QWidget):
             self.layout_search.setCurrentIndex(2)
         # Series
         else:
-            self.table.setRowCount(0)
             self.table.setColumnCount(3)
 
             id_header = QTableWidgetItem('Id')
@@ -481,7 +513,7 @@ class SearchDatabase(QWidget):
             publisher = self.book_search.publisher.text()
             series = self.book_search.series.text()
             category = self.book_search.category.currentText()
-            language = self.book_search.language.text()
+            language = self.book_search.language.currentText()
             owner = self.book_search.owner.currentText()
             booktype = self.book_search.booktype.currentText()
 
