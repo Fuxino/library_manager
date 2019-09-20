@@ -926,10 +926,11 @@ class SearchDatabase(QWidget):
                     Author = row[2]
 
                     # Get Author Name from Id
-                    mySql_select_query = """SELECT Name FROM Authors WHERE Id = %s"""
-                    cursor.execute(mySql_select_query, (Author,))
-                    Author = cursor.fetchall()
-                    Author = Author[0][0]
+                    if Author is not None:
+                        mySql_select_query = """SELECT Name FROM Authors WHERE Id = %s"""
+                        cursor.execute(mySql_select_query, (Author,))
+                        Author = cursor.fetchall()
+                        Author = Author[0][0]
 
                     i = self.table.rowCount()
                     self.table.insertRow(i)
@@ -1799,58 +1800,52 @@ class InsertRecord(QWidget):
                 error.exec_()
 
                 return
+
             if author == '':
-                # Author cannot be NULL, show error
-                error = QMessageBox()
-                error.setIcon(QMessageBox.Critical)
-                error.setWindowTitle('Error')
-                error.setText('Author cannot be NULL. Operation failed')
-                error.setStandardButtons(QMessageBox.Ok)
-                error.exec_()
+                author = None
 
-                return
-
-            # Get Author Id from Name
-            mySql_select_query = """SELECT Id FROM Authors WHERE Name LIKE %s"""
-            cursor.execute(mySql_select_query, ('%'+author+'%',))
-            author_id = cursor.fetchall()
-            if len(author_id) == 0:
-                # Author cannot be NULL, show error
-                error = QMessageBox()
-                error.setIcon(QMessageBox.Critical)
-                error.setWindowTitle('Error')
-                error.setText('Author not found in Authors table. Operation failed')
-                error.setStandardButtons(QMessageBox.Ok)
-                error.exec_()
-
-                return
-            elif len(author_id) == 1:
-                author = author_id[0][0]
-            else:
-                # Show warning if string matches multiple authors
-                warning = QMessageBox()
-                warning.setIcon(QMessageBox.Information)
-                warning.setWindowTitle('Warning')
-                warning.setText('String matches multiple authors. Using exact match')
-                warning.setStandardButtons(QMessageBox.Ok)
-                warning.exec_()
-
-                # Get Author Id from Name using exact match
-                mySql_select_query = """SELECT Id FROM Authors WHERE Name=%s"""
-                cursor.execute(mySql_select_query, (author,))
+            if author != None:
+                # Get Author Id from Name
+                mySql_select_query = """SELECT Id FROM Authors WHERE Name LIKE %s"""
+                cursor.execute(mySql_select_query, ('%'+author+'%',))
                 author_id = cursor.fetchall()
                 if len(author_id) == 0:
                     # Author cannot be NULL, show error
                     error = QMessageBox()
                     error.setIcon(QMessageBox.Critical)
                     error.setWindowTitle('Error')
-                    error.setText('No exact match found in table Authors. Operation failed')
+                    error.setText('Author not found in Authors table. Operation failed')
                     error.setStandardButtons(QMessageBox.Ok)
                     error.exec_()
 
                     return
                 elif len(author_id) == 1:
                     author = author_id[0][0]
+                else:
+                    # Show warning if string matches multiple authors
+                    warning = QMessageBox()
+                    warning.setIcon(QMessageBox.Information)
+                    warning.setWindowTitle('Warning')
+                    warning.setText('String matches multiple authors. Using exact match')
+                    warning.setStandardButtons(QMessageBox.Ok)
+                    warning.exec_()
+
+                    # Get Author Id from Name using exact match
+                    mySql_select_query = """SELECT Id FROM Authors WHERE Name=%s"""
+                    cursor.execute(mySql_select_query, (author,))
+                    author_id = cursor.fetchall()
+                    if len(author_id) == 0:
+                        # Author cannot be NULL, show error
+                        error = QMessageBox()
+                        error.setIcon(QMessageBox.Critical)
+                        error.setWindowTitle('Error')
+                        error.setText('No exact match found in table Authors. Operation failed')
+                        error.setStandardButtons(QMessageBox.Ok)
+                        error.exec_()
+
+                        return
+                    elif len(author_id) == 1:
+                        author = author_id[0][0]
 
             mySql_insert_query = """INSERT INTO Series(Id, Name, Author) Values(NULL, %s, %s)"""
             values = (name, author)
