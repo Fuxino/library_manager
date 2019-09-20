@@ -146,6 +146,7 @@ class SearchBookForm(QWidget):
         self.category.addItem('Collection')
         self.category.addItem('Chronicle')
         self.category.addItem('Children\'s book')
+        self.category.addItem('Textbook')
 
         self.language = QComboBox()
         self.language.addItem('')
