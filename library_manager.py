@@ -1241,7 +1241,7 @@ class SearchDatabase(QWidget):
             filename = file_dialog.getSaveFileName(self, 'Backup database', 'Library.sql')
 
             # Define backup command
-            cmd = 'mysqldump.exe --single-transaction --master-data=2 --host={} Library -u {} -p{} > {}'.format(hostname, user, pwd, filename[0])
+            cmd = 'mysqldump.exe --single-transaction --master-data=2 --host={} --databases Library -u {} -p{} > {}'.format(hostname, user, pwd, filename[0])
         elif os.name == 'posix':
             file_dialog.setDefaultSuffix('.gz')
             filename = file_dialog.getSaveFileName(self, 'Backup database', 'Library.sql.gz')
