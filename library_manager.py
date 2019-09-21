@@ -45,6 +45,8 @@ class Login(QDialog):
         self.host = QComboBox()
         self.host.addItem('192.168.0.100')
         self.host.addItem('localhost')
+        self.host.setEditable(True)
+        self.host.setInsertPolicy(QComboBox.InsertAtCurrent)
 
         # Add fields to layout
         layout_login.addRow(QLabel('Username:'), self.username)
