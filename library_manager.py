@@ -504,8 +504,10 @@ class SearchDatabase(QWidget):
 
         # Query Books
         if self.layout_search.currentIndex() == 0:
-            query = 'SELECT Id, ISBN, Title, Author, OtherAuthors, Publisher, Series, \
-                    Category, Language, Year, Pages, Owner, Type FROM Books WHERE '
+            query = 'SELECT Books.Id, ISBN, Title, Authors.Name, OtherAuthors, Publishers.Name, \
+                    Series.Name, Category, Language, Year, Pages, Owner, Type FROM Books \
+                    LEFT JOIN Authors ON Books.Author=Authors.Id LEFT JOIN Publishers ON \
+                    Books.Publisher=Publishers.Id LEFT JOIN Series ON Books.Series=Series.Id WHERE '
 
             # Get text from search form
             isbn = self.book_search.isbn.text()
@@ -526,113 +528,18 @@ class SearchDatabase(QWidget):
             if title != '':
                 query = query + 'Title LIKE \'%' + title + '%\' AND '
             if author_n != '':
-                # Get Authors Id from Name
-                mySql_select_query = """SELECT Id FROM Authors WHERE Name LIKE %s"""
-                cursor.execute(mySql_select_query, ('%'+author_n+'%',))
-                author = cursor.fetchall()
-                if len(author) == 0:
-                    author_id = 0
-                else:
-                    author_id = ''
-
-                    i = 0
-                    for row in author:
-                        author_id = author_id + str(author[i][0]) + ', '
-                        i = i + 1
-
-                    author_id = author_id[:-2]
-
-                query = query + '(Author IN (' + str(author_id) + ') OR OtherAuthors LIKE \'%' + author_n + '%\') AND '
+                query = query + '(Authors.Name LIKE \'%' + author_n + '%\' OR OtherAuthors LIKE \'%' + author_n + '%\') AND '
             if author_g != '':
-                # Get Authors Id from Gender
                 if author_g == 'Other':
-                    mySql_select_query = """SELECT Id FROM Authors WHERE Gender!='M' AND Gender!='F'"""
-                    cursor.execute(mySql_select_query)
-                    author = cursor.fetchall()
-                    if len(author) == 0:
-                        author_id = 0
-                    else:
-                        author_id = ''
-
-                        i = 0
-                        for row in author:
-                            author_id = author_id + str(author[i][0]) + ', '
-                            i= i + 1
-
-                        author_id = author_id[:-2]
-
-                    query = query + 'Author IN (' + str(author_id) + ') AND '
+                    query = query + 'Authors.Gender!=\'M\' AND Authors.Gender!=\'F\' AND '
                 else:
-                    mySql_select_query = """SELECT Id FROM Authors WHERE Gender=%s"""
-                    cursor.execute(mySql_select_query, (author_g,))
-                    author = cursor.fetchall()
-                    if len(author) == 0:
-                        author_id = 0
-                    else:
-                        author_id = ''
-
-                        i = 0
-                        for row in author:
-                            author_id = author_id + str(author[i][0]) + ', '
-                            i = i + 1
-
-                        author_id = author_id[:-2]
-
-                    query = query + 'Author IN (' + str(author_id) + ') AND '
+                    query = query + 'Authors.Gender=\'' + author_g + '\' AND '
             if author_c != '':
-                # Get Authors Id from Nationality
-                mySql_select_query = """SELECT Id FROM Authors WHERE Nationality LIKE %s"""
-                cursor.execute(mySql_select_query, ('%'+author_c+'%',))
-                author = cursor.fetchall()
-                if len(author) == 0:
-                    author_id = 0
-                else:
-                    author_id = ''
-
-                    i = 0
-                    for row in author:
-                        author_id = author_id + str(author[i][0]) + ', '
-                        i = i + 1
-
-                    author_id = author_id[:-2]
-
-                query = query + 'Author IN (' + str(author_id) + ') AND '
+                query = query + 'Authors.Nationality LIKE \'%' + author_c + '%\' AND '
             if publisher != '':
-                # Get Publishers Id from Name
-                mySql_select_query = """SELECT Id FROM Publishers WHERE Name LIKE %s"""
-                cursor.execute(mySql_select_query, ('%'+publisher+'%',))
-                publisher = cursor.fetchall()
-                if len(publisher) == 0:
-                    publisher_id = 0
-                else:
-                    publisher_id = ''
-
-                    i = 0
-                    for row in publisher:
-                        publisher_id = publisher_id + str(publisher[i][0]) + ', '
-                        i = i + 1
-
-                    publisher_id = publisher_id[:-2]
-
-                query = query + 'Publisher IN (' + str(publisher_id) + ') AND '
+                query = query + 'Publishers.Name LIKE \'%' + publisher + '%\' AND '
             if series != '':
-                # Get Series Id from Name
-                mySql_select_query = """SELECT Id FROM Series WHERE Name LIKE %s"""
-                cursor.execute(mySql_select_query, ('%'+series+'%',))
-                series = cursor.fetchall()
-                if len(series) == 0:
-                    series_id = 0
-                else:
-                    series_id = ''
-
-                    i = 0
-                    for row in series:
-                        series_id = series_id + str(series[i][0]) + ', '
-                        i = i + 1
-
-                    series_id = series_id[:-2]
-
-                query = query + 'Series IN (' + str(series_id) + ') AND '
+                query = query + 'Series.Name LIKE \'%' + series + '%\' AND '
             if category != '':
                 query = query + 'Category LIKE \'%' + category + '%\' AND '
             if language != '':
@@ -648,6 +555,8 @@ class SearchDatabase(QWidget):
 
             if query[-6:] == 'WHERE ':
                 query = query[:-6]
+
+            query = query + 'ORDER BY Authors.Name, Series.Name, Year'
 
             try:
                 # Execute the query
@@ -672,26 +581,6 @@ class SearchDatabase(QWidget):
                     Pages = row[10]
                     Owner = row[11]
                     Type = row[12]
-
-                    # Get Author Name from Id
-                    mySql_select_query = """SELECT Name FROM Authors WHERE Id = %s"""
-                    cursor.execute(mySql_select_query, (Author,))
-                    Author = cursor.fetchall()
-                    Author = Author[0][0]
-
-                    # Get Publisher Name from Id
-                    if Publisher is not None:
-                        mySql_select_query = """SELECT Name FROM Publishers WHERE Id = %s"""
-                        cursor.execute(mySql_select_query, (Publisher,))
-                        Publisher = cursor.fetchall()
-                        Publisher = Publisher[0][0]
-
-                    # Get Series Name from Id
-                    if Series is not None:
-                        mySql_select_query = """SELECT Name FROM Series WHERE Id = %s"""
-                        cursor.execute(mySql_select_query, (Series,))
-                        Series = cursor.fetchall()
-                        Series = Series[0][0]
 
                     # If Year and/or Pages is NULL, show empty string
                     if Year == None:
@@ -728,11 +617,6 @@ class SearchDatabase(QWidget):
 
                 if self.table.columnWidth(4) > 300:
                     self.table.setColumnWidth(4, 300)
-
-                # Sort table
-                self.table.sortItems(9)
-                self.table.sortItems(6)
-                self.table.sortItems(3)
             except Error as e:
                 # Create error message box
                 error = QMessageBox()
@@ -770,6 +654,8 @@ class SearchDatabase(QWidget):
 
             if query[-6:] == 'WHERE ':
                 query = query[:-6]
+
+            query = query + 'ORDER BY Name'
 
             try:
                 # Execute the query
@@ -810,9 +696,6 @@ class SearchDatabase(QWidget):
 
                 # Resize columns
                 self.table.resizeColumnsToContents()
-                
-                # Sort table
-                self.table.sortItems(1)
             except Error as e:
                 # Create error message box
                 error = QMessageBox()
@@ -839,6 +722,8 @@ class SearchDatabase(QWidget):
             if query[-6:] == 'WHERE ':
                 query = query[:-6]
 
+            query = query + 'ORDER BY Name'
+
             try:
                 # Execute the query
                 cursor.execute(query)
@@ -863,9 +748,6 @@ class SearchDatabase(QWidget):
 
                 # Resize columns
                 self.table.resizeColumnsToContents()
-
-                # Sort table
-                self.table.sortItems(1)
             except Error as e:
                 # Create error message box
                 error = QMessageBox()
@@ -879,7 +761,8 @@ class SearchDatabase(QWidget):
 
         # Query series
         else:
-            query = 'SELECT Id, Name, Author FROM Series WHERE '
+            query = 'SELECT Series.Id, Series.Name, Authors.Name FROM Series \
+                    LEFT JOIN Authors ON Series.Author=Authors.Id WHERE '
 
             # Get text from search form
             name = self.series_search.name.text()
@@ -889,23 +772,7 @@ class SearchDatabase(QWidget):
             if name != '':
                 query = query + 'Name LIKE \'%' + name + '%\' AND '
             if author != '':
-                # Get Authors Id from Name
-                mySql_select_query = """SELECT Id FROM Authors WHERE Name LIKE %s"""
-                cursor.execute(mySql_select_query, ('%'+author+'%',))
-                author = cursor.fetchall()
-                if len(author) == 0:
-                    author_id = 0
-                else:
-                    author_id = ''
-
-                    i = 0
-                    for row in author:
-                        author_id = author_id + str(author[i][0]) + ', '
-                        i = i + 1
-
-                    author_id = author_id[:-2]
-
-                query = query + 'Author IN (' + str(author_id) + ') '
+                query = query + 'Authors.Name LIKE \'%' + author + '%\ '
 
             # Remove trailing 'AND' and/or 'WHERE' from query
             if query[-4:] == 'AND ':
@@ -913,6 +780,8 @@ class SearchDatabase(QWidget):
 
             if query[-6:] == 'WHERE ':
                 query = query[:-6]
+
+            query = query + 'ORDER BY Authors.Name, Series.Name'
 
             try:
                 # Execute the query
@@ -928,13 +797,6 @@ class SearchDatabase(QWidget):
                     Name = row[1]
                     Author = row[2]
 
-                    # Get Author Name from Id
-                    if Author is not None:
-                        mySql_select_query = """SELECT Name FROM Authors WHERE Id = %s"""
-                        cursor.execute(mySql_select_query, (Author,))
-                        Author = cursor.fetchall()
-                        Author = Author[0][0]
-
                     i = self.table.rowCount()
                     self.table.insertRow(i)
 
@@ -947,10 +809,6 @@ class SearchDatabase(QWidget):
 
                 # Resize columns
                 self.table.resizeColumnsToContents()
-
-                # Sort table
-                self.table.sortItems(1)
-                self.table.sortItems(2)
             except Error as e:
                 # Create error message box
                 error = QMessageBox()
