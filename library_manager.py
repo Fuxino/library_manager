@@ -19,6 +19,13 @@ from mysql.connector import Error
 if os.name == 'nt':
     from fbs_runtime.application_context.PyQt5 import ApplicationContext
 
+try:
+    from isbnlib import canonical, is_isbn10, is_isbn13, mask
+
+    isbn_check = True
+except:
+    isbn_check = False
+
 # Login dialog box
 class Login(QDialog):
 
@@ -582,6 +589,13 @@ class SearchDatabase(QWidget):
                     Owner = row[11]
                     Type = row[12]
 
+                    # Hyphenate ISBN
+                    if ISBN is not None:
+                        try:
+                            ISBN = mask(ISBN, '-')
+                        except:
+                            pass
+
                     # If Year and/or Pages is NULL, show empty string
                     if Year == None:
                         Year = ''
@@ -834,7 +848,64 @@ class SearchDatabase(QWidget):
         record_index = self.table.currentRow()
         id_n = self.table.item(record_index, 0).text()
 
-        if field == 'Author':
+        if field == 'ISBN':
+            if value != '' and isbn_check:
+                if '-' in value:
+                    value = canonical(value)
+                if len(value) == 10:
+                    if not is_isbn10(value):
+                        # Show an error if the ISBN is invalid
+                        error = QMessageBox()
+                        error.setIcon(QMessageBox.Critical)
+                        error.setWindowTitle('Error')
+                        error.setText('The ISBN inserted is invalid. Operation failed.')
+                        error.setStandardButtons(QMessageBox.Ok)
+                        error.exec_()
+
+                        self.table.blockSignals(True)
+
+                        self.table.removeCellWidget(record_index, field_index)
+                        self.table.setItem(record_index, field_index, QTableWidgetItem(self.current_item))
+
+                        self.table.blockSignals(False)
+
+                        return
+                elif len(value) == 13:
+                    if not is_isbn13(value):
+                        # Show an error if the ISBN is invalid
+                        error = QMessageBox()
+                        error.setIcon(QMessageBox.Critical)
+                        error.setWindowTitle('Error')
+                        error.setText('The ISBN inserted is invalid. Operation failed.')
+                        error.setStandardButtons(QMessageBox.Ok)
+                        error.exec_()
+
+                        self.table.blockSignals(True)
+
+                        self.table.removeCellWidget(record_index, field_index)
+                        self.table.setItem(record_index, field_index, QTableWidgetItem(self.current_item))
+
+                        self.table.blockSignals(False)
+
+                        return
+                else:
+                    # Show an error if the ISBN is invalid
+                    error = QMessageBox()
+                    error.setIcon(QMessageBox.Critical)
+                    error.setWindowTitle('Error')
+                    error.setText('The ISBN inserted is invalid. Operation failed.')
+                    error.setStandardButtons(QMessageBox.Ok)
+                    error.exec_()
+
+                    self.table.blockSignals(True)
+
+                    self.table.removeCellWidget(record_index, field_index)
+                    self.table.setItem(record_index, field_index, QTableWidgetItem(self.current_item))
+
+                    self.table.blockSignals(False)
+
+                    return
+        elif field == 'Author':
             if value == '':
                 # Author cannot be NULL, show error
                 error = QMessageBox()
@@ -998,7 +1069,17 @@ class SearchDatabase(QWidget):
             cursor.execute(query)
             connection.commit()
 
-            if field == 'Author':
+            if field == 'ISBN':
+                if value != '':
+                    value = mask(value, '-')
+
+                    self.table.blockSignals(True)
+
+                    self.table.removeCellWidget(record_index, field_index)
+                    self.table.setItem(record_index, field_index, QTableWidgetItem(value))
+
+                    self.table.blockSignals(False)
+            elif field == 'Author':
                 mySql_select_query = """SELECT Name FROM Authors WHERE Id=%s"""
                 cursor.execute(mySql_select_query, (value,))
                 author = cursor.fetchall()
@@ -1363,6 +1444,43 @@ class InsertRecord(QWidget):
             # Set values to None where strings are empty
             if isbn == '':
                 isbn = None
+            else:
+                # Check is the ISBN is valid
+                if isbn_check:
+                    if '-' in isbn:
+                        isbn = canonical(isbn)
+                    if len(isbn) == 10:
+                        if not is_isbn10(isbn):
+                            # Show an error if the ISBN is invalid
+                            error = QMessageBox()
+                            error.setIcon(QMessageBox.Critical)
+                            error.setWindowTitle('Error')
+                            error.setText('The ISBN inserted is invalid. Operation failed.')
+                            error.setStandardButtons(QMessageBox.Ok)
+                            error.exec_()
+
+                            return
+                    elif len(isbn) == 13:
+                        if not is_isbn13(isbn):
+                            # Show an error if the ISBN is invalid
+                            error = QMessageBox()
+                            error.setIcon(QMessageBox.Critical)
+                            error.setWindowTitle('Error')
+                            error.setText('The ISBN inserted is invalid. Operation failed.')
+                            error.setStandardButtons(QMessageBox.Ok)
+                            error.exec_()
+
+                            return
+                    else:
+                        # Show an error if the ISBN is invalid
+                        error = QMessageBox()
+                        error.setIcon(QMessageBox.Critical)
+                        error.setWindowTitle('Error')
+                        error.setText('The ISBN inserted is invalid. Operation failed.')
+                        error.setStandardButtons(QMessageBox.Ok)
+                        error.exec_()
+
+                        return
             if title == '':
                 # Title cannot be NULL, show error
                 error = QMessageBox()

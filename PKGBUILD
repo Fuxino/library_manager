@@ -3,7 +3,7 @@
 # Maintainer: Daniele Fucini <dfucini@gmail.com>
 
 pkgname=library_manager
-pkgver=2.3.2.r0.g5a881e2
+pkgver=2.5.0.r0.g0ee138a
 pkgrel=1
 pkgdesc="Manage Library database"
 arch=("any")
@@ -14,6 +14,7 @@ depends=("python3"
          "mariadb"
          "python-mysql-connector"
          "python-pyqt5")
+optdepends=('python-isbnlib: check if isbn inserted is valid')
 source=(git+https://github.com/Fuxino/${pkgname}.git)
 sha256sums=('SKIP')
 
