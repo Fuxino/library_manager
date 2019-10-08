@@ -2,7 +2,7 @@
 --
 -- Host: raspi    Database: Library
 -- ------------------------------------------------------
--- Server version	10.4.7-MariaDB-log
+-- Server version	10.4.8-MariaDB-log
 
 /*!40101 SET @OLD_CHARACTER_SET_CLIENT=@@CHARACTER_SET_CLIENT */;
 /*!40101 SET @OLD_CHARACTER_SET_RESULTS=@@CHARACTER_SET_RESULTS */;
@@ -14,18 +14,6 @@
 /*!40014 SET @OLD_FOREIGN_KEY_CHECKS=@@FOREIGN_KEY_CHECKS, FOREIGN_KEY_CHECKS=0 */;
 /*!40101 SET @OLD_SQL_MODE=@@SQL_MODE, SQL_MODE='NO_AUTO_VALUE_ON_ZERO' */;
 /*!40111 SET @OLD_SQL_NOTES=@@SQL_NOTES, SQL_NOTES=0 */;
-
---
--- Position to start replication or point-in-time recovery from
---
-
--- CHANGE MASTER TO MASTER_LOG_FILE='raspi-bin.000010', MASTER_LOG_POS=6857;
-
---
--- GTID to start replication from
---
-
--- SET GLOBAL gtid_slave_pos='0-1-284';
 
 --
 -- Current Database: `Library`
@@ -69,6 +57,7 @@ CREATE TABLE `Books` (
   `OtherAuthors` text COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   `Publisher` int(11) DEFAULT NULL,
   `Series` int(11) DEFAULT NULL,
+  `Subseries` varchar(256) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   `Language` varchar(64) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   `Year` int(11) DEFAULT NULL,
   `Pages` int(11) DEFAULT NULL,
@@ -128,4 +117,4 @@ CREATE TABLE `Series` (
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2019-09-21  7:59:43
+-- Dump completed on 2019-10-08 19:22:30

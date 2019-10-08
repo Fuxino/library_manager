@@ -141,6 +141,8 @@ class SearchBookForm(QWidget):
         self.publisher.returnPressed.connect(query_db)
         self.series = QLineEdit()
         self.series.returnPressed.connect(query_db)
+        self.subseries = QLineEdit()
+        self.subseries.returnPressed.connect(query_db)
 
         self.category = QComboBox()
         self.category.addItem('')
@@ -180,6 +182,7 @@ class SearchBookForm(QWidget):
         layout.addRow('Author\'s nationality:', self.author_nationality)
         layout.addRow('Publisher:', self.publisher)
         layout.addRow('Series:', self.series)
+        layout.addRow('Subseries:', self.subseries)
         layout.addRow('Category:', self.category)
         layout.addRow('Language:', self.language)
         layout.addRow('Owner:', self.owner)
@@ -279,7 +282,7 @@ class SearchDatabase(QWidget):
         # Create table to show database queries results
         self.table = QTableWidget()
         self.table.setRowCount(0)
-        self.table.setColumnCount(13)
+        self.table.setColumnCount(14)
 
         id_header = QTableWidgetItem('Id')
         isbn_header = QTableWidgetItem('ISBN')
@@ -288,6 +291,7 @@ class SearchDatabase(QWidget):
         otherauthors_header = QTableWidgetItem('OtherAuthors')
         publisher_header = QTableWidgetItem('Publisher')
         series_header = QTableWidgetItem('Series')
+        subseries_header = QTableWidgetItem('Subseries')
         category_header = QTableWidgetItem('Category')
         language_header = QTableWidgetItem('Language')
         year_header = QTableWidgetItem('Year')
@@ -302,12 +306,13 @@ class SearchDatabase(QWidget):
         self.table.setHorizontalHeaderItem(4, otherauthors_header)
         self.table.setHorizontalHeaderItem(5, publisher_header)
         self.table.setHorizontalHeaderItem(6, series_header)
-        self.table.setHorizontalHeaderItem(7, category_header)
-        self.table.setHorizontalHeaderItem(8, language_header)
-        self.table.setHorizontalHeaderItem(9, year_header)
-        self.table.setHorizontalHeaderItem(10, pages_header)
-        self.table.setHorizontalHeaderItem(11, owner_header)
-        self.table.setHorizontalHeaderItem(12, type_header)
+        self.table.setHorizontalHeaderItem(7, subseries_header)
+        self.table.setHorizontalHeaderItem(8, category_header)
+        self.table.setHorizontalHeaderItem(9, language_header)
+        self.table.setHorizontalHeaderItem(10, year_header)
+        self.table.setHorizontalHeaderItem(11, pages_header)
+        self.table.setHorizontalHeaderItem(12, owner_header)
+        self.table.setHorizontalHeaderItem(13, type_header)
 
         self.table.resizeColumnsToContents()
 
@@ -396,6 +401,7 @@ class SearchDatabase(QWidget):
         self.book_search.author_nationality.clear()
         self.book_search.publisher.clear()
         self.book_search.series.clear()
+        self.book_search.subseries.clear()
         self.book_search.category.setCurrentIndex(0)
         self.book_search.language.setCurrentIndex(0)
         self.book_search.owner.setCurrentIndex(0)
@@ -420,7 +426,7 @@ class SearchDatabase(QWidget):
 
         # Books
         if table_name == 'Books':
-            self.table.setColumnCount(13)
+            self.table.setColumnCount(14)
 
             id_header = QTableWidgetItem('Id')
             isbn_header = QTableWidgetItem('ISBN')
@@ -429,6 +435,7 @@ class SearchDatabase(QWidget):
             otherauthors_header = QTableWidgetItem('OtherAuthors')
             publisher_header = QTableWidgetItem('Publisher')
             series_header = QTableWidgetItem('Series')
+            subseries_header = QTableWidgetItem('Subseries')
             category_header = QTableWidgetItem('Category')
             language_header = QTableWidgetItem('Language')
             year_header = QTableWidgetItem('Year')
@@ -443,12 +450,13 @@ class SearchDatabase(QWidget):
             self.table.setHorizontalHeaderItem(4, otherauthors_header)
             self.table.setHorizontalHeaderItem(5, publisher_header)
             self.table.setHorizontalHeaderItem(6, series_header)
-            self.table.setHorizontalHeaderItem(7, category_header)
-            self.table.setHorizontalHeaderItem(8, language_header)
-            self.table.setHorizontalHeaderItem(9, year_header)
-            self.table.setHorizontalHeaderItem(10, pages_header)
-            self.table.setHorizontalHeaderItem(11, owner_header)
-            self.table.setHorizontalHeaderItem(12, type_header)
+            self.table.setHorizontalHeaderItem(7, subseries_header)
+            self.table.setHorizontalHeaderItem(8, category_header)
+            self.table.setHorizontalHeaderItem(9, language_header)
+            self.table.setHorizontalHeaderItem(10, year_header)
+            self.table.setHorizontalHeaderItem(11, pages_header)
+            self.table.setHorizontalHeaderItem(12, owner_header)
+            self.table.setHorizontalHeaderItem(13, type_header)
 
             self.table.resizeColumnsToContents()
 
@@ -512,7 +520,7 @@ class SearchDatabase(QWidget):
         # Query Books
         if self.layout_search.currentIndex() == 0:
             query = 'SELECT Books.Id, ISBN, Title, Authors.Name, OtherAuthors, Publishers.Name, \
-                    Series.Name, Category, Language, Year, Pages, Owner, Type FROM Books \
+                    Series.Name, Subseries, Category, Language, Year, Pages, Owner, Type FROM Books \
                     LEFT JOIN Authors ON Books.Author=Authors.Id LEFT JOIN Publishers ON \
                     Books.Publisher=Publishers.Id LEFT JOIN Series ON Books.Series=Series.Id WHERE '
 
@@ -524,6 +532,7 @@ class SearchDatabase(QWidget):
             author_c = self.book_search.author_nationality.text()
             publisher = self.book_search.publisher.text()
             series = self.book_search.series.text()
+            subseries = self.book_search.subseries.text()
             category = self.book_search.category.currentText()
             language = self.book_search.language.currentText()
             owner = self.book_search.owner.currentText()
@@ -547,6 +556,8 @@ class SearchDatabase(QWidget):
                 query = query + 'Publishers.Name LIKE \'%' + publisher + '%\' AND '
             if series != '':
                 query = query + 'Series.Name LIKE \'%' + series + '%\' AND '
+            if subseries != '':
+                query = query + 'Subseries LIKE \'%' + subseries + '%\' AND '
             if category != '':
                 query = query + 'Category LIKE \'%' + category + '%\' AND '
             if language != '':
@@ -582,12 +593,13 @@ class SearchDatabase(QWidget):
                     OtherAuthors = row[4]
                     Publisher = row[5]
                     Series = row[6]
-                    Category = row[7]
-                    Language = row[8]
-                    Year = row[9]
-                    Pages = row[10]
-                    Owner = row[11]
-                    Type = row[12]
+                    Subseries = row[7]
+                    Category = row[8]
+                    Language = row[9]
+                    Year = row[10]
+                    Pages = row[11]
+                    Owner = row[12]
+                    Type = row[13]
 
                     # Hyphenate ISBN
                     if ISBN is not None:
@@ -616,12 +628,13 @@ class SearchDatabase(QWidget):
                     self.table.setItem(i, 4, QTableWidgetItem(OtherAuthors))
                     self.table.setItem(i, 5, QTableWidgetItem(Publisher))
                     self.table.setItem(i, 6, QTableWidgetItem(Series))
-                    self.table.setItem(i, 7, QTableWidgetItem(Category))
-                    self.table.setItem(i, 8, QTableWidgetItem(Language))
-                    self.table.setItem(i, 9, QTableWidgetItem(str(Year)))
-                    self.table.setItem(i, 10, QTableWidgetItem(str(Pages)))
-                    self.table.setItem(i, 11, QTableWidgetItem(Owner))
-                    self.table.setItem(i, 12, QTableWidgetItem(Type))
+                    self.table.setItem(i, 7, QTableWidgetItem(Subseries))
+                    self.table.setItem(i, 8, QTableWidgetItem(Category))
+                    self.table.setItem(i, 9, QTableWidgetItem(Language))
+                    self.table.setItem(i, 10, QTableWidgetItem(str(Year)))
+                    self.table.setItem(i, 11, QTableWidgetItem(str(Pages)))
+                    self.table.setItem(i, 12, QTableWidgetItem(Owner))
+                    self.table.setItem(i, 13, QTableWidgetItem(Type))
 
                 # Resize columns
                 self.table.resizeColumnsToContents()
@@ -786,7 +799,7 @@ class SearchDatabase(QWidget):
             if name != '':
                 query = query + 'Name LIKE \'%' + name + '%\' AND '
             if author != '':
-                query = query + 'Authors.Name LIKE \'%' + author + '%\ '
+                query = query + 'Authors.Name LIKE \'%' + author + '%\' '
 
             # Remove trailing 'AND' and/or 'WHERE' from query
             if query[-4:] == 'AND ':
@@ -1116,6 +1129,9 @@ class SearchDatabase(QWidget):
 
                 self.table.blockSignals(False)
 
+            # Resize columns
+            self.table.resizeColumnsToContents()
+
             info = QMessageBox()
             info.setIcon(QMessageBox.Information)
             info.setWindowTitle('Success')
@@ -1226,6 +1242,7 @@ class InsertBookForm(QWidget):
         self.otherauthors = QLineEdit()
         self.publisher = QLineEdit()
         self.series = QLineEdit()
+        self.subseries = QLineEdit()
         self.category = QLineEdit()
         self.language = QLineEdit()
         self.year = QLineEdit()
@@ -1247,6 +1264,7 @@ class InsertBookForm(QWidget):
         layout.addRow('OtherAuthors:', self.otherauthors)
         layout.addRow('Publisher:', self.publisher)
         layout.addRow('Series:', self.series)
+        layout.addRow('Subseries:', self.subseries)
         layout.addRow('Category:', self.category)
         layout.addRow('Language:', self.language)
         layout.addRow('Year:', self.year)
@@ -1388,6 +1406,7 @@ class InsertRecord(QWidget):
         self.book_insert.otherauthors.clear()
         self.book_insert.publisher.clear()
         self.book_insert.series.clear()
+        self.book_insert.subseries.clear()
         self.book_insert.category.clear()
         self.book_insert.language.clear()
         self.book_insert.year.clear()
@@ -1434,6 +1453,7 @@ class InsertRecord(QWidget):
             otherauthors = self.book_insert.otherauthors.text()
             publisher = self.book_insert.publisher.text()
             series = self.book_insert.series.text()
+            subseries = self.book_insert.subseries.text()
             category = self.book_insert.category.text()
             language = self.book_insert.language.text()
             year = self.book_insert.year.text()
@@ -1507,6 +1527,8 @@ class InsertRecord(QWidget):
                 publisher = None
             if series == '':
                 series = None
+            if subseries == '':
+                subseries = None
             if category == '':
                 category = None
             if language == '':
@@ -1644,10 +1666,10 @@ class InsertRecord(QWidget):
                     elif len(series_id) == 1:
                         series = series_id[0][0]
 
-            mySql_insert_query = """INSERT INTO Books(Id, ISBN, Title, Author, OtherAuthors, Publisher, Series, Category,
-                                                      Language, Year, Pages, Owner,  Type)
-                                    Values(NULL, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)"""
-            values = (isbn, title, author, otherauthors, publisher, series, category, language, year, pages, owner, booktype)
+            mySql_insert_query = """INSERT INTO Books(ISBN, Title, Author, OtherAuthors, Publisher, Series, Subseries,
+                                                      Category, Language, Year, Pages, Owner,  Type)
+                                    Values(%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)"""
+            values = (isbn, title, author, otherauthors, publisher, series, subseries, category, language, year, pages, owner, booktype)
 
             # Execute the query
             try:
@@ -1699,8 +1721,8 @@ class InsertRecord(QWidget):
             if deathyear == '':
                 deathyear = None
 
-            mySql_insert_query = """INSERT INTO Authors(Id, Name, Gender, Nationality, BirthYear, DeathYear) 
-                                    Values(NULL, %s, %s, %s, %s, %s)"""
+            mySql_insert_query = """INSERT INTO Authors(Name, Gender, Nationality, BirthYear, DeathYear)
+                                    Values(%s, %s, %s, %s, %s)"""
             values = (name, gender, nationality, birthyear, deathyear)
 
             # Execute the query
@@ -1740,7 +1762,7 @@ class InsertRecord(QWidget):
 
                 return
 
-            mySql_insert_query = """INSERT INTO Publishers(Id, Name) Values(NULL, %s)"""
+            mySql_insert_query = """INSERT INTO Publishers(Name) Values(%s)"""
 
             # Execute the query
             try:
@@ -1826,7 +1848,7 @@ class InsertRecord(QWidget):
                     elif len(author_id) == 1:
                         author = author_id[0][0]
 
-            mySql_insert_query = """INSERT INTO Series(Id, Name, Author) Values(NULL, %s, %s)"""
+            mySql_insert_query = """INSERT INTO Series(Name, Author) Values(%s, %s)"""
             values = (name, author)
 
             # Execute the query
