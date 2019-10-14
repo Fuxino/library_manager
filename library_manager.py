@@ -13,8 +13,11 @@ from PyQt5.QtWidgets import *
 from PyQt5.QtGui import QIcon
 from PyQt5.QtCore import Qt
 
-import mysql.connector
 from mysql.connector import Error
+
+from login import Login_dialog
+
+import _globals
 
 if os.name == 'nt':
     from fbs_runtime.application_context.PyQt5 import ApplicationContext
@@ -25,94 +28,6 @@ try:
     isbn_check = True
 except:
     isbn_check = False
-
-# Login dialog box
-class Login(QDialog):
-
-    def __init__(self, *args, **kwargs):
-        super(Login, self).__init__(*args, **kwargs)
-
-        # Set dialog title
-        self.setWindowTitle('Login to Library')
-
-        if os.name == 'nt':
-            self.setWindowIcon(QIcon('Icon.ico'))
-        elif os.name == 'posix':
-            self.setWindowIcon(QIcon('/usr/share/icons/hicolor/32x32/apps/library_manager.png'))
-
-        # Define layouts
-        layout = QVBoxLayout()
-        layout_login = QFormLayout()
-
-        # Define login fields
-        self.username = QLineEdit()
-        self.password = QLineEdit()
-        # Hide password when typing
-        self.password.setEchoMode(QLineEdit.Password)
-        self.host = QComboBox()
-        self.host.addItem('192.168.0.100')
-        self.host.addItem('localhost')
-        self.host.setEditable(True)
-        self.host.setInsertPolicy(QComboBox.InsertAtCurrent)
-
-        # Add fields to layout
-        layout_login.addRow(QLabel('Username:'), self.username)
-        layout_login.addRow(QLabel('Password:'), self.password)
-        layout_login.addRow(QLabel('Hostname:'), self.host)
-
-        # Create buttons
-        QBtn = QDialogButtonBox.Ok | QDialogButtonBox.Cancel
-
-        # Define button behavior
-        buttonBox = QDialogButtonBox(QBtn)
-        buttonBox.accepted.connect(self.db_connect)
-        buttonBox.rejected.connect(self.exit_program)
-
-        # Add login form and button to main layout
-        layout.addLayout(layout_login)
-        layout.addWidget(buttonBox)
-
-        # Set layout
-        self.setLayout(layout)
-
-    # Function to connect to the database
-    def db_connect(self):
-        try:
-            # Global variable because we need them later
-            global connection
-            global cursor
-            global hostname
-            global user
-            global pwd
-
-            hostname = self.host.currentText()
-            user = self.username.text()
-            pwd = self.password.text()
-
-            # Create connection
-            connection = mysql.connector.connect(host=hostname,
-                                                 database='Library',
-                                                 user=user,
-                                                 password=pwd)
-
-            cursor = connection.cursor(prepared=True)
-
-            # Close login dialog
-            self.accept()
-
-        # If error occurred during connection
-        except Error as e:
-            # Create error message box
-            error = QMessageBox()
-            error.setIcon(QMessageBox.Critical)
-            error.setWindowTitle('Error')
-            error.setText(str(e))
-            error.setStandardButtons(QMessageBox.Ok)
-            error.exec_()
-
-    # Function to exit the program
-    def exit_program(self):
-        exit(0)
 
 # Form to search books
 class SearchBookForm(QWidget):
@@ -331,6 +246,12 @@ class SearchDatabase(QWidget):
         backup_button = QPushButton('Backup database')
         clear_button = QPushButton('Clear')
         save_button = QPushButton('Save to file')
+        backup_button.setMinimumSize(200, 30)
+        backup_button.setMaximumSize(200, 30)
+        clear_button.setMinimumSize(200, 30)
+        clear_button.setMaximumSize(200, 30)
+        save_button.setMinimumSize(200, 30)
+        save_button.setMaximumSize(200, 30)
 
         # Define buttons behavior
         backup_button.clicked.connect(self.backup_db)
@@ -367,20 +288,16 @@ class SearchDatabase(QWidget):
         # Add stacked layout to right layout
         layout_right.addLayout(self.layout_search)
 
-        # Define layout for buttons
-        layout_button_r = QHBoxLayout()
         # Create buttons
         search_button = QPushButton('Search')
-        close_button = QPushButton('Exit')
+        search_button.setMinimumSize(500, 30)
+        search_button.setMaximumSize(500, 30)
 
         # Define buttons behavior
         search_button.clicked.connect(self.query_db)
-        close_button.clicked.connect(self.exit_program)
 
         # Add buttons to layout
-        layout_button_r.addWidget(search_button)
-        layout_button_r.addWidget(close_button)
-        layout_right.addLayout(layout_button_r)
+        layout_right.addWidget(search_button)
 
         # Add right layout to main layout
         layout.addLayout(layout_right)
@@ -578,8 +495,8 @@ class SearchDatabase(QWidget):
 
             try:
                 # Execute the query
-                cursor.execute(query)
-                results = cursor.fetchall()
+                _globals.cursor.execute(query)
+                results = _globals.cursor.fetchall()
 
                 # Clear the results table
                 self.table.setRowCount(0)
@@ -686,8 +603,8 @@ class SearchDatabase(QWidget):
 
             try:
                 # Execute the query
-                cursor.execute(query)
-                results = cursor.fetchall()
+                _globals.cursor.execute(query)
+                results = _globals.cursor.fetchall()
 
                 # Clear the results table
                 self.table.setRowCount(0)
@@ -753,8 +670,8 @@ class SearchDatabase(QWidget):
 
             try:
                 # Execute the query
-                cursor.execute(query)
-                results = cursor.fetchall()
+                _globals.cursor.execute(query)
+                results = _globals.cursor.fetchall()
 
                 # Clear the results table
                 self.table.setRowCount(0)
@@ -812,8 +729,8 @@ class SearchDatabase(QWidget):
 
             try:
                 # Execute the query
-                cursor.execute(query) 
-                results = cursor.fetchall()
+                _globals.cursor.execute(query) 
+                results = _globals.cursor.fetchall()
 
                 # Clear the results table
                 self.table.setRowCount(0)
@@ -938,8 +855,8 @@ class SearchDatabase(QWidget):
                 return
 
             mySql_select_query = """SELECT Id FROM Authors WHERE Name LIKE %s"""
-            cursor.execute(mySql_select_query, ('%'+value+'%',))
-            author = cursor.fetchall()
+            _globals.cursor.execute(mySql_select_query, ('%'+value+'%',))
+            author = _globals.cursor.fetchall()
             if len(author) == 0:
                 # Author cannot be NULL, show error
                 error = QMessageBox()
@@ -979,8 +896,8 @@ class SearchDatabase(QWidget):
         elif field == 'Publisher':
             if value != '':
                 mySql_select_query = """SELECT Id FROM Publishers WHERE Name LIKE %s"""
-                cursor.execute(mySql_select_query, ('%'+value+'%',))
-                publisher = cursor.fetchall()
+                _globals.cursor.execute(mySql_select_query, ('%'+value+'%',))
+                publisher = _globals.cursor.fetchall()
                 if len(publisher) == 0:
                     error = QMessageBox()
                     error.setIcon(QMessageBox.Critical)
@@ -1019,8 +936,8 @@ class SearchDatabase(QWidget):
         elif field == 'Series':
             if value != '':
                 mySql_select_query = """SELECT Id FROM Series WHERE Name LIKE %s"""
-                cursor.execute(mySql_select_query, ('%'+value+'%',))
-                series = cursor.fetchall()
+                _globals.cursor.execute(mySql_select_query, ('%'+value+'%',))
+                series = _globals.cursor.fetchall()
                 if len(series) == 0:
                     error = QMessageBox()
                     error.setIcon(QMessageBox.Critical)
@@ -1079,8 +996,8 @@ class SearchDatabase(QWidget):
                 query = 'UPDATE Series SET {}=NULL WHERE Id={}'.format(field, id_n)
 
         try:
-            cursor.execute(query)
-            connection.commit()
+            _globals.cursor.execute(query)
+            _globals.connection.commit()
 
             if field == 'ISBN':
                 if value != '':
@@ -1094,8 +1011,8 @@ class SearchDatabase(QWidget):
                     self.table.blockSignals(False)
             elif field == 'Author':
                 mySql_select_query = """SELECT Name FROM Authors WHERE Id=%s"""
-                cursor.execute(mySql_select_query, (value,))
-                author = cursor.fetchall()
+                _globals.cursor.execute(mySql_select_query, (value,))
+                author = _globals.cursor.fetchall()
                 value = author[0][0]
 
                 self.table.blockSignals(True)
@@ -1106,8 +1023,8 @@ class SearchDatabase(QWidget):
                 self.table.blockSignals(False)
             elif field == 'Publisher':
                 mySql_select_query = """SELECT Name FROM Publishers WHERE Id=%s"""
-                cursor.execute(mySql_select_query, (value,))
-                publisher = cursor.fetchall()
+                _globals.cursor.execute(mySql_select_query, (value,))
+                publisher = _globals.cursor.fetchall()
                 value = publisher[0][0]
 
                 self.table.blockSignals(True)
@@ -1118,8 +1035,8 @@ class SearchDatabase(QWidget):
                 self.table.blockSignals(False)
             elif field == 'Series':
                 mySql_select_query = """SELECT Name FROM Series WHERE Id=%s"""
-                cursor.execute(mySql_select_query, (value,))
-                series = cursor.fetchall()
+                _globals.cursor.execute(mySql_select_query, (value,))
+                series = _globals.cursor.fetchall()
                 value = series[0][0]
 
                 self.table.blockSignals(True)
@@ -1198,13 +1115,13 @@ class SearchDatabase(QWidget):
             filename = file_dialog.getSaveFileName(self, 'Backup database', 'Library.sql')
 
             # Define backup command
-            cmd = 'mysqldump.exe --single-transaction --master-data=2 --host={} --databases Library -u {} -p{} > {}'.format(hostname, user, pwd, filename[0])
+            cmd = 'mysqldump.exe --single-transaction --master-data=2 --host={} --databases Library -u {} -p{} > {}'.format(_globals.hostname, _globals.user, _globals.pwd, filename[0])
         elif os.name == 'posix':
             file_dialog.setDefaultSuffix('.gz')
             filename = file_dialog.getSaveFileName(self, 'Backup database', 'Library.sql.gz')
 
             # Define backup command
-            cmd = 'mysqldump --single-transaction --master-data=2 --host={} Library -u {} -p{} | gzip > {}'.format(hostname, user, pwd, filename[0])
+            cmd = 'mysqldump --single-transaction --master-data=2 --host={} Library -u {} -p{} | gzip > {}'.format(_globals.hostname, _globals.user, _globals.pwd, filename[0])
 
         # Execute the backup command
         try:
@@ -1224,9 +1141,6 @@ class SearchDatabase(QWidget):
             error.setText('Backup failed: {}'.format(e))
             error.setStandardButtons(QMessageBox.Ok)
             error.exec_()
-
-    def exit_program(self):
-        exit(0)
 
 # Form to insert books
 class InsertBookForm(QWidget):
@@ -1382,17 +1296,22 @@ class InsertRecord(QWidget):
         # Create buttons
         insert_button = QPushButton('Insert')
         clear_button = QPushButton('Clear')
-        close_button = QPushButton('Exit')
+        insert_button.setMinimumSize(400, 30)
+        insert_button.setMaximumSize(500, 30)
+        clear_button.setMinimumSize(400, 30)
+        clear_button.setMaximumSize(500, 30)
 
         # Define buttons behavior
         insert_button.clicked.connect(self.insert_record)
         clear_button.clicked.connect(self.clear_text)
-        close_button.clicked.connect(self.exit_program)
 
         # Add buttons to layout
         layout_button.addWidget(insert_button)
         layout_button.addWidget(clear_button)
-        layout_button.addWidget(close_button)
+        layout_button.addWidget(QWidget())
+        layout_button.addWidget(QWidget())
+        layout_button.setAlignment(insert_button, Qt.AlignLeft)
+        layout_button.setAlignment(clear_button, Qt.AlignLeft)
         layout.addLayout(layout_button)
 
         # Set main layout
@@ -1544,8 +1463,8 @@ class InsertRecord(QWidget):
 
             # Get Author Id from Name
             mySql_select_query = """SELECT Id FROM Authors WHERE Name LIKE %s"""
-            cursor.execute(mySql_select_query, ('%'+author+'%',))
-            author_id = cursor.fetchall()
+            _globals.cursor.execute(mySql_select_query, ('%'+author+'%',))
+            author_id = _globals.cursor.fetchall()
             if len(author_id) == 0:
                 # Author cannot be NULL, show error
                 error = QMessageBox()
@@ -1569,8 +1488,8 @@ class InsertRecord(QWidget):
 
                 # Get Author Id from Name using exact match
                 mySql_select_query = """SELECT Id FROM Authors WHERE Name=%s"""
-                cursor.execute(mySql_select_query, (author,))
-                author_id = cursor.fetchall()
+                _globals.cursor.execute(mySql_select_query, (author,))
+                author_id = _globals.cursor.fetchall()
                 if len(author_id) == 0:
                     # Author cannot be NULL, show error
                     error = QMessageBox()
@@ -1587,8 +1506,8 @@ class InsertRecord(QWidget):
             # Get Publisher Id from Name
             if publisher is not None:
                 mySql_select_query = """SELECT Id FROM Publishers WHERE Name LIKE %s"""
-                cursor.execute(mySql_select_query, ('%'+publisher+'%',))
-                publisher_id = cursor.fetchall()
+                _globals.cursor.execute(mySql_select_query, ('%'+publisher+'%',))
+                publisher_id = _globals.cursor.fetchall()
                 if len(publisher_id) == 0:
                     publisher = None
                     # Show warning if string doesn't match any Publisher
@@ -1611,8 +1530,8 @@ class InsertRecord(QWidget):
 
                     # Get Publisher Id from Name using exact match
                     mySql_select_query = """SELECT Id FROM Publishers WHERE Name=%s"""
-                    cursor.execute(mySql_select_query, (publisher,))
-                    publisher_id = cursor.fetchall()
+                    _globals.cursor.execute(mySql_select_query, (publisher,))
+                    publisher_id = _globals.cursor.fetchall()
                     if len(publisher_id) == 0:
                         publisher = None
                         # Show warning if exact match is not found
@@ -1628,8 +1547,8 @@ class InsertRecord(QWidget):
             # Get Series Id from Name
             if series is not None:
                 mySql_select_query = """SELECT Id FROM Series WHERE Name LIKE %s"""
-                cursor.execute(mySql_select_query, ('%'+series+'%',))
-                series_id = cursor.fetchall()
+                _globals.cursor.execute(mySql_select_query, ('%'+series+'%',))
+                series_id = _globals.cursor.fetchall()
                 if len(series_id) == 0:
                     series = None
                     # Show warning if string doesn't match any Series
@@ -1652,8 +1571,8 @@ class InsertRecord(QWidget):
 
                     # Get Series Id from Name using exact match
                     mySql_select_query = """SELECT Id FROM Series WHERE Name=%s"""
-                    cursor.execute(mySql_select_query, (series,))
-                    series_id = cursor.fetchall()
+                    _globals.cursor.execute(mySql_select_query, (series,))
+                    series_id = _globals.cursor.fetchall()
                     if len(series_id) == 0:
                         series = None
                         # Show warning if exact match is not found
@@ -1673,8 +1592,8 @@ class InsertRecord(QWidget):
 
             # Execute the query
             try:
-                cursor.execute(mySql_insert_query, values)
-                connection.commit()
+                _globals.cursor.execute(mySql_insert_query, values)
+                _globals.connection.commit()
 
                 # Show message if insertion succeeded
                 info = QMessageBox()
@@ -1727,8 +1646,8 @@ class InsertRecord(QWidget):
 
             # Execute the query
             try:
-                cursor.execute(mySql_insert_query, values)
-                connection.commit()
+                _globals.cursor.execute(mySql_insert_query, values)
+                _globals.connection.commit()
 
                 # Show message if insertion succeeded
                 info = QMessageBox()
@@ -1766,8 +1685,8 @@ class InsertRecord(QWidget):
 
             # Execute the query
             try:
-                cursor.execute(mySql_insert_query, (name,))
-                connection.commit()
+                _globals.cursor.execute(mySql_insert_query, (name,))
+                _globals.connection.commit()
 
                 # Show message if insertion succeeded
                 info = QMessageBox()
@@ -1808,8 +1727,8 @@ class InsertRecord(QWidget):
             if author != None:
                 # Get Author Id from Name
                 mySql_select_query = """SELECT Id FROM Authors WHERE Name LIKE %s"""
-                cursor.execute(mySql_select_query, ('%'+author+'%',))
-                author_id = cursor.fetchall()
+                _globals.cursor.execute(mySql_select_query, ('%'+author+'%',))
+                author_id = _globals.cursor.fetchall()
                 if len(author_id) == 0:
                     # Author cannot be NULL, show error
                     error = QMessageBox()
@@ -1833,8 +1752,8 @@ class InsertRecord(QWidget):
 
                     # Get Author Id from Name using exact match
                     mySql_select_query = """SELECT Id FROM Authors WHERE Name=%s"""
-                    cursor.execute(mySql_select_query, (author,))
-                    author_id = cursor.fetchall()
+                    _globals.cursor.execute(mySql_select_query, (author,))
+                    author_id = _globals.cursor.fetchall()
                     if len(author_id) == 0:
                         # Author cannot be NULL, show error
                         error = QMessageBox()
@@ -1853,8 +1772,8 @@ class InsertRecord(QWidget):
 
             # Execute the query
             try:
-                cursor.execute(mySql_insert_query, values)
-                connection.commit()
+                _globals.cursor.execute(mySql_insert_query, values)
+                _globals.connection.commit()
 
                 # Show message if insertion succeeded
                 info = QMessageBox()
@@ -1872,10 +1791,6 @@ class InsertRecord(QWidget):
                 error.setStandardButtons(QMessageBox.Ok)
                 error.exec_()
 
-    # Function to exit the program
-    def exit_program(self):
-        exit(0)
-
 # Main window
 class MainWindow(QMainWindow):
 
@@ -1883,11 +1798,11 @@ class MainWindow(QMainWindow):
         super(MainWindow, self).__init__(*args, **kwargs)
 
         # Run the login window
-        login_window = Login()
+        login_window = Login_dialog()
         login_window.exec_()
         
         # Set window title and icon
-        if hostname == 'localhost':
+        if _globals.hostname == 'localhost':
             window_title = 'Library database - Local'
         else:
             window_title = 'Library database - Raspberry Pi'
@@ -1899,19 +1814,39 @@ class MainWindow(QMainWindow):
         elif os.name == 'posix':
             self.setWindowIcon(QIcon('/usr/share/icons/hicolor/32x32/apps/library_manager.png'))
 
+        # Define main layout
+        layout = QVBoxLayout()
+
+        # Define exit button
+        exit_button = QPushButton('Exit')
+        exit_button.setMinimumSize(400, 30)
+        exit_button.setMaximumSize(600, 30)
+        
+        # Define buttons behavior
+        exit_button.clicked.connect(self.close)
+
         # Define main window tabs
         tabs = QTabWidget()
         tabs.addTab(SearchDatabase(), 'Search')
         tabs.addTab(InsertRecord(), 'Insert')
         tabs.setDocumentMode(True)
 
+        layout.addWidget(tabs)
+        layout.addWidget(exit_button)
+        layout.setAlignment(exit_button, Qt.AlignRight)
+
+        widget = QWidget()
+        widget.setLayout(layout)
+
         # Show tabs
-        self.setCentralWidget(tabs)
+        self.setCentralWidget(widget)
 
         # Maximize window size
         self.showMaximized()
 
 def main():
+    _globals.init()
+
     app = QApplication(argv)
 
     window = MainWindow()
@@ -1919,9 +1854,9 @@ def main():
 
     app.exec_()
 
-    if connection.is_connected():
-        cursor.close()
-        connection.close()
+    if _globals.connection.is_connected():
+        _globals.cursor.close()
+        _globals.connection.close()
 
 if __name__ == '__main__':
     main()
