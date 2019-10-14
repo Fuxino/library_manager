@@ -1,1 +1,3 @@
-__pycache__
+library_manager/__pycache__/
+build/
+library_manager.egg-info/
