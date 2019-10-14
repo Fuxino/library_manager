@@ -35,6 +35,7 @@ package()
 {
    cd ${srcdir}/${pkgname}
    install -Dm644 "${srcdir}/${pkgname}/${pkgname}/icons/Icon.png" "${pkgdir}/usr/share/icons/hicolor/32x32/apps/${pkgname}.png"
+   install -Dm644 "${srcdir}/${pkgname}/${pkgname}.desktop" "${pkgdir}/usr/share/applications/${pkgname}.desktop"
 
    python3 setup.py install --root=${pkgdir} --optimize=1 --skip-build
 }
