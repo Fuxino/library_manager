@@ -9,7 +9,8 @@ pkgdesc="Manage Library database"
 arch=("any")
 url="https://github.com/Fuxino/library_manager"
 license=("GPL3")
-makedepends=("git")
+makedepends=("python-setuptools"
+             "git")
 depends=("python3"
          "mariadb"
          "python-mysql-connector"
@@ -24,8 +25,16 @@ pkgver()
    git describe --long --tags | sed 's/\([^-]*-g\)/r\1/;s/-/./g'
 }
 
+build()
+{
+   cd ${srcdir}/${pkgname}
+   python3 setup.py build
+}
+
 package()
 {
-   install -Dm755 "${srcdir}/${pkgname}/${pkgname}.py" "${pkgdir}/usr/bin/${pkgname}"
-   install -Dm644 "${srcdir}/${pkgname}/Icon.png" "${pkgdir}/usr/share/icons/hicolor/32x32/apps/${pkgname}.png"
+   cd ${srcdir}/${pkgname}
+   install -Dm644 "${srcdir}/${pkgname}/${pkgname}/icons/Icon.png" "${pkgdir}/usr/share/icons/hicolor/32x32/apps/${pkgname}.png"
+
+   python3 setup.py install --root=${pkgdir} --optimize=1 --skip-build
 }
