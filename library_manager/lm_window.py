@@ -1,25 +1,16 @@
-#!/usr/bin/python3
+#!/usr/bin/env python3
 
-# Import libraries
 import os
-
-#import sys
-from sys import argv
 
 from PyQt5.QtWidgets import *
 from PyQt5.QtGui import QIcon
 from PyQt5.QtCore import Qt
 
-from mysql.connector import Error
+from library_manager.login import Login_dialog
+from library_manager.query import SearchDatabase
+from library_manager.insert import InsertRecord
 
-from login import Login_dialog
-from query import SearchDatabase
-from insert import InsertRecord
-
-import _globals
-
-if os.name == 'nt':
-    from fbs_runtime.application_context.PyQt5 import ApplicationContext
+import library_manager._globals as _globals
 
 # Main window
 class MainWindow(QMainWindow):
@@ -74,19 +65,3 @@ class MainWindow(QMainWindow):
         # Maximize window size
         self.showMaximized()
 
-def main():
-    _globals.init()
-
-    app = QApplication(argv)
-
-    window = MainWindow()
-    window.show()
-
-    app.exec_()
-
-    if _globals.connection.is_connected():
-        _globals.cursor.close()
-        _globals.connection.close()
-
-if __name__ == '__main__':
-    main()

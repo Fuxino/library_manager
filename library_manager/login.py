@@ -1,4 +1,4 @@
-#!/usr/bin/python3
+#!/usr/bin/env python3
 
 # Import libraries
 import os
@@ -9,7 +9,7 @@ from PyQt5.QtGui import QIcon
 import mysql.connector
 from mysql.connector import Error
 
-import _globals
+import library_manager._globals as _globals
 
 # Login dialog box
 class Login_dialog(QDialog):

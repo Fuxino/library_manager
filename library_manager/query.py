@@ -1,4 +1,4 @@
-#!/usr/bin/python3
+#!/usr/bin/env python3
 
 import os
 
@@ -6,12 +6,11 @@ import subprocess
 from subprocess import CalledProcessError, PIPE
 
 from PyQt5.QtWidgets import *
-from PyQt5.QtGui import QIcon
 from PyQt5.QtCore import Qt
 
 from mysql.connector import Error
 
-import _globals
+import library_manager._globals as _globals
 
 # Form to search books
 class SearchBookForm(QWidget):
