@@ -12,6 +12,13 @@ from mysql.connector import Error
 
 import library_manager._globals as _globals
 
+try:
+    from isbnlib import canonical, is_isbn10, is_isbn13, mask
+
+    isbn_check = True
+except:
+    isbn_check = False
+
 # Form to search books
 class SearchBookForm(QWidget):
 
