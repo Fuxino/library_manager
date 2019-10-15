@@ -1048,6 +1048,12 @@ class SearchDatabase(QWidget):
 
             # Resize columns
             self.table.resizeColumnsToContents()
+            
+            if self.table.columnWidth(2) > 300:
+                self.table.setColumnWidth(2, 300)
+
+            if self.table.columnWidth(4) > 300:
+                self.table.setColumnWidth(4, 300)
 
             info = QMessageBox()
             info.setIcon(QMessageBox.Information)
