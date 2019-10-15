@@ -151,10 +151,10 @@ class InsertRecord(QWidget):
         self.layout_insert = QStackedLayout()
 
         # Create insert form for each table in database
-        self.book_insert = InsertBookForm(self.insert_record)
-        self.author_insert = InsertAuthorForm(self.insert_record)
-        self.publisher_insert = InsertPublisherForm(self.insert_record)
-        self.series_insert = InsertSeriesForm(self.insert_record)
+        self.book_insert = InsertBookForm()
+        self.author_insert = InsertAuthorForm()
+        self.publisher_insert = InsertPublisherForm()
+        self.series_insert = InsertSeriesForm()
 
         # Add search forms to layout
         self.layout_insert.addWidget(self.book_insert)
