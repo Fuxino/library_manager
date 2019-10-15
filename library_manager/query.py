@@ -203,7 +203,7 @@ class SearchDatabase(QWidget):
         pages_header = QTableWidgetItem('Pages')
         owner_header = QTableWidgetItem('Owner')
         type_header = QTableWidgetItem('Type')
-        
+
         self.table.setHorizontalHeaderItem(0, id_header)
         self.table.setHorizontalHeaderItem(1, isbn_header)
         self.table.setHorizontalHeaderItem(2, title_header)
@@ -305,12 +305,12 @@ class SearchDatabase(QWidget):
         # Set main layout
         self.setLayout(layout)
 
-    # Function to clear all query result table and search fields 
+    # Function to clear all query result table and search fields
     def clear(self):
         self.table.blockSignals(True)
 
         self.table.setRowCount(0)
-        
+
         self.book_search.isbn.clear()
         self.book_search.title.clear()
         self.book_search.author.clear()
@@ -359,7 +359,7 @@ class SearchDatabase(QWidget):
             pages_header = QTableWidgetItem('Pages')
             owner_header = QTableWidgetItem('Owner')
             type_header = QTableWidgetItem('Type')
-        
+
             self.table.setHorizontalHeaderItem(0, id_header)
             self.table.setHorizontalHeaderItem(1, isbn_header)
             self.table.setHorizontalHeaderItem(2, title_header)
@@ -388,7 +388,7 @@ class SearchDatabase(QWidget):
             nationality_header = QTableWidgetItem('Nationality')
             birthyear_header = QTableWidgetItem('BirthYear')
             deathyear_header = QTableWidgetItem('DeathYear')
-            
+
             self.table.setHorizontalHeaderItem(0, id_header)
             self.table.setHorizontalHeaderItem(1, name_header)
             self.table.setHorizontalHeaderItem(2, gender_header)
@@ -405,7 +405,7 @@ class SearchDatabase(QWidget):
 
             id_header = QTableWidgetItem('Id')
             name_header = QTableWidgetItem('Name')
-            
+
             self.table.setHorizontalHeaderItem(0, id_header)
             self.table.setHorizontalHeaderItem(1, name_header)
 
@@ -729,7 +729,7 @@ class SearchDatabase(QWidget):
 
             try:
                 # Execute the query
-                _globals.cursor.execute(query) 
+                _globals.cursor.execute(query)
                 results = _globals.cursor.fetchall()
 
                 # Clear the results table
@@ -1088,7 +1088,7 @@ class SearchDatabase(QWidget):
 
             for row in range(self.table.rowCount()):
                 for col in range(self.table.columnCount()):
-                    text = str(self.table.item(row, col).text());
+                    text = str(self.table.item(row, col).text())
                     if text.find(',') != -1:
                         text = '\"' + text + '\"'
                     text = text + ','

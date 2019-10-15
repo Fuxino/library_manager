@@ -21,7 +21,7 @@ class MainWindow(QMainWindow):
         # Run the login window
         login_window = Login_dialog()
         login_window.exec_()
-        
+
         # Set window title and icon
         if _globals.hostname == 'localhost':
             window_title = 'Library database - Local'
@@ -42,7 +42,7 @@ class MainWindow(QMainWindow):
         exit_button = QPushButton('Exit')
         exit_button.setMinimumSize(400, 30)
         exit_button.setMaximumSize(600, 30)
-        
+
         # Define buttons behavior
         exit_button.clicked.connect(self.close)
 
@@ -64,4 +64,3 @@ class MainWindow(QMainWindow):
 
         # Maximize window size
         self.showMaximized()
-

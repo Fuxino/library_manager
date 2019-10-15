@@ -660,4 +660,3 @@ class InsertRecord(QWidget):
                 error.setText(str(e))
                 error.setStandardButtons(QMessageBox.Ok)
                 error.exec_()
-

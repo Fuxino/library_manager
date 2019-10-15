@@ -11,9 +11,6 @@ from library_manager.lm_window import MainWindow
 
 import library_manager._globals as _globals
 
-if os.name == 'nt':
-    from fbs_runtime.application_context.PyQt5 import ApplicationContext
-
 def main():
     _globals.init()
 

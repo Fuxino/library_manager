@@ -69,9 +69,9 @@ class Login_dialog(QDialog):
 
             # Create connection
             _globals.connection = mysql.connector.connect(host=_globals.hostname,
-                                                 database='Library',
-                                                 user=_globals.user,
-                                                 password=_globals.pwd)
+                                                          database='Library',
+                                                          user=_globals.user,
+                                                          password=_globals.pwd)
 
             _globals.cursor = _globals.connection.cursor(prepared=True)
 
@@ -91,4 +91,3 @@ class Login_dialog(QDialog):
     # Function to exit the program
     def exit_program(self):
         exit(0)
-
