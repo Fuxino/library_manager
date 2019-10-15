@@ -3,6 +3,8 @@
 from PyQt5.QtWidgets import *
 from PyQt5.QtCore import Qt
 
+from mysql.connector import Error
+
 import library_manager._globals as _globals
 
 try:
@@ -15,7 +17,7 @@ except:
 # Form to insert books
 class InsertBookForm(QWidget):
 
-    def __init__(self, insert_record, *args, **kwargs):
+    def __init__(self, *args, **kwargs):
         super(InsertBookForm, self).__init__(*args, **kwargs)
 
         # Define layout
@@ -62,7 +64,7 @@ class InsertBookForm(QWidget):
 # Form to insert authors
 class InsertAuthorForm(QWidget):
 
-    def __init__(self, insert_record, *args, **kwargs):
+    def __init__(self, *args, **kwargs):
         super(InsertAuthorForm, self).__init__(*args, **kwargs)
 
         # Define layout
@@ -94,7 +96,7 @@ class InsertAuthorForm(QWidget):
 # Form to insert publishers
 class InsertPublisherForm(QWidget):
 
-    def __init__(self, insert_record, *args, **kwargs):
+    def __init__(self, *args, **kwargs):
         super(InsertPublisherForm, self).__init__(*args, **kwargs)
 
         # Define layout
@@ -110,7 +112,7 @@ class InsertPublisherForm(QWidget):
 # Form to insert series
 class InsertSeriesForm(QWidget):
 
-    def __init__(self, insert_record, *args, **kwargs):
+    def __init__(self, *args, **kwargs):
         super(InsertSeriesForm, self).__init__(*args, **kwargs)
 
         # Define layout
