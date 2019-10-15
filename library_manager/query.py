@@ -901,7 +901,7 @@ class SearchDatabase(QWidget):
                 mySql_select_query = """SELECT Id FROM Publishers WHERE Name LIKE %s"""
                 _globals.cursor.execute(mySql_select_query, ('%'+value+'%',))
                 publisher = _globals.cursor.fetchall()
-                
+
                 if not publisher:
                     error = QMessageBox()
                     error.setIcon(QMessageBox.Critical)
@@ -943,7 +943,7 @@ class SearchDatabase(QWidget):
                 mySql_select_query = """SELECT Id FROM Series WHERE Name LIKE %s"""
                 _globals.cursor.execute(mySql_select_query, ('%'+value+'%',))
                 series = _globals.cursor.fetchall()
-                
+
                 if not series:
                     error = QMessageBox()
                     error.setIcon(QMessageBox.Critical)
