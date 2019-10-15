@@ -1,8 +1,6 @@
 #!/usr/bin/env python3
 
 # Import libraries
-import os
-
 from sys import argv
 
 from PyQt5.QtWidgets import QApplication

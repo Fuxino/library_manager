@@ -5,7 +5,9 @@ import os
 import subprocess
 from subprocess import CalledProcessError, PIPE
 
-from PyQt5.QtWidgets import *
+from PyQt5.QtWidgets import QFileDialog, QWidget, QLineEdit, QComboBox, QPushButton,\
+        QTableWidget, QTableWidgetItem, QMessageBox, QFormLayout,\
+        QHBoxLayout, QVBoxLayout, QStackedLayout
 from PyQt5.QtCore import Qt
 
 from mysql.connector import Error

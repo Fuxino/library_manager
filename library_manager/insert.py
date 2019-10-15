@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 
-from PyQt5.QtWidgets import *
+from PyQt5.QtWidgets import QWidget, QLineEdit, QComboBox, QPushButton, QMessageBox,\
+        QHBoxLayout, QVBoxLayout, QFormLayout, QStackedLayout
 from PyQt5.QtCore import Qt
 
 from mysql.connector import Error
@@ -8,7 +9,7 @@ from mysql.connector import Error
 import library_manager._globals as _globals
 
 try:
-    from isbnlib import canonical, is_isbn10, is_isbn13, mask
+    from isbnlib import canonical, is_isbn10, is_isbn13
 
     isbn_check = True
 except:
@@ -502,7 +503,6 @@ class InsertRecord(QWidget):
                 error.exec_()
 
                 return
-                name = None
             if gender == '':
                 gender = None
             if nationality == '':

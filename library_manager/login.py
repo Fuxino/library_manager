@@ -3,7 +3,8 @@
 # Import libraries
 import os
 
-from PyQt5.QtWidgets import *
+from PyQt5.QtWidgets import QDialog, QDialogButtonBox, QMessageBox, QLabel, QLineEdit,\
+        QComboBox, QVBoxLayout, QFormLayout
 from PyQt5.QtGui import QIcon
 
 import mysql.connector
