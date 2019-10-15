@@ -528,10 +528,10 @@ class SearchDatabase(QWidget):
                             pass
 
                     # If Year and/or Pages is NULL, show empty string
-                    if Year == None:
+                    if Year is None:
                         Year = ''
 
-                    if Pages == None:
+                    if Pages is None:
                         Pages = ''
 
                     # Insert values in table
@@ -621,10 +621,10 @@ class SearchDatabase(QWidget):
                     DeathYear = row[5]
 
                     # If BirthYear and/or DeathYear is NULL, show empty string
-                    if BirthYear == None:
+                    if BirthYear is None:
                         BirthYear = ''
 
-                    if DeathYear == None:
+                    if DeathYear is None:
                         DeathYear = ''
 
                     # Insert values in table
@@ -859,7 +859,7 @@ class SearchDatabase(QWidget):
             mySql_select_query = """SELECT Id FROM Authors WHERE Name LIKE %s"""
             _globals.cursor.execute(mySql_select_query, ('%'+value+'%',))
             author = _globals.cursor.fetchall()
-            if len(author) == 0:
+            if not author:
                 # Author cannot be NULL, show error
                 error = QMessageBox()
                 error.setIcon(QMessageBox.Critical)
@@ -876,7 +876,8 @@ class SearchDatabase(QWidget):
                 self.table.blockSignals(False)
 
                 return
-            elif len(author) == 1:
+
+            if len(author) == 1:
                 value = author[0][0]
             else:
                 # Create error message box
@@ -900,7 +901,8 @@ class SearchDatabase(QWidget):
                 mySql_select_query = """SELECT Id FROM Publishers WHERE Name LIKE %s"""
                 _globals.cursor.execute(mySql_select_query, ('%'+value+'%',))
                 publisher = _globals.cursor.fetchall()
-                if len(publisher) == 0:
+                
+                if not publisher:
                     error = QMessageBox()
                     error.setIcon(QMessageBox.Critical)
                     error.setWindowTitle('Error')
@@ -916,7 +918,8 @@ class SearchDatabase(QWidget):
                     self.table.blockSignals(False)
 
                     return
-                elif len(publisher) == 1:
+
+                if len(publisher) == 1:
                     value = publisher[0][0]
                 else:
                     # Create error message box
@@ -940,7 +943,8 @@ class SearchDatabase(QWidget):
                 mySql_select_query = """SELECT Id FROM Series WHERE Name LIKE %s"""
                 _globals.cursor.execute(mySql_select_query, ('%'+value+'%',))
                 series = _globals.cursor.fetchall()
-                if len(series) == 0:
+                
+                if not series:
                     error = QMessageBox()
                     error.setIcon(QMessageBox.Critical)
                     error.setWindowTitle('Error')
@@ -956,7 +960,8 @@ class SearchDatabase(QWidget):
                     self.table.blockSignals(False)
 
                     return
-                elif len(series) == 1:
+
+                if len(series) == 1:
                     value = series[0][0]
                 else:
                     # Create error message box
@@ -1050,7 +1055,7 @@ class SearchDatabase(QWidget):
 
             # Resize columns
             self.table.resizeColumnsToContents()
-            
+
             if self.table.columnWidth(2) > 300:
                 self.table.setColumnWidth(2, 300)
 

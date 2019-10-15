@@ -338,7 +338,7 @@ class InsertRecord(QWidget):
             mySql_select_query = """SELECT Id FROM Authors WHERE Name LIKE %s"""
             _globals.cursor.execute(mySql_select_query, ('%'+author+'%',))
             author_id = _globals.cursor.fetchall()
-            if len(author_id) == 0:
+            if not author_id:
                 # Author cannot be NULL, show error
                 error = QMessageBox()
                 error.setIcon(QMessageBox.Critical)
@@ -348,7 +348,8 @@ class InsertRecord(QWidget):
                 error.exec_()
 
                 return
-            elif len(author_id) == 1:
+
+            if len(author_id) == 1:
                 author = author_id[0][0]
             else:
                 # Show warning if string matches multiple authors
@@ -363,7 +364,7 @@ class InsertRecord(QWidget):
                 mySql_select_query = """SELECT Id FROM Authors WHERE Name=%s"""
                 _globals.cursor.execute(mySql_select_query, (author,))
                 author_id = _globals.cursor.fetchall()
-                if len(author_id) == 0:
+                if not author_id:
                     # Author cannot be NULL, show error
                     error = QMessageBox()
                     error.setIcon(QMessageBox.Critical)
@@ -373,7 +374,8 @@ class InsertRecord(QWidget):
                     error.exec_()
 
                     return
-                elif len(author_id) == 1:
+
+                if len(author_id) == 1:
                     author = author_id[0][0]
 
             # Get Publisher Id from Name
@@ -381,7 +383,7 @@ class InsertRecord(QWidget):
                 mySql_select_query = """SELECT Id FROM Publishers WHERE Name LIKE %s"""
                 _globals.cursor.execute(mySql_select_query, ('%'+publisher+'%',))
                 publisher_id = _globals.cursor.fetchall()
-                if len(publisher_id) == 0:
+                if not publisher_id:
                     publisher = None
                     # Show warning if string doesn't match any Publisher
                     warning = QMessageBox()
@@ -405,7 +407,7 @@ class InsertRecord(QWidget):
                     mySql_select_query = """SELECT Id FROM Publishers WHERE Name=%s"""
                     _globals.cursor.execute(mySql_select_query, (publisher,))
                     publisher_id = _globals.cursor.fetchall()
-                    if len(publisher_id) == 0:
+                    if not publisher_id:
                         publisher = None
                         # Show warning if exact match is not found
                         warning = QMessageBox()
@@ -422,7 +424,7 @@ class InsertRecord(QWidget):
                 mySql_select_query = """SELECT Id FROM Series WHERE Name LIKE %s"""
                 _globals.cursor.execute(mySql_select_query, ('%'+series+'%',))
                 series_id = _globals.cursor.fetchall()
-                if len(series_id) == 0:
+                if not series_id:
                     series = None
                     # Show warning if string doesn't match any Series
                     warning = QMessageBox()
@@ -446,7 +448,7 @@ class InsertRecord(QWidget):
                     mySql_select_query = """SELECT Id FROM Series WHERE Name=%s"""
                     _globals.cursor.execute(mySql_select_query, (series,))
                     series_id = _globals.cursor.fetchall()
-                    if len(series_id) == 0:
+                    if not series_id:
                         series = None
                         # Show warning if exact match is not found
                         warning = QMessageBox()
@@ -596,12 +598,12 @@ class InsertRecord(QWidget):
             if author == '':
                 author = None
 
-            if author != None:
+            if author is not None:
                 # Get Author Id from Name
                 mySql_select_query = """SELECT Id FROM Authors WHERE Name LIKE %s"""
                 _globals.cursor.execute(mySql_select_query, ('%'+author+'%',))
                 author_id = _globals.cursor.fetchall()
-                if len(author_id) == 0:
+                if not author_id:
                     # Author cannot be NULL, show error
                     error = QMessageBox()
                     error.setIcon(QMessageBox.Critical)
@@ -611,7 +613,8 @@ class InsertRecord(QWidget):
                     error.exec_()
 
                     return
-                elif len(author_id) == 1:
+
+                if len(author_id) == 1:
                     author = author_id[0][0]
                 else:
                     # Show warning if string matches multiple authors
@@ -626,7 +629,8 @@ class InsertRecord(QWidget):
                     mySql_select_query = """SELECT Id FROM Authors WHERE Name=%s"""
                     _globals.cursor.execute(mySql_select_query, (author,))
                     author_id = _globals.cursor.fetchall()
-                    if len(author_id) == 0:
+
+                    if not author_id:
                         # Author cannot be NULL, show error
                         error = QMessageBox()
                         error.setIcon(QMessageBox.Critical)
@@ -636,7 +640,8 @@ class InsertRecord(QWidget):
                         error.exec_()
 
                         return
-                    elif len(author_id) == 1:
+
+                    if len(author_id) == 1:
                         author = author_id[0][0]
 
             mySql_insert_query = """INSERT INTO Series(Name, Author) Values(%s, %s)"""
