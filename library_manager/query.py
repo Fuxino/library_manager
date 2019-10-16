@@ -1147,7 +1147,8 @@ class SearchDatabase(QWidget):
 
         # Execute the backup command
         try:
-            proc_status = subprocess.run(cmd, shell=True, check=True, stdout=PIPE).stdout
+#            proc_status = subprocess.run(cmd, shell=True, check=True, stdout=PIPE).stdout
+            proc_status = subprocess.run(cmd, shell=True, check=True, stdout=PIPE)
             # Show message if backup succeeded
             info = QMessageBox()
             info.setIcon(QMessageBox.Information)
