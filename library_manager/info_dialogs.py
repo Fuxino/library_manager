@@ -2,7 +2,7 @@
 
 """Information, warning and error dialogs"""
 
-from PyQt5.QWidgets import QMessageBox
+from PyQt5.QtWidgets import QMessageBox
 
 class ErrorDialog(QMessageBox):
 
