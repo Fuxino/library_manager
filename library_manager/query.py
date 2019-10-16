@@ -1152,7 +1152,7 @@ class SearchDatabase(QWidget):
             info = QMessageBox()
             info.setIcon(QMessageBox.Information)
             info.setWindowTitle('Success')
-            info.setText('Backup completed successfully')
+            info.setText(f'Backup completed successfully. Return code: {proc_status.returncode}')
             info.setStandardButtons(QMessageBox.Ok)
             info.exec_()
         except CalledProcessError as e:
