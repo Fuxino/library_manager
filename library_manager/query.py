@@ -1,5 +1,16 @@
 #!/usr/bin/env python3
 
+"""Module for querying the database
+
+This module creates the layout that allows to query
+the Library database and show the results.
+It implements the functions for the database queries,
+and allows to save the search results and backup the
+whole database.
+It also implements the function to update existing
+records in the database.
+"""
+
 import os
 
 import subprocess

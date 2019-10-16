@@ -1,5 +1,11 @@
 #!/usr/bin/env python3
 
+"""Login module
+
+This module creates a login dialog box that take username, password
+and hostname and allows to connect to the Library database
+"""
+
 # Import libraries
 import os
 

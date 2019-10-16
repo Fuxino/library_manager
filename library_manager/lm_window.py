@@ -1,5 +1,7 @@
 #!/usr/bin/env python3
 
+"""Create the main window"""
+
 import os
 
 from PyQt5.QtWidgets import QMainWindow, QWidget, QPushButton, QTabWidget, QVBoxLayout

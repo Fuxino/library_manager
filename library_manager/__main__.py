@@ -1,5 +1,7 @@
 #!/usr/bin/env python3
 
+"""Main module"""
+
 # Import libraries
 from sys import argv
 
@@ -10,6 +12,7 @@ from library_manager.lm_window import MainWindow
 import library_manager._globals as _globals
 
 def main():
+    """Main"""
     app = QApplication(argv)
 
     window = MainWindow()

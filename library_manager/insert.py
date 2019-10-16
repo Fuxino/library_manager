@@ -1,5 +1,11 @@
 #!/usr/bin/env python3
 
+"""Module for inserting records in the database
+
+This module creates the layout and the functions that allow
+to insert new records in the database.
+"""
+
 from PyQt5.QtWidgets import QWidget, QLineEdit, QComboBox, QPushButton, QMessageBox,\
         QHBoxLayout, QVBoxLayout, QFormLayout, QStackedLayout
 from PyQt5.QtCore import Qt
