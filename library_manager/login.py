@@ -54,7 +54,6 @@ class Login_dialog(QDialog):
         # Define button behavior
         buttonBox = QDialogButtonBox(QBtn)
         buttonBox.accepted.connect(self.db_connect)
-#        buttonBox.rejected.connect(self.exit_program)
         buttonBox.rejected.connect(partial(exit, 0))
 
         # Add login form and button to main layout
@@ -91,7 +90,3 @@ class Login_dialog(QDialog):
             error.setText(str(e))
             error.setStandardButtons(QMessageBox.Ok)
             error.exec_()
-
-    # Function to exit the program
-#    def exit_program(self):
-#        exit(0)
