@@ -4,7 +4,7 @@
 
 from PyQt5.QWidgets import QMessageBox
 
-class ErrorDialog(QMessageBox)
+class ErrorDialog(QMessageBox):
 
     def __init__(self, error, *args, **kwargs):
         super(ErrorDialog, self).__init__(*args, **kwargs)
