@@ -11,7 +11,7 @@ import os
 
 from functools import partial
 
-from PyQt5.QtWidgets import QDialog, QDialogButtonBox, QMessageBox, QLabel, QLineEdit,\
+from PyQt5.QtWidgets import QDialog, QDialogButtonBox, QLabel, QLineEdit,\
         QComboBox, QVBoxLayout, QFormLayout
 from PyQt5.QtGui import QIcon
 

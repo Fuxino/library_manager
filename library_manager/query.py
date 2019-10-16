@@ -16,8 +16,8 @@ import os
 import subprocess
 from subprocess import CalledProcessError, PIPE
 
-from PyQt5.QtWidgets import QFileDialog, QWidget, QLineEdit, QComboBox, QPushButton,\
-        QTableWidget, QTableWidgetItem, QMessageBox, QFormLayout,\
+from PyQt5.QtWidgets import QFileDialog, QWidget, QLineEdit, QComboBox,\
+        QPushButton, QTableWidget, QTableWidgetItem, QFormLayout,\
         QHBoxLayout, QVBoxLayout, QStackedLayout
 from PyQt5.QtCore import Qt
 
@@ -1093,7 +1093,8 @@ class SearchDatabase(QWidget):
         try:
             proc_status = subprocess.run(cmd, shell=True, check=True, stdout=PIPE)
             # Show message if backup succeeded
-            info = InfoDialog(f'Backup completed successfully (return code: {proc_status.returncode})')
+            info = InfoDialog('Backup completed successfully ' +\
+                    f'(return code: {proc_status.returncode})')
             info.show()
         except CalledProcessError as e:
             # Create error message box

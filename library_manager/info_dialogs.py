@@ -13,7 +13,7 @@ class ErrorDialog(QMessageBox):
         self.setWindowTitle('Error')
         self.setText(error)
         self.setStandardButtons(QMessageBox.Ok)
-        
+
     def show(self):
         self.exec_()
 

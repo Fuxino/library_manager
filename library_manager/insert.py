@@ -6,7 +6,7 @@ This module creates the layout and the functions that allow
 to insert new records in the database.
 """
 
-from PyQt5.QtWidgets import QWidget, QLineEdit, QComboBox, QPushButton, QMessageBox,\
+from PyQt5.QtWidgets import QWidget, QLineEdit, QComboBox, QPushButton,\
         QHBoxLayout, QVBoxLayout, QFormLayout, QStackedLayout
 from PyQt5.QtCore import Qt
 
@@ -541,7 +541,8 @@ class InsertRecord(QWidget):
 
                     if not author_id:
                         # Author cannot be NULL, show error
-                        error = ErrorDialog('No exact match found in table Authors. Operation failed')
+                        error = ErrorDialog('No exact match found in table Authors. ' +\
+                                'Operation failed')
                         error.show()
 
                         return
