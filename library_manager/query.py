@@ -574,12 +574,14 @@ class SearchDatabase(QWidget):
                     self.table.setColumnWidth(4, 300)
             except Error as e:
                 # Create error message box
-                error = QMessageBox()
-                error.setIcon(QMessageBox.Critical)
-                error.setWindowTitle('Error')
-                error.setText(str(e))
-                error.setStandardButtons(QMessageBox.Ok)
-                error.exec_()
+                error = ErrorDialog(str(e))
+                error.show()
+#                error = QMessageBox()
+#                error.setIcon(QMessageBox.Critical)
+#                error.setWindowTitle('Error')
+#                error.setText(str(e))
+#                error.setStandardButtons(QMessageBox.Ok)
+#                error.exec_()
 
                 self.table.blockSignals(False)
 
@@ -653,12 +655,14 @@ class SearchDatabase(QWidget):
                 self.table.resizeColumnsToContents()
             except Error as e:
                 # Create error message box
-                error = QMessageBox()
-                error.setIcon(QMessageBox.Critical)
-                error.setWindowTitle('Error')
-                error.setText(str(e))
-                error.setStandardButtons(QMessageBox.Ok)
-                error.exec_()
+                error = ErrorDialog(str(e))
+                error.show()
+#                error = QMessageBox()
+#                error.setIcon(QMessageBox.Critical)
+#                error.setWindowTitle('Error')
+#                error.setText(str(e))
+#                error.setStandardButtons(QMessageBox.Ok)
+#                error.exec_()
 
                 self.table.blockSignals(False)
 
@@ -705,12 +709,14 @@ class SearchDatabase(QWidget):
                 self.table.resizeColumnsToContents()
             except Error as e:
                 # Create error message box
-                error = QMessageBox()
-                error.setIcon(QMessageBox.Critical)
-                error.setWindowTitle('Error')
-                error.setText(str(e))
-                error.setStandardButtons(QMessageBox.Ok)
-                error.exec_()
+                error = ErrorDialog(str(e))
+                error.show()
+#                error = QMessageBox()
+#                error.setIcon(QMessageBox.Critical)
+#                error.setWindowTitle('Error')
+#                error.setText(str(e))
+#                error.setStandardButtons(QMessageBox.Ok)
+#                error.exec_()
 
                 self.table.blockSignals(False)
 
@@ -766,12 +772,14 @@ class SearchDatabase(QWidget):
                 self.table.resizeColumnsToContents()
             except Error as e:
                 # Create error message box
-                error = QMessageBox()
-                error.setIcon(QMessageBox.Critical)
-                error.setWindowTitle('Error')
-                error.setText(str(e))
-                error.setStandardButtons(QMessageBox.Ok)
-                error.exec_()
+                error = ErrorDialog(str(e))
+                error.show()
+#                error = QMessageBox()
+#                error.setIcon(QMessageBox.Critical)
+#                error.setWindowTitle('Error')
+#                error.setText(str(e))
+#                error.setStandardButtons(QMessageBox.Ok)
+#                error.exec_()
 
                 self.table.blockSignals(False)
 
@@ -796,12 +804,14 @@ class SearchDatabase(QWidget):
                 if len(value) == 10:
                     if not is_isbn10(value):
                         # Show an error if the ISBN is invalid
-                        error = QMessageBox()
-                        error.setIcon(QMessageBox.Critical)
-                        error.setWindowTitle('Error')
-                        error.setText('The ISBN inserted is invalid. Operation failed.')
-                        error.setStandardButtons(QMessageBox.Ok)
-                        error.exec_()
+                        error = ErrorDialog('The ISBN inserted is invalid. Operation failed.')
+                        error.show()
+#                        error = QMessageBox()
+#                        error.setIcon(QMessageBox.Critical)
+#                        error.setWindowTitle('Error')
+#                        error.setText('The ISBN inserted is invalid. Operation failed.')
+#                        error.setStandardButtons(QMessageBox.Ok)
+#                        error.exec_()
 
                         self.table.blockSignals(True)
 
@@ -815,12 +825,14 @@ class SearchDatabase(QWidget):
                 elif len(value) == 13:
                     if not is_isbn13(value):
                         # Show an error if the ISBN is invalid
-                        error = QMessageBox()
-                        error.setIcon(QMessageBox.Critical)
-                        error.setWindowTitle('Error')
-                        error.setText('The ISBN inserted is invalid. Operation failed.')
-                        error.setStandardButtons(QMessageBox.Ok)
-                        error.exec_()
+                        error = ErrorDialog('The ISBN inserted is invalid. Operation failed.')
+                        error.show()
+#                        error = QMessageBox()
+#                        error.setIcon(QMessageBox.Critical)
+#                        error.setWindowTitle('Error')
+#                        error.setText('The ISBN inserted is invalid. Operation failed.')
+#                        error.setStandardButtons(QMessageBox.Ok)
+#                        error.exec_()
 
                         self.table.blockSignals(True)
 
@@ -833,12 +845,14 @@ class SearchDatabase(QWidget):
                         return
                 else:
                     # Show an error if the ISBN is invalid
-                    error = QMessageBox()
-                    error.setIcon(QMessageBox.Critical)
-                    error.setWindowTitle('Error')
-                    error.setText('The ISBN inserted is invalid. Operation failed.')
-                    error.setStandardButtons(QMessageBox.Ok)
-                    error.exec_()
+                    error = ErrorDialog('The ISBN inserted is invalid. Operation failed.')
+                    error.show()
+#                    error = QMessageBox()
+#                    error.setIcon(QMessageBox.Critical)
+#                    error.setWindowTitle('Error')
+#                    error.setText('The ISBN inserted is invalid. Operation failed.')
+#                    error.setStandardButtons(QMessageBox.Ok)
+#                    error.exec_()
 
                     self.table.blockSignals(True)
 
@@ -852,12 +866,14 @@ class SearchDatabase(QWidget):
         elif field == 'Author':
             if value == '':
                 # Author cannot be NULL, show error
-                error = QMessageBox()
-                error.setIcon(QMessageBox.Critical)
-                error.setWindowTitle('Error')
-                error.setText('Author cannot be NULL. Operation failed')
-                error.setStandardButtons(QMessageBox.Ok)
-                error.exec_()
+                error = ErrorDialog('Author cannot be NULL. Operation failed')
+                error.show()
+#                error = QMessageBox()
+#                error.setIcon(QMessageBox.Critical)
+#                error.setWindowTitle('Error')
+#                error.setText('Author cannot be NULL. Operation failed')
+#                error.setStandardButtons(QMessageBox.Ok)
+#                error.exec_()
 
                 self.table.blockSignals(True)
 
@@ -873,12 +889,14 @@ class SearchDatabase(QWidget):
             author = _globals.cursor.fetchall()
             if not author:
                 # Author cannot be NULL, show error
-                error = QMessageBox()
-                error.setIcon(QMessageBox.Critical)
-                error.setWindowTitle('Error')
-                error.setText('Author not found in Authors table. Operation failed')
-                error.setStandardButtons(QMessageBox.Ok)
-                error.exec_()
+                error = ErrorDialog('Author not found in Authors table. Operation failed')
+                error.show()
+#                error = QMessageBox()
+#                error.setIcon(QMessageBox.Critical)
+#                error.setWindowTitle('Error')
+#                error.setText('Author not found in Authors table. Operation failed')
+#                error.setStandardButtons(QMessageBox.Ok)
+#                error.exec_()
 
                 self.table.blockSignals(True)
 
@@ -893,12 +911,14 @@ class SearchDatabase(QWidget):
                 value = author[0][0]
             else:
                 # Create error message box
-                error = QMessageBox()
-                error.setIcon(QMessageBox.Critical)
-                error.setWindowTitle('Error')
-                error.setText('Multiple authors match name string. Operation failed')
-                error.setStandardButtons(QMessageBox.Ok)
-                error.exec_()
+                error = ErrorDialog('Multiple authors match name string. Operation failed')
+                error.show()
+#                error = QMessageBox()
+#                error.setIcon(QMessageBox.Critical)
+#                error.setWindowTitle('Error')
+#                error.setText('Multiple authors match name string. Operation failed')
+#                error.setStandardButtons(QMessageBox.Ok)
+#                error.exec_()
 
                 self.table.blockSignals(True)
 
@@ -915,12 +935,14 @@ class SearchDatabase(QWidget):
                 publisher = _globals.cursor.fetchall()
 
                 if not publisher:
-                    error = QMessageBox()
-                    error.setIcon(QMessageBox.Critical)
-                    error.setWindowTitle('Error')
-                    error.setText('No publisher matches name string. Operation failed')
-                    error.setStandardButtons(QMessageBox.Ok)
-                    error.exec_()
+                    error = ErrorDialog('No publisher matches name string. Operation failed')
+                    error.show()
+#                    error = QMessageBox()
+#                    error.setIcon(QMessageBox.Critical)
+#                    error.setWindowTitle('Error')
+#                    error.setText('No publisher matches name string. Operation failed')
+#                    error.setStandardButtons(QMessageBox.Ok)
+#                    error.exec_()
 
                     self.table.blockSignals(True)
 
@@ -936,12 +958,14 @@ class SearchDatabase(QWidget):
                     value = publisher[0][0]
                 else:
                     # Create error message box
-                    error = QMessageBox()
-                    error.setIcon(QMessageBox.Critical)
-                    error.setWindowTitle('Error')
-                    error.setText('Multiple publishers match name string. Operation failed')
-                    error.setStandardButtons(QMessageBox.Ok)
-                    error.exec_()
+                    error = ErrorDialog('Multiple publishers match name string. Operation failed')
+                    error.show()
+#                    error = QMessageBox()
+#                    error.setIcon(QMessageBox.Critical)
+#                    error.setWindowTitle('Error')
+#                    error.setText('Multiple publishers match name string. Operation failed')
+#                    error.setStandardButtons(QMessageBox.Ok)
+#                    error.exec_()
 
                     self.table.blockSignals(True)
 
@@ -959,12 +983,14 @@ class SearchDatabase(QWidget):
                 series = _globals.cursor.fetchall()
 
                 if not series:
-                    error = QMessageBox()
-                    error.setIcon(QMessageBox.Critical)
-                    error.setWindowTitle('Error')
-                    error.setText('No series matches name string. Operation failed')
-                    error.setStandardButtons(QMessageBox.Ok)
-                    error.exec_()
+                    error = ErrorDialog('No series matches name string. Operation failed')
+                    error.show()
+#                    error = QMessageBox()
+#                    error.setIcon(QMessageBox.Critical)
+#                    error.setWindowTitle('Error')
+#                    error.setText('No series matches name string. Operation failed')
+#                    error.setStandardButtons(QMessageBox.Ok)
+#                    error.exec_()
 
                     self.table.blockSignals(True)
 
@@ -980,12 +1006,14 @@ class SearchDatabase(QWidget):
                     value = series[0][0]
                 else:
                     # Create error message box
-                    error = QMessageBox()
-                    error.setIcon(QMessageBox.Critical)
-                    error.setWindowTitle('Error')
-                    error.setText('Multiple series match name string. Operation failed')
-                    error.setStandardButtons(QMessageBox.Ok)
-                    error.exec_()
+                    error = ErrorDialog('Multiple series match name string. Operation failed.')
+                    error.show()
+#                    error = QMessageBox()
+#                    error.setIcon(QMessageBox.Critical)
+#                    error.setWindowTitle('Error')
+#                    error.setText('Multiple series match name string. Operation failed')
+#                    error.setStandardButtons(QMessageBox.Ok)
+#                    error.exec_()
 
                     self.table.blockSignals(True)
 
@@ -1086,12 +1114,14 @@ class SearchDatabase(QWidget):
             info.exec_()
         except Error as e:
             # Create error message box
-            error = QMessageBox()
-            error.setIcon(QMessageBox.Critical)
-            error.setWindowTitle('Error')
-            error.setText(str(e))
-            error.setStandardButtons(QMessageBox.Ok)
-            error.exec_()
+            error = ErrorDialog(str(e))
+            error.show()
+#            error = QMessageBox()
+#            error.setIcon(QMessageBox.Critical)
+#            error.setWindowTitle('Error')
+#            error.setText(str(e))
+#            error.setStandardButtons(QMessageBox.Ok)
+#            error.exec_()
 
             self.table.blockSignals(True)
 
@@ -1127,12 +1157,14 @@ class SearchDatabase(QWidget):
             file_p.close()
         except PermissionError as e:
             # Create error message box
-            error = QMessageBox()
-            error.setIcon(QMessageBox.Critical)
-            error.setWindowTitle('Error')
-            error.setText(e.strerror)
-            error.setStandardButtons(QMessageBox.Ok)
-            error.exec_()
+            error = ErrorDialog(str(e))
+            error.show()
+#            error = QMessageBox()
+#            error.setIcon(QMessageBox.Critical)
+#            error.setWindowTitle('Error')
+#            error.setText(e.strerror)
+#            error.setStandardButtons(QMessageBox.Ok)
+#            error.exec_()
         except FileNotFoundError:
             pass
 
@@ -1168,9 +1200,11 @@ class SearchDatabase(QWidget):
             info.exec_()
         except CalledProcessError as e:
             # Create error message box
-            error = QMessageBox()
-            error.setIcon(QMessageBox.Critical)
-            error.setWindowTitle('Error')
-            error.setText(f'Backup failed: {e}')
-            error.setStandardButtons(QMessageBox.Ok)
-            error.exec_()
+            error = ErrorDialog(str(e))
+            error.show()
+#            error = QMessageBox()
+#            error.setIcon(QMessageBox.Critical)
+#            error.setWindowTitle('Error')
+#            error.setText(f'Backup failed: {e}')
+#            error.setStandardButtons(QMessageBox.Ok)
+#            error.exec_()
