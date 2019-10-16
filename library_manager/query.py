@@ -988,24 +988,24 @@ class SearchDatabase(QWidget):
 
         if self.layout_search.currentIndex() == 0:
             if value != '':
-                query = 'UPDATE Books SET {}="{}" WHERE Id={}'.format(field, value, id_n)
+                query = f'UPDATE Books SET {field}="{value}" WHERE Id={id_n}'
             else:
-                query = 'UPDATE Books SET {}=NULL WHERE Id={}'.format(field, id_n)
+                query = f'UPDATE Books SET {field}=NULL WHERE Id={id_n}'
         elif self.layout_search.currentIndex() == 1:
             if value != '':
-                query = 'UPDATE Authors SET {}="{}" WHERE Id={}'.format(field, value, id_n)
+                query = f'UPDATE Authors SET {field}="{value}" WHERE Id={id_n}'
             else:
-                query = 'UPDATE Authors SET {}=NULL WHERE Id={}'.format(field, id_n)
+                query = f'UPDATE Authors SET {field}=NULL WHERE Id={id_n}'
         elif self.layout_search.currentIndex() == 2:
             if value != '':
-                query = 'UPDATE Publishers SET {}="{}" WHERE Id={}'.format(field, value, id_n)
+                query = f'UPDATE Publishers SET {field}="{value}" WHERE Id={id_n}'
             else:
-                query = 'UPDATE Publishers SET {}=NULL WHERE Id={}'.format(field, id_n)
+                query = f'UPDATE Publishers SET {field}=NULL WHERE Id={id_n}'
         else:
             if value != '':
-                query = 'UPDATE Series SET {}="{}" WHERE Id={}'.format(field, value, id_n)
+                query = f'UPDATE Series SET {field}="{value}" WHERE Id={id_n}'
             else:
-                query = 'UPDATE Series SET {}=NULL WHERE Id={}'.format(field, id_n)
+                query = f'UPDATE Series SET {field}=NULL WHERE Id={id_n}'
 
         try:
             _globals.cursor.execute(query)
@@ -1160,6 +1160,6 @@ class SearchDatabase(QWidget):
             error = QMessageBox()
             error.setIcon(QMessageBox.Critical)
             error.setWindowTitle('Error')
-            error.setText('Backup failed: {}'.format(e))
+            error.setText(f'Backup failed: {e}')
             error.setStandardButtons(QMessageBox.Ok)
             error.exec_()
