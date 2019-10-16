@@ -463,7 +463,8 @@ class SearchDatabase(QWidget):
             if title != '':
                 query = query + 'Title LIKE \'%' + title + '%\' AND '
             if author_n != '':
-                query = query + '(Authors.Name LIKE \'%' + author_n + '%\' OR OtherAuthors LIKE \'%' + author_n + '%\') AND '
+                query = query + '(Authors.Name LIKE \'%' + author_n +\
+                        '%\' OR OtherAuthors LIKE \'%' + author_n + '%\') AND '
             if author_g != '':
                 if author_g == 'Other':
                     query = query + 'Authors.Gender!=\'M\' AND Authors.Gender!=\'F\' AND '
@@ -797,7 +798,8 @@ class SearchDatabase(QWidget):
                         self.table.blockSignals(True)
 
                         self.table.removeCellWidget(record_index, field_index)
-                        self.table.setItem(record_index, field_index, QTableWidgetItem(self.current_item))
+                        self.table.setItem(record_index, field_index,\
+                                QTableWidgetItem(self.current_item))
 
                         self.table.blockSignals(False)
 
@@ -815,7 +817,8 @@ class SearchDatabase(QWidget):
                         self.table.blockSignals(True)
 
                         self.table.removeCellWidget(record_index, field_index)
-                        self.table.setItem(record_index, field_index, QTableWidgetItem(self.current_item))
+                        self.table.setItem(record_index, field_index,\
+                                QTableWidgetItem(self.current_item))
 
                         self.table.blockSignals(False)
 
@@ -832,7 +835,8 @@ class SearchDatabase(QWidget):
                     self.table.blockSignals(True)
 
                     self.table.removeCellWidget(record_index, field_index)
-                    self.table.setItem(record_index, field_index, QTableWidgetItem(self.current_item))
+                    self.table.setItem(record_index, field_index,\
+                            QTableWidgetItem(self.current_item))
 
                     self.table.blockSignals(False)
 
@@ -913,7 +917,8 @@ class SearchDatabase(QWidget):
                     self.table.blockSignals(True)
 
                     self.table.removeCellWidget(record_index, field_index)
-                    self.table.setItem(record_index, field_index, QTableWidgetItem(self.current_item))
+                    self.table.setItem(record_index, field_index,\
+                            QTableWidgetItem(self.current_item))
 
                     self.table.blockSignals(False)
 
@@ -933,7 +938,8 @@ class SearchDatabase(QWidget):
                     self.table.blockSignals(True)
 
                     self.table.removeCellWidget(record_index, field_index)
-                    self.table.setItem(record_index, field_index, QTableWidgetItem(self.current_item))
+                    self.table.setItem(record_index, field_index,\
+                            QTableWidgetItem(self.current_item))
 
                     self.table.blockSignals(False)
 
@@ -955,7 +961,8 @@ class SearchDatabase(QWidget):
                     self.table.blockSignals(True)
 
                     self.table.removeCellWidget(record_index, field_index)
-                    self.table.setItem(record_index, field_index, QTableWidgetItem(self.current_item))
+                    self.table.setItem(record_index, field_index,\
+                            QTableWidgetItem(self.current_item))
 
                     self.table.blockSignals(False)
 
@@ -975,7 +982,8 @@ class SearchDatabase(QWidget):
                     self.table.blockSignals(True)
 
                     self.table.removeCellWidget(record_index, field_index)
-                    self.table.setItem(record_index, field_index, QTableWidgetItem(self.current_item))
+                    self.table.setItem(record_index, field_index,\
+                            QTableWidgetItem(self.current_item))
 
                     self.table.blockSignals(False)
 
@@ -1128,13 +1136,17 @@ class SearchDatabase(QWidget):
             filename = file_dialog.getSaveFileName(self, 'Backup database', 'Library.sql')
 
             # Define backup command
-            cmd = 'mysqldump.exe --single-transaction --master-data=2 --host={} --databases Library -u {} -p{} > {}'.format(_globals.hostname, _globals.user, _globals.pwd, filename[0])
+            cmd = 'mysqldump.exe --single-transaction --master-data=2 ' +\
+                    f'--host={_globals.hostname} --databases Library -u {_globals.user} ' +\
+                    f'-p{_globals.pwd} > {filename[0]}'
         elif os.name == 'posix':
             file_dialog.setDefaultSuffix('.gz')
             filename = file_dialog.getSaveFileName(self, 'Backup database', 'Library.sql.gz')
 
             # Define backup command
-            cmd = 'mysqldump --single-transaction --master-data=2 --host={} Library -u {} -p{} | gzip > {}'.format(_globals.hostname, _globals.user, _globals.pwd, filename[0])
+            cmd = 'mysqldump --single-transaction --master-data=2 ' +\
+                    f'--host={_globals.hostname} --databases Library -u {_globals.user} ' +\
+                    f'-p{_globals.pwd} | gzip > {filename[0]}'
 
         # Execute the backup command
         try:

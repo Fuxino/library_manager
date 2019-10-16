@@ -460,10 +460,12 @@ class InsertRecord(QWidget):
                     elif len(series_id) == 1:
                         series = series_id[0][0]
 
-            mySql_insert_query = """INSERT INTO Books(ISBN, Title, Author, OtherAuthors, Publisher, Series, Subseries,
-                                                      Category, Language, Year, Pages, Owner,  Type)
-                                    Values(%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)"""
-            values = (isbn, title, author, otherauthors, publisher, series, subseries, category, language, year, pages, owner, booktype)
+            mySql_insert_query = """INSERT INTO Books(ISBN, Title, Author, OtherAuthors,
+            Publisher, Series, Subseries, Category, Language, Year, Pages, Owner, Type)
+            Values(%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)"""
+
+            values = (isbn, title, author, otherauthors, publisher, series, subseries,\
+                    category, language, year, pages, owner, booktype)
 
             # Execute the query
             try:
@@ -514,8 +516,8 @@ class InsertRecord(QWidget):
             if deathyear == '':
                 deathyear = None
 
-            mySql_insert_query = """INSERT INTO Authors(Name, Gender, Nationality, BirthYear, DeathYear)
-                                    Values(%s, %s, %s, %s, %s)"""
+            mySql_insert_query = """INSERT INTO Authors(Name, Gender, Nationality,
+            BirthYear, DeathYear) Values(%s, %s, %s, %s, %s)"""
             values = (name, gender, nationality, birthyear, deathyear)
 
             # Execute the query
