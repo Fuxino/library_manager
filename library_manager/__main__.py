@@ -10,8 +10,6 @@ from library_manager.lm_window import MainWindow
 import library_manager._globals as _globals
 
 def main():
-    _globals.init()
-
     app = QApplication(argv)
 
     window = MainWindow()
