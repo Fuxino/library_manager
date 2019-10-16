@@ -3,6 +3,8 @@
 # Import libraries
 import os
 
+from functools import partial
+
 from PyQt5.QtWidgets import QDialog, QDialogButtonBox, QMessageBox, QLabel, QLineEdit,\
         QComboBox, QVBoxLayout, QFormLayout
 from PyQt5.QtGui import QIcon
@@ -52,7 +54,8 @@ class Login_dialog(QDialog):
         # Define button behavior
         buttonBox = QDialogButtonBox(QBtn)
         buttonBox.accepted.connect(self.db_connect)
-        buttonBox.rejected.connect(self.exit_program)
+#        buttonBox.rejected.connect(self.exit_program)
+        buttonBox.rejected.connect(partial(exit, 0))
 
         # Add login form and button to main layout
         layout.addLayout(layout_login)
@@ -90,5 +93,5 @@ class Login_dialog(QDialog):
             error.exec_()
 
     # Function to exit the program
-    def exit_program(self):
-        exit(0)
+#    def exit_program(self):
+#        exit(0)
