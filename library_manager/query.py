@@ -18,7 +18,7 @@ try:
     from isbnlib import canonical, is_isbn10, is_isbn13, mask
 
     isbn_check = True
-except:
+except ImportError:
     isbn_check = False
 
 # Form to search books
@@ -522,11 +522,8 @@ class SearchDatabase(QWidget):
                     Type = row[13]
 
                     # Hyphenate ISBN
-                    if ISBN is not None:
-                        try:
-                            ISBN = mask(ISBN, '-')
-                        except:
-                            pass
+                    if ISBN is not None and isbn_check:
+                        ISBN = mask(ISBN, '-')
 
                     # If Year and/or Pages is NULL, show empty string
                     if Year is None:
@@ -1150,7 +1147,7 @@ class SearchDatabase(QWidget):
 
         # Execute the backup command
         try:
-            subprocess.run(cmd, shell=True, check=True, stdout=PIPE).stdout
+            proc_status = subprocess.run(cmd, shell=True, check=True, stdout=PIPE).stdout
             # Show message if backup succeeded
             info = QMessageBox()
             info.setIcon(QMessageBox.Information)

@@ -12,7 +12,7 @@ try:
     from isbnlib import canonical, is_isbn10, is_isbn13
 
     isbn_check = True
-except:
+except ImportError:
     isbn_check = False
 
 # Form to insert books
