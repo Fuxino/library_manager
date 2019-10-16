@@ -16,3 +16,29 @@ class ErrorDialog(QMessageBox):
         
     def show(self):
         self.exec_()
+
+class WarningDialog(QMessageBox):
+
+    def __init__(self, warning, *args, **kwargs):
+        super(WarningDialog, self).__init__(*args, **kwargs)
+
+        self.setIcon(QMessageBox.Warning)
+        self.setWindowTitle('Warning')
+        self.setText(warning)
+        self.setStandardButtons(QMessageBox.Ok)
+
+    def show(self):
+        self.exec_()
+
+class InfoDialog(QMessageBox):
+
+    def __init__(self, info, *args, **kwargs):
+        super(InfoDialog, self).__init__(*args, **kwargs)
+
+        self.setIcon(QMessageBox.Information)
+        self.setWindowTitle('Success')
+        self.setText(info)
+        self.setStandardButtons(QMessageBox.Ok)
+
+    def show(self):
+        self.exec_()

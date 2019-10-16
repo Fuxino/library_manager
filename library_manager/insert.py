@@ -13,6 +13,7 @@ from PyQt5.QtCore import Qt
 from mysql.connector import Error
 
 import library_manager._globals as _globals
+from library_manager.info_dialogs import ErrorDialog, WarningDialog, InfoDialog
 
 try:
     from isbnlib import canonical, is_isbn10, is_isbn13
@@ -270,53 +271,33 @@ class InsertRecord(QWidget):
                     if len(isbn) == 10:
                         if not is_isbn10(isbn):
                             # Show an error if the ISBN is invalid
-                            error = QMessageBox()
-                            error.setIcon(QMessageBox.Critical)
-                            error.setWindowTitle('Error')
-                            error.setText('The ISBN inserted is invalid. Operation failed.')
-                            error.setStandardButtons(QMessageBox.Ok)
-                            error.exec_()
+                            error = ErrorDialog('The ISBN inserted is invalid. Operation failed.')
+                            error.show()
 
                             return
                     elif len(isbn) == 13:
                         if not is_isbn13(isbn):
                             # Show an error if the ISBN is invalid
-                            error = QMessageBox()
-                            error.setIcon(QMessageBox.Critical)
-                            error.setWindowTitle('Error')
-                            error.setText('The ISBN inserted is invalid. Operation failed.')
-                            error.setStandardButtons(QMessageBox.Ok)
-                            error.exec_()
+                            error = ErrorDialog('The ISBN inserted is invalid. Operation failed.')
+                            error.show()
 
                             return
                     else:
                         # Show an error if the ISBN is invalid
-                        error = QMessageBox()
-                        error.setIcon(QMessageBox.Critical)
-                        error.setWindowTitle('Error')
-                        error.setText('The ISBN inserted is invalid. Operation failed.')
-                        error.setStandardButtons(QMessageBox.Ok)
-                        error.exec_()
+                        error = ErrorDialog('The ISBN inserted is invalid. Operation failed.')
+                        error.show()
 
                         return
             if title == '':
                 # Title cannot be NULL, show error
-                error = QMessageBox()
-                error.setIcon(QMessageBox.Critical)
-                error.setWindowTitle('Error')
-                error.setText('Title cannot be NULL. Operation failed')
-                error.setStandardButtons(QMessageBox.Ok)
-                error.exec_()
+                error = ErrorDialog('Title cannot be NULL. Operation failed.')
+                error.show()
 
                 return
             if author == '':
                 # Author cannot be NULL, show error
-                error = QMessageBox()
-                error.setIcon(QMessageBox.Critical)
-                error.setWindowTitle('Error')
-                error.setText('Author cannot be NULL. Operation failed')
-                error.setStandardButtons(QMessageBox.Ok)
-                error.exec_()
+                error = ErrorDialog('Author cannot be NULL. Operation failed')
+                error.show()
 
                 return
             if otherauthors == '':
@@ -346,12 +327,8 @@ class InsertRecord(QWidget):
             author_id = _globals.cursor.fetchall()
             if not author_id:
                 # Author cannot be NULL, show error
-                error = QMessageBox()
-                error.setIcon(QMessageBox.Critical)
-                error.setWindowTitle('Error')
-                error.setText('Author not found in Authors table. Operation failed')
-                error.setStandardButtons(QMessageBox.Ok)
-                error.exec_()
+                error = ErrorDialog('Author not found in Authors table. Operation failed')
+                error.show()
 
                 return
 
@@ -359,12 +336,8 @@ class InsertRecord(QWidget):
                 author = author_id[0][0]
             else:
                 # Show warning if string matches multiple authors
-                warning = QMessageBox()
-                warning.setIcon(QMessageBox.Information)
-                warning.setWindowTitle('Warning')
-                warning.setText('String matches multiple authors. Using exact match')
-                warning.setStandardButtons(QMessageBox.Ok)
-                warning.exec_()
+                warning = WarningDialog('String matches multiple authors. Using exact match')
+                warning.show()
 
                 # Get Author Id from Name using exact match
                 mySql_select_query = """SELECT Id FROM Authors WHERE Name=%s"""
@@ -372,12 +345,8 @@ class InsertRecord(QWidget):
                 author_id = _globals.cursor.fetchall()
                 if not author_id:
                     # Author cannot be NULL, show error
-                    error = QMessageBox()
-                    error.setIcon(QMessageBox.Critical)
-                    error.setWindowTitle('Error')
-                    error.setText('No exact match found in table Authors. Operation failed')
-                    error.setStandardButtons(QMessageBox.Ok)
-                    error.exec_()
+                    error = ErrorDialog('No exact match found in table Authors. Operation failed')
+                    error.show()
 
                     return
 
@@ -392,22 +361,14 @@ class InsertRecord(QWidget):
                 if not publisher_id:
                     publisher = None
                     # Show warning if string doesn't match any Publisher
-                    warning = QMessageBox()
-                    warning.setIcon(QMessageBox.Warning)
-                    warning.setWindowTitle('Warning')
-                    warning.setText('Publisher not found, set to \'NULL\'')
-                    warning.setStandardButtons(QMessageBox.Ok)
-                    warning.exec_()
+                    warning = WarningDialog('Publisher not found, set to \'NULL\'')
+                    warning.show()
                 elif len(publisher_id) == 1:
                     publisher = publisher_id[0][0]
                 else:
                     # Show warning if string matches multiple publishers
-                    warning = QMessageBox()
-                    warning.setIcon(QMessageBox.Information)
-                    warning.setWindowTitle('Warning')
-                    warning.setText('String matches multiple publishers. Using exact match')
-                    warning.setStandardButtons(QMessageBox.Ok)
-                    warning.exec_()
+                    warning = WarningDialog('String matches multiple publishers. Using exact match')
+                    warning.show()
 
                     # Get Publisher Id from Name using exact match
                     mySql_select_query = """SELECT Id FROM Publishers WHERE Name=%s"""
@@ -416,12 +377,8 @@ class InsertRecord(QWidget):
                     if not publisher_id:
                         publisher = None
                         # Show warning if exact match is not found
-                        warning = QMessageBox()
-                        warning.setIcon(QMessageBox.Warning)
-                        warning.setWindowTitle('Warning')
-                        warning.setText('Publisher not found, set to \'NULL\'')
-                        warning.setStandardButtons(QMessageBox.Ok)
-                        warning.exec_()
+                        warning = WarningDialog('Publisher not found, set to \'NULL\'')
+                        warning.show()
                     elif len(publisher_id) == 1:
                         publisher = publisher_id[0][0]
 
@@ -433,22 +390,14 @@ class InsertRecord(QWidget):
                 if not series_id:
                     series = None
                     # Show warning if string doesn't match any Series
-                    warning = QMessageBox()
-                    warning.setIcon(QMessageBox.Warning)
-                    warning.setWindowTitle('Warning')
-                    warning.setText('Series not found, set to \'NULL\'')
-                    warning.setStandardButtons(QMessageBox.Ok)
-                    warning.exec_()
+                    warning = WarningDialog('Series not found, set to \'NULL\'')
+                    warning.show()
                 elif len(series_id) == 1:
                     series = series_id[0][0]
                 else:
                     # Show warning is string matches multiple Series
-                    warning = QMessageBox()
-                    warning.setIcon(QMessageBox.Information)
-                    warning.setWindowTitle('Warning')
-                    warning.setText('String matches multiple series. Using exact match')
-                    warning.setStandardButtons(QMessageBox.Ok)
-                    warning.exec_()
+                    warning = WarningDialog('String matches multiple series. Using exact match')
+                    warning.show()
 
                     # Get Series Id from Name using exact match
                     mySql_select_query = """SELECT Id FROM Series WHERE Name=%s"""
@@ -457,12 +406,8 @@ class InsertRecord(QWidget):
                     if not series_id:
                         series = None
                         # Show warning if exact match is not found
-                        warning = QMessageBox()
-                        warning.setIcon(QMessageBox.Warning)
-                        warning.setWindowTitle('Warning')
-                        warning.setText('Series not found, set to \'NULL\'')
-                        warning.setStandardButtons(QMessageBox.Ok)
-                        warning.exec_()
+                        warning = WarningDialog('Series not found, set to \'NULL\'')
+                        warning.show()
                     elif len(series_id) == 1:
                         series = series_id[0][0]
 
@@ -479,20 +424,12 @@ class InsertRecord(QWidget):
                 _globals.connection.commit()
 
                 # Show message if insertion succeeded
-                info = QMessageBox()
-                info.setIcon(QMessageBox.Information)
-                info.setWindowTitle('Success')
-                info.setText('Record inserted successfully into Books')
-                info.setStandardButtons(QMessageBox.Ok)
-                info.exec_()
+                info = InfoDialog('Record inserted successfully into Books')
+                info.show()
             except Error as e:
                 # Create error message box
-                error = QMessageBox()
-                error.setIcon(QMessageBox.Critical)
-                error.setWindowTitle('Error')
-                error.setText(str(e))
-                error.setStandardButtons(QMessageBox.Ok)
-                error.exec_()
+                error = ErrorDialog(str(e))
+                error.show()
 
         elif self.layout_insert.currentIndex() == 1:
             # Get text from insert form
@@ -505,12 +442,8 @@ class InsertRecord(QWidget):
             # Set values to None where strings are empty
             if name == '':
                 # Name cannot be NULL, show error
-                error = QMessageBox()
-                error.setIcon(QMessageBox.Critical)
-                error.setWindowTitle('Error')
-                error.setText('Name cannot be NULL. Operation failed')
-                error.setStandardButtons(QMessageBox.Ok)
-                error.exec_()
+                error = ErrorDialog('Name cannot be NULL. Operation failed')
+                error.show()
 
                 return
             if gender == '':
@@ -532,20 +465,12 @@ class InsertRecord(QWidget):
                 _globals.connection.commit()
 
                 # Show message if insertion succeeded
-                info = QMessageBox()
-                info.setIcon(QMessageBox.Information)
-                info.setWindowTitle('Success')
-                info.setText('Record inserted successfully into Authors')
-                info.setStandardButtons(QMessageBox.Ok)
-                info.exec_()
+                info = InfoDialog('Record inserted successfully into Authors')
+                info.show()
             except Error as e:
                 # Create error message box
-                error = QMessageBox()
-                error.setIcon(QMessageBox.Critical)
-                error.setWindowTitle('Error')
-                error.setText(str(e))
-                error.setStandardButtons(QMessageBox.Ok)
-                error.exec_()
+                error = ErrorDialog(str(e))
+                error.show()
 
         elif self.layout_insert.currentIndex() == 2:
             # Get text from insert form
@@ -554,12 +479,8 @@ class InsertRecord(QWidget):
             # Set value to None if string is empty
             if name == '':
                 # Name cannot be NULL, show error
-                error = QMessageBox()
-                error.setIcon(QMessageBox.Critical)
-                error.setWindowTitle('Error')
-                error.setText('Name cannot be NULL. Operation failed')
-                error.setStandardButtons(QMessageBox.Ok)
-                error.exec_()
+                error = ErrorDialog('Name cannot be NULL. Operation failed')
+                error.show()
 
                 return
 
@@ -571,20 +492,12 @@ class InsertRecord(QWidget):
                 _globals.connection.commit()
 
                 # Show message if insertion succeeded
-                info = QMessageBox()
-                info.setIcon(QMessageBox.Information)
-                info.setWindowTitle('Success')
-                info.setText('Record inserted successfully into Publishers')
-                info.setStandardButtons(QMessageBox.Ok)
-                info.exec_()
+                info = InfoDialog('Record inserted successfully into Publishers')
+                info.show()
             except Error as e:
                 # Create error message box
-                error = QMessageBox()
-                error.setIcon(QMessageBox.Critical)
-                error.setWindowTitle('Error')
-                error.setText(str(e))
-                error.setStandardButtons(QMessageBox.Ok)
-                error.exec_()
+                error = ErrorDialog(str(e))
+                error.show()
 
         elif self.layout_insert.currentIndex() == 3:
             # Get text from insert form
@@ -594,12 +507,8 @@ class InsertRecord(QWidget):
             # Set values to None where strings are empty
             if name == '':
                 # Name cannot be NULL, show error
-                error = QMessageBox()
-                error.setIcon(QMessageBox.Critical)
-                error.setWindowTitle('Error')
-                error.setText('Name cannot be NULL. Operation failed')
-                error.setStandardButtons(QMessageBox.Ok)
-                error.exec_()
+                error = ErrorDialog('Name cannot be NULL. Operation failed')
+                error.show()
 
                 return
 
@@ -613,12 +522,8 @@ class InsertRecord(QWidget):
                 author_id = _globals.cursor.fetchall()
                 if not author_id:
                     # Author cannot be NULL, show error
-                    error = QMessageBox()
-                    error.setIcon(QMessageBox.Critical)
-                    error.setWindowTitle('Error')
-                    error.setText('Author not found in Authors table. Operation failed')
-                    error.setStandardButtons(QMessageBox.Ok)
-                    error.exec_()
+                    error = ErrorDialog('Author not found in Authors table. Operation failed')
+                    error.show()
 
                     return
 
@@ -626,12 +531,8 @@ class InsertRecord(QWidget):
                     author = author_id[0][0]
                 else:
                     # Show warning if string matches multiple authors
-                    warning = QMessageBox()
-                    warning.setIcon(QMessageBox.Information)
-                    warning.setWindowTitle('Warning')
-                    warning.setText('String matches multiple authors. Using exact match')
-                    warning.setStandardButtons(QMessageBox.Ok)
-                    warning.exec_()
+                    warning = WarningDialog('String matches multiple authors. Using exact match')
+                    warning.show()
 
                     # Get Author Id from Name using exact match
                     mySql_select_query = """SELECT Id FROM Authors WHERE Name=%s"""
@@ -640,12 +541,8 @@ class InsertRecord(QWidget):
 
                     if not author_id:
                         # Author cannot be NULL, show error
-                        error = QMessageBox()
-                        error.setIcon(QMessageBox.Critical)
-                        error.setWindowTitle('Error')
-                        error.setText('No exact match found in table Authors. Operation failed')
-                        error.setStandardButtons(QMessageBox.Ok)
-                        error.exec_()
+                        error = ErrorDialog('No exact match found in table Authors. Operation failed')
+                        error.show()
 
                         return
 
@@ -661,17 +558,9 @@ class InsertRecord(QWidget):
                 _globals.connection.commit()
 
                 # Show message if insertion succeeded
-                info = QMessageBox()
-                info.setIcon(QMessageBox.Information)
-                info.setWindowTitle('Success')
-                info.setText('Record inserted successfully into Series')
-                info.setStandardButtons(QMessageBox.Ok)
-                info.exec_()
+                info = InfoDialog('Record inserted successfully into Series')
+                info.show()
             except Error as e:
                 # Create error message box
-                error = QMessageBox()
-                error.setIcon(QMessageBox.Critical)
-                error.setWindowTitle('Error')
-                error.setText(str(e))
-                error.setStandardButtons(QMessageBox.Ok)
-                error.exec_()
+                error = ErrorDialog(str(e))
+                error.show()

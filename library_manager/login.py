@@ -19,6 +19,7 @@ import mysql.connector
 from mysql.connector import Error
 
 import library_manager._globals as _globals
+from library_manager.info_dialogs import ErrorDialog
 
 # Login dialog box
 class Login_dialog(QDialog):
@@ -90,9 +91,5 @@ class Login_dialog(QDialog):
         # If error occurred during connection
         except Error as e:
             # Create error message box
-            error = QMessageBox()
-            error.setIcon(QMessageBox.Critical)
-            error.setWindowTitle('Error')
-            error.setText(str(e))
-            error.setStandardButtons(QMessageBox.Ok)
-            error.exec_()
+            error = ErrorDialog(str(e))
+            error.show()
