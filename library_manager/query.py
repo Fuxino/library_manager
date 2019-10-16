@@ -14,7 +14,7 @@ records in the database.
 import os
 
 import subprocess
-from subprocess import CalledProcessError, PIPE
+from subprocess import CalledProcessError
 
 from PyQt5.QtWidgets import QFileDialog, QWidget, QLineEdit, QComboBox,\
         QPushButton, QTableWidget, QTableWidgetItem, QFormLayout,\
@@ -1091,12 +1091,12 @@ class SearchDatabase(QWidget):
 
         # Execute the backup command
         try:
-            proc_status = subprocess.run(cmd, shell=True, check=True, stdout=PIPE)
+            proc_status = subprocess.run(cmd, shell=True, check=True, capture_output=True)
             # Show message if backup succeeded
             info = InfoDialog('Backup completed successfully ' +\
                     f'(return code: {proc_status.returncode})')
             info.show()
         except CalledProcessError as e:
             # Create error message box
-            error = ErrorDialog(str(e))
+            error = ErrorDialog(str(e.stderr))
             error.show()
