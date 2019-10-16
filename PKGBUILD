@@ -16,6 +16,7 @@ depends=("python3"
          "python-mysql-connector"
          "python-pyqt5")
 optdepends=('python-isbnlib: check if isbn inserted is valid')
+conflicts=('library_manager-dev')
 source=(git+https://github.com/Fuxino/${pkgname}.git)
 sha256sums=('SKIP')
 
