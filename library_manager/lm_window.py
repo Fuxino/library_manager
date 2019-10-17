@@ -31,7 +31,7 @@ class MainWindow(QMainWindow):
         if _globals.HOSTNAME == 'localhost':
             window_title = 'Library database - Local'
         else:
-            window_title = 'Library database - Raspberry Pi'
+            window_title = 'Library database - Remote'
 
         self.setWindowTitle(window_title)
 
