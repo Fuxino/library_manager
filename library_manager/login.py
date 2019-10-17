@@ -24,11 +24,11 @@ import library_manager._globals as _globals
 from library_manager.info_dialogs import ErrorDialog
 
 # Login dialog box
-class Login_dialog(QDialog):
+class LoginDialog(QDialog):
     """Login dialog."""
 
     def __init__(self, *args, **kwargs):
-        super(Login_dialog, self).__init__(*args, **kwargs)
+        super(LoginDialog, self).__init__(*args, **kwargs)
 
         # Set dialog title
         self.setWindowTitle('Login to Library')
@@ -60,16 +60,16 @@ class Login_dialog(QDialog):
         layout_login.addRow(QLabel('Hostname:'), self.host)
 
         # Create buttons
-        QBtn = QDialogButtonBox.Ok | QDialogButtonBox.Cancel
+        q_button = QDialogButtonBox.Ok | QDialogButtonBox.Cancel
 
         # Define button behavior
-        buttonBox = QDialogButtonBox(QBtn)
-        buttonBox.accepted.connect(self.db_connect)
-        buttonBox.rejected.connect(partial(exit, 0))
+        button_box = QDialogButtonBox(q_button)
+        button_box.accepted.connect(self.db_connect)
+        button_box.rejected.connect(partial(exit, 0))
 
         # Add login form and button to main layout
         layout.addLayout(layout_login)
-        layout.addWidget(buttonBox)
+        layout.addWidget(button_box)
 
         # Set layout
         self.setLayout(layout)
@@ -83,23 +83,23 @@ class Login_dialog(QDialog):
         """
 
         try:
-            _globals.hostname = self.host.currentText()
-            _globals.user = self.username.text()
-            _globals.pwd = self.password.text()
+            _globals.HOSTNAME = self.host.currentText()
+            _globals.USER = self.username.text()
+            _globals.PWD = self.password.text()
 
             # Create connection
-            _globals.connection = mysql.connector.connect(host=_globals.hostname,
+            _globals.CONNECTION = mysql.connector.connect(host=_globals.HOSTNAME,
                                                           database='Library',
-                                                          user=_globals.user,
-                                                          password=_globals.pwd)
+                                                          user=_globals.USER,
+                                                          password=_globals.PWD)
 
-            _globals.cursor = _globals.connection.cursor(prepared=True)
+            _globals.CURSOR = _globals.CONNECTION.CURSOR(prepared=True)
 
             # Close login dialog
             self.accept()
 
         # If error occurred during connection
-        except Error as e:
+        except Error as err:
             # Create error message box
-            error = ErrorDialog(str(e))
+            error = ErrorDialog(str(err))
             error.show()

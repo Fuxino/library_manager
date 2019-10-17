@@ -18,9 +18,9 @@ from library_manager.info_dialogs import ErrorDialog, WarningDialog, InfoDialog
 try:
     from isbnlib import canonical, is_isbn10, is_isbn13
 
-    isbn_check = True
+    ISBN_CHECK = True
 except ImportError:
-    isbn_check = False
+    ISBN_CHECK = False
 
 # Form to insert books
 class InsertBookForm(QWidget):
@@ -286,7 +286,7 @@ class InsertRecord(QWidget):
                 isbn = None
             else:
                 # Check is the ISBN is valid
-                if isbn_check:
+                if ISBN_CHECK:
                     if '-' in isbn:
                         isbn = canonical(isbn)
                     if len(isbn) == 10:
@@ -343,9 +343,9 @@ class InsertRecord(QWidget):
                 booktype = None
 
             # Get Author Id from Name
-            mySql_select_query = """SELECT Id FROM Authors WHERE Name LIKE %s"""
-            _globals.cursor.execute(mySql_select_query, ('%'+author+'%',))
-            author_id = _globals.cursor.fetchall()
+            mysql_select_query = """SELECT Id FROM Authors WHERE Name LIKE %s"""
+            _globals.CURSOR.execute(mysql_select_query, ('%'+author+'%',))
+            author_id = _globals.CURSOR.fetchall()
             if not author_id:
                 # Author cannot be NULL, show error
                 error = ErrorDialog('Author not found in Authors table. Operation failed')
@@ -361,9 +361,9 @@ class InsertRecord(QWidget):
                 warning.show()
 
                 # Get Author Id from Name using exact match
-                mySql_select_query = """SELECT Id FROM Authors WHERE Name=%s"""
-                _globals.cursor.execute(mySql_select_query, (author,))
-                author_id = _globals.cursor.fetchall()
+                mysql_select_query = """SELECT Id FROM Authors WHERE Name=%s"""
+                _globals.CURSOR.execute(mysql_select_query, (author,))
+                author_id = _globals.CURSOR.fetchall()
                 if not author_id:
                     # Author cannot be NULL, show error
                     error = ErrorDialog('No exact match found in table Authors. Operation failed')
@@ -376,9 +376,9 @@ class InsertRecord(QWidget):
 
             # Get Publisher Id from Name
             if publisher is not None:
-                mySql_select_query = """SELECT Id FROM Publishers WHERE Name LIKE %s"""
-                _globals.cursor.execute(mySql_select_query, ('%'+publisher+'%',))
-                publisher_id = _globals.cursor.fetchall()
+                mysql_select_query = """SELECT Id FROM Publishers WHERE Name LIKE %s"""
+                _globals.CURSOR.execute(mysql_select_query, ('%'+publisher+'%',))
+                publisher_id = _globals.CURSOR.fetchall()
                 if not publisher_id:
                     publisher = None
                     # Show warning if string doesn't match any Publisher
@@ -392,9 +392,9 @@ class InsertRecord(QWidget):
                     warning.show()
 
                     # Get Publisher Id from Name using exact match
-                    mySql_select_query = """SELECT Id FROM Publishers WHERE Name=%s"""
-                    _globals.cursor.execute(mySql_select_query, (publisher,))
-                    publisher_id = _globals.cursor.fetchall()
+                    mysql_select_query = """SELECT Id FROM Publishers WHERE Name=%s"""
+                    _globals.CURSOR.execute(mysql_select_query, (publisher,))
+                    publisher_id = _globals.CURSOR.fetchall()
                     if not publisher_id:
                         publisher = None
                         # Show warning if exact match is not found
@@ -405,9 +405,9 @@ class InsertRecord(QWidget):
 
             # Get Series Id from Name
             if series is not None:
-                mySql_select_query = """SELECT Id FROM Series WHERE Name LIKE %s"""
-                _globals.cursor.execute(mySql_select_query, ('%'+series+'%',))
-                series_id = _globals.cursor.fetchall()
+                mysql_select_query = """SELECT Id FROM Series WHERE Name LIKE %s"""
+                _globals.CURSOR.execute(mysql_select_query, ('%'+series+'%',))
+                series_id = _globals.CURSOR.fetchall()
                 if not series_id:
                     series = None
                     # Show warning if string doesn't match any Series
@@ -421,9 +421,9 @@ class InsertRecord(QWidget):
                     warning.show()
 
                     # Get Series Id from Name using exact match
-                    mySql_select_query = """SELECT Id FROM Series WHERE Name=%s"""
-                    _globals.cursor.execute(mySql_select_query, (series,))
-                    series_id = _globals.cursor.fetchall()
+                    mysql_select_query = """SELECT Id FROM Series WHERE Name=%s"""
+                    _globals.CURSOR.execute(mysql_select_query, (series,))
+                    series_id = _globals.CURSOR.fetchall()
                     if not series_id:
                         series = None
                         # Show warning if exact match is not found
@@ -432,7 +432,7 @@ class InsertRecord(QWidget):
                     elif len(series_id) == 1:
                         series = series_id[0][0]
 
-            mySql_insert_query = """INSERT INTO Books(ISBN, Title, Author, OtherAuthors,
+            mysql_insert_query = """INSERT INTO Books(ISBN, Title, Author, OtherAuthors,
             Publisher, Series, Subseries, Category, Language, Year, Pages, Owner, Type)
             Values(%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)"""
 
@@ -441,15 +441,15 @@ class InsertRecord(QWidget):
 
             # Execute the query
             try:
-                _globals.cursor.execute(mySql_insert_query, values)
-                _globals.connection.commit()
+                _globals.CURSOR.execute(mysql_insert_query, values)
+                _globals.CONNECTION.commit()
 
                 # Show message if insertion succeeded
                 info = InfoDialog('Record inserted successfully into Books')
                 info.show()
-            except Error as e:
+            except Error as err:
                 # Create error message box
-                error = ErrorDialog(str(e))
+                error = ErrorDialog(str(err))
                 error.show()
 
         elif self.layout_insert.currentIndex() == 1:
@@ -476,21 +476,21 @@ class InsertRecord(QWidget):
             if deathyear == '':
                 deathyear = None
 
-            mySql_insert_query = """INSERT INTO Authors(Name, Gender, Nationality,
+            mysql_insert_query = """INSERT INTO Authors(Name, Gender, Nationality,
             BirthYear, DeathYear) Values(%s, %s, %s, %s, %s)"""
             values = (name, gender, nationality, birthyear, deathyear)
 
             # Execute the query
             try:
-                _globals.cursor.execute(mySql_insert_query, values)
-                _globals.connection.commit()
+                _globals.CURSOR.execute(mysql_insert_query, values)
+                _globals.CONNECTION.commit()
 
                 # Show message if insertion succeeded
                 info = InfoDialog('Record inserted successfully into Authors')
                 info.show()
-            except Error as e:
+            except Error as err:
                 # Create error message box
-                error = ErrorDialog(str(e))
+                error = ErrorDialog(str(err))
                 error.show()
 
         elif self.layout_insert.currentIndex() == 2:
@@ -505,19 +505,19 @@ class InsertRecord(QWidget):
 
                 return
 
-            mySql_insert_query = """INSERT INTO Publishers(Name) Values(%s)"""
+            mysql_insert_query = """INSERT INTO Publishers(Name) Values(%s)"""
 
             # Execute the query
             try:
-                _globals.cursor.execute(mySql_insert_query, (name,))
-                _globals.connection.commit()
+                _globals.CURSOR.execute(mysql_insert_query, (name,))
+                _globals.CONNECTION.commit()
 
                 # Show message if insertion succeeded
                 info = InfoDialog('Record inserted successfully into Publishers')
                 info.show()
-            except Error as e:
+            except Error as err:
                 # Create error message box
-                error = ErrorDialog(str(e))
+                error = ErrorDialog(str(err))
                 error.show()
 
         elif self.layout_insert.currentIndex() == 3:
@@ -538,9 +538,9 @@ class InsertRecord(QWidget):
 
             if author is not None:
                 # Get Author Id from Name
-                mySql_select_query = """SELECT Id FROM Authors WHERE Name LIKE %s"""
-                _globals.cursor.execute(mySql_select_query, ('%'+author+'%',))
-                author_id = _globals.cursor.fetchall()
+                mysql_select_query = """SELECT Id FROM Authors WHERE Name LIKE %s"""
+                _globals.CURSOR.execute(mysql_select_query, ('%'+author+'%',))
+                author_id = _globals.CURSOR.fetchall()
                 if not author_id:
                     # Author cannot be NULL, show error
                     error = ErrorDialog('Author not found in Authors table. Operation failed')
@@ -556,9 +556,9 @@ class InsertRecord(QWidget):
                     warning.show()
 
                     # Get Author Id from Name using exact match
-                    mySql_select_query = """SELECT Id FROM Authors WHERE Name=%s"""
-                    _globals.cursor.execute(mySql_select_query, (author,))
-                    author_id = _globals.cursor.fetchall()
+                    mysql_select_query = """SELECT Id FROM Authors WHERE Name=%s"""
+                    _globals.CURSOR.execute(mysql_select_query, (author,))
+                    author_id = _globals.CURSOR.fetchall()
 
                     if not author_id:
                         # Author cannot be NULL, show error
@@ -571,18 +571,18 @@ class InsertRecord(QWidget):
                     if len(author_id) == 1:
                         author = author_id[0][0]
 
-            mySql_insert_query = """INSERT INTO Series(Name, Author) Values(%s, %s)"""
+            mysql_insert_query = """INSERT INTO Series(Name, Author) Values(%s, %s)"""
             values = (name, author)
 
             # Execute the query
             try:
-                _globals.cursor.execute(mySql_insert_query, values)
-                _globals.connection.commit()
+                _globals.CURSOR.execute(mysql_insert_query, values)
+                _globals.CONNECTION.commit()
 
                 # Show message if insertion succeeded
                 info = InfoDialog('Record inserted successfully into Series')
                 info.show()
-            except Error as e:
+            except Error as err:
                 # Create error message box
-                error = ErrorDialog(str(e))
+                error = ErrorDialog(str(err))
                 error.show()

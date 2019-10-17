@@ -3,8 +3,8 @@
 """Global variables."""
 
 # Initialize global variables
-connection = None
-cursor = None
-user = ''
-pwd = ''
-hostname = ''
+CONNECTION = None
+CURSOR = None
+USER = ''
+PWD = ''
+HOSTNAME = ''

@@ -10,7 +10,7 @@ from PyQt5.QtWidgets import QMainWindow, QWidget, QPushButton, QTabWidget, QVBox
 from PyQt5.QtGui import QIcon
 from PyQt5.QtCore import Qt
 
-from library_manager.login import Login_dialog
+from library_manager.login import LoginDialog
 from library_manager.query import SearchDatabase
 from library_manager.insert import InsertRecord
 
@@ -24,11 +24,11 @@ class MainWindow(QMainWindow):
         super(MainWindow, self).__init__(*args, **kwargs)
 
         # Run the login window
-        login_window = Login_dialog()
+        login_window = LoginDialog()
         login_window.exec_()
 
         # Set window title and icon
-        if _globals.hostname == 'localhost':
+        if _globals.HOSTNAME == 'localhost':
             window_title = 'Library database - Local'
         else:
             window_title = 'Library database - Raspberry Pi'

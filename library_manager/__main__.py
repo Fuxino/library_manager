@@ -20,9 +20,9 @@ def main():
 
     app.exec_()
 
-    if _globals.connection.is_connected():
-        _globals.cursor.close()
-        _globals.connection.close()
+    if _globals.CONNECTION.is_connected():
+        _globals.CURSOR.close()
+        _globals.CONNECTION.close()
 
 if __name__ == '__main__':
     main()

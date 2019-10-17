@@ -29,9 +29,9 @@ from library_manager.info_dialogs import ErrorDialog, InfoDialog
 try:
     from isbnlib import canonical, is_isbn10, is_isbn13, mask
 
-    isbn_check = True
+    ISBN_CHECK = True
 except ImportError:
-    isbn_check = False
+    ISBN_CHECK = False
 
 # Form to search books
 class SearchBookForm(QWidget):
@@ -532,8 +532,8 @@ class SearchDatabase(QWidget):
 
             try:
                 # Execute the query
-                _globals.cursor.execute(query)
-                results = _globals.cursor.fetchall()
+                _globals.CURSOR.execute(query)
+                results = _globals.CURSOR.fetchall()
 
                 # Clear the results table
                 self.table.setRowCount(0)
@@ -556,7 +556,7 @@ class SearchDatabase(QWidget):
                     Type = row[13]
 
                     # Hyphenate ISBN
-                    if ISBN is not None and isbn_check:
+                    if ISBN is not None and ISBN_CHECK:
                         ISBN = mask(ISBN, '-')
 
                     # If Year and/or Pages is NULL, show empty string
@@ -595,9 +595,9 @@ class SearchDatabase(QWidget):
 
                 if self.table.columnWidth(4) > 300:
                     self.table.setColumnWidth(4, 300)
-            except Error as e:
+            except Error as err:
                 # Create error message box
-                error = ErrorDialog(str(e))
+                error = ErrorDialog(str(err))
                 error.show()
 
                 self.table.blockSignals(False)
@@ -633,8 +633,8 @@ class SearchDatabase(QWidget):
 
             try:
                 # Execute the query
-                _globals.cursor.execute(query)
-                results = _globals.cursor.fetchall()
+                _globals.CURSOR.execute(query)
+                results = _globals.CURSOR.fetchall()
 
                 # Clear the results table
                 self.table.setRowCount(0)
@@ -670,9 +670,9 @@ class SearchDatabase(QWidget):
 
                 # Resize columns
                 self.table.resizeColumnsToContents()
-            except Error as e:
+            except Error as err:
                 # Create error message box
-                error = ErrorDialog(str(e))
+                error = ErrorDialog(str(err))
                 error.show()
 
                 self.table.blockSignals(False)
@@ -696,8 +696,8 @@ class SearchDatabase(QWidget):
 
             try:
                 # Execute the query
-                _globals.cursor.execute(query)
-                results = _globals.cursor.fetchall()
+                _globals.CURSOR.execute(query)
+                results = _globals.CURSOR.fetchall()
 
                 # Clear the results table
                 self.table.setRowCount(0)
@@ -718,9 +718,9 @@ class SearchDatabase(QWidget):
 
                 # Resize columns
                 self.table.resizeColumnsToContents()
-            except Error as e:
+            except Error as err:
                 # Create error message box
-                error = ErrorDialog(str(e))
+                error = ErrorDialog(str(err))
                 error.show()
 
                 self.table.blockSignals(False)
@@ -751,8 +751,8 @@ class SearchDatabase(QWidget):
 
             try:
                 # Execute the query
-                _globals.cursor.execute(query)
-                results = _globals.cursor.fetchall()
+                _globals.CURSOR.execute(query)
+                results = _globals.CURSOR.fetchall()
 
                 # Clear the results table
                 self.table.setRowCount(0)
@@ -775,9 +775,9 @@ class SearchDatabase(QWidget):
 
                 # Resize columns
                 self.table.resizeColumnsToContents()
-            except Error as e:
+            except Error as err:
                 # Create error message box
-                error = ErrorDialog(str(e))
+                error = ErrorDialog(str(err))
                 error.show()
 
                 self.table.blockSignals(False)
@@ -809,7 +809,7 @@ class SearchDatabase(QWidget):
         id_n = self.table.item(record_index, 0).text()
 
         if field == 'ISBN':
-            if value != '' and isbn_check:
+            if value != '' and ISBN_CHECK:
                 if '-' in value:
                     value = canonical(value)
                 if len(value) == 10:
@@ -871,9 +871,9 @@ class SearchDatabase(QWidget):
 
                 return
 
-            mySql_select_query = """SELECT Id FROM Authors WHERE Name LIKE %s"""
-            _globals.cursor.execute(mySql_select_query, ('%'+value+'%',))
-            author = _globals.cursor.fetchall()
+            mysql_select_query = """SELECT Id FROM Authors WHERE Name LIKE %s"""
+            _globals.CURSOR.execute(mysql_select_query, ('%'+value+'%',))
+            author = _globals.CURSOR.fetchall()
             if not author:
                 # Author cannot be NULL, show error
                 error = ErrorDialog('Author not found in Authors table. Operation failed')
@@ -905,9 +905,9 @@ class SearchDatabase(QWidget):
                 return
         elif field == 'Publisher':
             if value != '':
-                mySql_select_query = """SELECT Id FROM Publishers WHERE Name LIKE %s"""
-                _globals.cursor.execute(mySql_select_query, ('%'+value+'%',))
-                publisher = _globals.cursor.fetchall()
+                mysql_select_query = """SELECT Id FROM Publishers WHERE Name LIKE %s"""
+                _globals.CURSOR.execute(mysql_select_query, ('%'+value+'%',))
+                publisher = _globals.CURSOR.fetchall()
 
                 if not publisher:
                     error = ErrorDialog('No publisher matches name string. Operation failed')
@@ -941,9 +941,9 @@ class SearchDatabase(QWidget):
                     return
         elif field == 'Series':
             if value != '':
-                mySql_select_query = """SELECT Id FROM Series WHERE Name LIKE %s"""
-                _globals.cursor.execute(mySql_select_query, ('%'+value+'%',))
-                series = _globals.cursor.fetchall()
+                mysql_select_query = """SELECT Id FROM Series WHERE Name LIKE %s"""
+                _globals.CURSOR.execute(mysql_select_query, ('%'+value+'%',))
+                series = _globals.CURSOR.fetchall()
 
                 if not series:
                     error = ErrorDialog('No series matches name string. Operation failed')
@@ -998,8 +998,8 @@ class SearchDatabase(QWidget):
                 query = f'UPDATE Series SET {field}=NULL WHERE Id={id_n}'
 
         try:
-            _globals.cursor.execute(query)
-            _globals.connection.commit()
+            _globals.CURSOR.execute(query)
+            _globals.CONNECTION.commit()
 
             if field == 'ISBN':
                 if value != '':
@@ -1012,9 +1012,9 @@ class SearchDatabase(QWidget):
 
                     self.table.blockSignals(False)
             elif field == 'Author':
-                mySql_select_query = """SELECT Name FROM Authors WHERE Id=%s"""
-                _globals.cursor.execute(mySql_select_query, (value,))
-                author = _globals.cursor.fetchall()
+                mysql_select_query = """SELECT Name FROM Authors WHERE Id=%s"""
+                _globals.CURSOR.execute(mysql_select_query, (value,))
+                author = _globals.CURSOR.fetchall()
                 value = author[0][0]
 
                 self.table.blockSignals(True)
@@ -1024,9 +1024,9 @@ class SearchDatabase(QWidget):
 
                 self.table.blockSignals(False)
             elif field == 'Publisher':
-                mySql_select_query = """SELECT Name FROM Publishers WHERE Id=%s"""
-                _globals.cursor.execute(mySql_select_query, (value,))
-                publisher = _globals.cursor.fetchall()
+                mysql_select_query = """SELECT Name FROM Publishers WHERE Id=%s"""
+                _globals.CURSOR.execute(mysql_select_query, (value,))
+                publisher = _globals.CURSOR.fetchall()
                 value = publisher[0][0]
 
                 self.table.blockSignals(True)
@@ -1036,9 +1036,9 @@ class SearchDatabase(QWidget):
 
                 self.table.blockSignals(False)
             elif field == 'Series':
-                mySql_select_query = """SELECT Name FROM Series WHERE Id=%s"""
-                _globals.cursor.execute(mySql_select_query, (value,))
-                series = _globals.cursor.fetchall()
+                mysql_select_query = """SELECT Name FROM Series WHERE Id=%s"""
+                _globals.CURSOR.execute(mysql_select_query, (value,))
+                series = _globals.CURSOR.fetchall()
                 value = series[0][0]
 
                 self.table.blockSignals(True)
@@ -1059,9 +1059,9 @@ class SearchDatabase(QWidget):
 
             info = InfoDialog('Record modified successfully')
             info.show()
-        except Error as e:
+        except Error as err:
             # Create error message box
-            error = ErrorDialog(str(e))
+            error = ErrorDialog(str(err))
             error.show()
 
             self.table.blockSignals(True)
@@ -1098,9 +1098,9 @@ class SearchDatabase(QWidget):
                 file_p.write('\n')
 
             file_p.close()
-        except PermissionError as e:
+        except PermissionError as err:
             # Create error message box
-            error = ErrorDialog(str(e))
+            error = ErrorDialog(str(err))
             error.show()
         except FileNotFoundError:
             pass
@@ -1116,16 +1116,16 @@ class SearchDatabase(QWidget):
 
             # Define backup command
             cmd = 'mysqldump.exe --single-transaction --master-data=2 ' +\
-                    f'--host={_globals.hostname} --databases Library -u {_globals.user} ' +\
-                    f'-p{_globals.pwd} > {filename[0]}'
+                    f'--host={_globals.HOSTNAME} --databases Library -u {_globals.USER} ' +\
+                    f'-p{_globals.PWD} > {filename[0]}'
         elif os.name == 'posix':
             file_dialog.setDefaultSuffix('.gz')
             filename = file_dialog.getSaveFileName(self, 'Backup database', 'Library.sql.gz')
 
             # Define backup command
             cmd = 'mysqldump --single-transaction --master-data=2 ' +\
-                    f'--host={_globals.hostname} --databases Library -u {_globals.user} ' +\
-                    f'-p{_globals.pwd} | gzip > {filename[0]}'
+                    f'--host={_globals.HOSTNAME} --databases Library -u {_globals.USER} ' +\
+                    f'-p{_globals.PWD} | gzip > {filename[0]}'
 
         # Execute the backup command
         try:
@@ -1134,7 +1134,7 @@ class SearchDatabase(QWidget):
             info = InfoDialog('Backup completed successfully ' +\
                     f'(return code: {proc_status.returncode})')
             info.show()
-        except CalledProcessError as e:
+        except CalledProcessError as err:
             # Create error message box
-            error = ErrorDialog(str(e.stderr))
+            error = ErrorDialog(str(err.stderr))
             error.show()
