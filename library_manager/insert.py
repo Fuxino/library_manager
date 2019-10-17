@@ -24,6 +24,7 @@ except ImportError:
 
 # Form to insert books
 class InsertBookForm(QWidget):
+    """Widget to insert new book records in the database"""
 
     def __init__(self, *args, **kwargs):
         super(InsertBookForm, self).__init__(*args, **kwargs)
@@ -71,6 +72,7 @@ class InsertBookForm(QWidget):
 
 # Form to insert authors
 class InsertAuthorForm(QWidget):
+    """Widget to insert new author records in the database"""
 
     def __init__(self, *args, **kwargs):
         super(InsertAuthorForm, self).__init__(*args, **kwargs)
@@ -103,6 +105,7 @@ class InsertAuthorForm(QWidget):
 
 # Form to insert publishers
 class InsertPublisherForm(QWidget):
+    """Widget to insert new publisher records in the database"""
 
     def __init__(self, *args, **kwargs):
         super(InsertPublisherForm, self).__init__(*args, **kwargs)
@@ -119,6 +122,7 @@ class InsertPublisherForm(QWidget):
 
 # Form to insert series
 class InsertSeriesForm(QWidget):
+    """Widget to insert new series records in the database"""
 
     def __init__(self, *args, **kwargs):
         super(InsertSeriesForm, self).__init__(*args, **kwargs)
@@ -137,6 +141,12 @@ class InsertSeriesForm(QWidget):
 
 # Insert into database widget
 class InsertRecord(QWidget):
+    """Main widget for inserting new records in the database
+
+    This class creates a stacked layout containing four insert form widgets
+    (Books, Authors, Publishers, Series) selected with a drop down menu.
+    It implements the function to insert the record in the database.
+    """
 
     def __init__(self, *args, **kwargs):
         super(InsertRecord, self).__init__(*args, **kwargs)

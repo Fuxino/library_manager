@@ -35,6 +35,7 @@ except ImportError:
 
 # Form to search books
 class SearchBookForm(QWidget):
+    """Widget to search for books in the database"""
 
     def __init__(self, query_db, *args, **kwargs):
         super(SearchBookForm, self).__init__(*args, **kwargs)
@@ -112,6 +113,7 @@ class SearchBookForm(QWidget):
 
 # Form to search authors
 class SearchAuthorForm(QWidget):
+    """Widget to search for authors in the database"""
 
     def __init__(self, query_db, *args, **kwargs):
         super(SearchAuthorForm, self).__init__(*args, **kwargs)
@@ -140,6 +142,7 @@ class SearchAuthorForm(QWidget):
 
 # Form to search publishers
 class SearchPublisherForm(QWidget):
+    """Widget to search for publishers in the database"""
 
     def __init__(self, query_db, *args, **kwargs):
         super(SearchPublisherForm, self).__init__(*args, **kwargs)
@@ -157,6 +160,7 @@ class SearchPublisherForm(QWidget):
 
 # Form to search series
 class SearchSeriesForm(QWidget):
+    """Widget to search for series in the database"""
 
     def __init__(self, query_db, *args, **kwargs):
         super(SearchSeriesForm, self).__init__(*args, **kwargs)
@@ -177,6 +181,13 @@ class SearchSeriesForm(QWidget):
 
 # Search database widget
 class SearchDatabase(QWidget):
+    """Main widget to search records in the database
+
+    This class creates a stacked layout containing four search form widgets
+    (Books, Authors, Publishers, Series) and table widgets to display the query results.
+    It implements functions to query the database, save the query results to file and backup
+    the whole database and update records in the database.
+    """
 
     def __init__(self, *args, **kwargs):
         super(SearchDatabase, self).__init__(*args, **kwargs)

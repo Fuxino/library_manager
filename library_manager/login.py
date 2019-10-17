@@ -23,6 +23,7 @@ from library_manager.info_dialogs import ErrorDialog
 
 # Login dialog box
 class Login_dialog(QDialog):
+    """Login dialog"""
 
     def __init__(self, *args, **kwargs):
         super(Login_dialog, self).__init__(*args, **kwargs)

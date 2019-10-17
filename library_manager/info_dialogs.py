@@ -5,6 +5,7 @@
 from PyQt5.QtWidgets import QMessageBox
 
 class ErrorDialog(QMessageBox):
+    """Show an error dialog box"""
 
     def __init__(self, error, *args, **kwargs):
         super(ErrorDialog, self).__init__(*args, **kwargs)
@@ -18,6 +19,7 @@ class ErrorDialog(QMessageBox):
         self.exec_()
 
 class WarningDialog(QMessageBox):
+    """Show a warning dialog box"""
 
     def __init__(self, warning, *args, **kwargs):
         super(WarningDialog, self).__init__(*args, **kwargs)
@@ -31,6 +33,7 @@ class WarningDialog(QMessageBox):
         self.exec_()
 
 class InfoDialog(QMessageBox):
+    """Show an information dialog box"""
 
     def __init__(self, info, *args, **kwargs):
         super(InfoDialog, self).__init__(*args, **kwargs)
