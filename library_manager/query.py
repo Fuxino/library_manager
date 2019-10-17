@@ -35,7 +35,7 @@ except ImportError:
 
 # Form to search books
 class SearchBookForm(QWidget):
-    """Widget to search for books in the database"""
+    """Widget to search for books in the database."""
 
     def __init__(self, query_db, *args, **kwargs):
         super(SearchBookForm, self).__init__(*args, **kwargs)
@@ -113,7 +113,7 @@ class SearchBookForm(QWidget):
 
 # Form to search authors
 class SearchAuthorForm(QWidget):
-    """Widget to search for authors in the database"""
+    """Widget to search for authors in the database."""
 
     def __init__(self, query_db, *args, **kwargs):
         super(SearchAuthorForm, self).__init__(*args, **kwargs)
@@ -142,7 +142,7 @@ class SearchAuthorForm(QWidget):
 
 # Form to search publishers
 class SearchPublisherForm(QWidget):
-    """Widget to search for publishers in the database"""
+    """Widget to search for publishers in the database."""
 
     def __init__(self, query_db, *args, **kwargs):
         super(SearchPublisherForm, self).__init__(*args, **kwargs)
@@ -160,7 +160,7 @@ class SearchPublisherForm(QWidget):
 
 # Form to search series
 class SearchSeriesForm(QWidget):
-    """Widget to search for series in the database"""
+    """Widget to search for series in the database."""
 
     def __init__(self, query_db, *args, **kwargs):
         super(SearchSeriesForm, self).__init__(*args, **kwargs)
@@ -332,6 +332,8 @@ class SearchDatabase(QWidget):
 
     # Function to clear all query result table and search fields
     def clear(self):
+        """Clear the result table and the search form."""
+
         self.table.blockSignals(True)
 
         self.table.setRowCount(0)
@@ -362,6 +364,8 @@ class SearchDatabase(QWidget):
 
     # Function to set table columns according to database table selected
     def change_table(self, table_name):
+        """Select the search form (Books, Authors, Publishers or Series)."""
+
         self.clear()
 
         self.table.blockSignals(True)
@@ -457,6 +461,13 @@ class SearchDatabase(QWidget):
 
     # Function to query the database
     def query_db(self):
+        """Search Boosk, Authors, Publishers or Series in the database
+
+        The method reads the informations in the active search form
+        (Books, Authors, Publishers or Series) and uses them to query
+        the database, displaying the result in the table.
+        """
+
         self.table.blockSignals(True)
 
         # Query Books
@@ -775,10 +786,22 @@ class SearchDatabase(QWidget):
 
     # Function to save current cell item
     def get_current_item(self):
+        """Save the item of the current table cell.
+
+        Used to restore the value displayed when update command fails.
+        """
+
         self.current_item = self.table.currentItem().text()
 
     # Function to update database
     def update_db(self):
+        """Update a record in the database
+
+        When the user edits a value, corresponding to a field of a record in the database,
+        in the search results table, this method automatically updates the database
+        with the new value.
+        """
+
         field_index = self.table.currentColumn()
         field = self.table.horizontalHeaderItem(field_index).text()
         value = self.table.currentItem().text()
@@ -1050,6 +1073,8 @@ class SearchDatabase(QWidget):
 
     # Function to save query result to file
     def save_to_file(self):
+        """Save the query results to a file."""
+
         file_dialog = QFileDialog()
         file_dialog.setDefaultSuffix('.csv')
         filename = file_dialog.getSaveFileName(self, 'Save query results', 'Results.csv')
@@ -1081,6 +1106,8 @@ class SearchDatabase(QWidget):
             pass
 
     def backup_db(self):
+        """Backup the database to a file."""
+
         file_dialog = QFileDialog()
 
         if os.name == 'nt':

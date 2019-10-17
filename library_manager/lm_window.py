@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 
-"""Create the main window"""
+"""Create the main window."""
 
 import os
 
@@ -16,7 +16,7 @@ import library_manager._globals as _globals
 
 # Main window
 class MainWindow(QMainWindow):
-    """Main window layout"""
+    """Main window layout."""
 
     def __init__(self, *args, **kwargs):
         super(MainWindow, self).__init__(*args, **kwargs)

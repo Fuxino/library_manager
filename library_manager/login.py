@@ -3,7 +3,7 @@
 """Login module
 
 This module creates a login dialog box that take username, password
-and hostname and allows to connect to the Library database
+and hostname and allows to connect to the Library database.
 """
 
 # Import libraries
@@ -23,7 +23,7 @@ from library_manager.info_dialogs import ErrorDialog
 
 # Login dialog box
 class Login_dialog(QDialog):
-    """Login dialog"""
+    """Login dialog."""
 
     def __init__(self, *args, **kwargs):
         super(Login_dialog, self).__init__(*args, **kwargs)
@@ -73,6 +73,12 @@ class Login_dialog(QDialog):
 
     # Function to connect to the database
     def db_connect(self):
+        """Connect to the database
+
+        The method takes the username, password and hostname inserted by the user
+        in the Login dialog  and uses them to connect to the database with mysql-connector.
+        """
+
         try:
             _globals.hostname = self.host.currentText()
             _globals.user = self.username.text()

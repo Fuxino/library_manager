@@ -1,11 +1,11 @@
 #!/usr/bin/env python3
 
-"""Information, warning and error dialogs"""
+"""Information, warning and error dialogs."""
 
 from PyQt5.QtWidgets import QMessageBox
 
 class ErrorDialog(QMessageBox):
-    """Show an error dialog box"""
+    """Show an error dialog box."""
 
     def __init__(self, error, *args, **kwargs):
         super(ErrorDialog, self).__init__(*args, **kwargs)
@@ -16,10 +16,12 @@ class ErrorDialog(QMessageBox):
         self.setStandardButtons(QMessageBox.Ok)
 
     def show(self):
+        """Show the dialog."""
+
         self.exec_()
 
 class WarningDialog(QMessageBox):
-    """Show a warning dialog box"""
+    """Show a warning dialog box."""
 
     def __init__(self, warning, *args, **kwargs):
         super(WarningDialog, self).__init__(*args, **kwargs)
@@ -30,10 +32,12 @@ class WarningDialog(QMessageBox):
         self.setStandardButtons(QMessageBox.Ok)
 
     def show(self):
+        """Show the dialog."""
+
         self.exec_()
 
 class InfoDialog(QMessageBox):
-    """Show an information dialog box"""
+    """Show an information dialog box."""
 
     def __init__(self, info, *args, **kwargs):
         super(InfoDialog, self).__init__(*args, **kwargs)
@@ -44,4 +48,6 @@ class InfoDialog(QMessageBox):
         self.setStandardButtons(QMessageBox.Ok)
 
     def show(self):
+        """Show the dialog."""
+
         self.exec_()

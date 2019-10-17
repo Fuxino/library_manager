@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 
-"""Global variables"""
+"""Global variables."""
 
 # Initialize global variables
 connection = None

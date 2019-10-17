@@ -24,7 +24,7 @@ except ImportError:
 
 # Form to insert books
 class InsertBookForm(QWidget):
-    """Widget to insert new book records in the database"""
+    """Widget to insert new book records in the database."""
 
     def __init__(self, *args, **kwargs):
         super(InsertBookForm, self).__init__(*args, **kwargs)
@@ -72,7 +72,7 @@ class InsertBookForm(QWidget):
 
 # Form to insert authors
 class InsertAuthorForm(QWidget):
-    """Widget to insert new author records in the database"""
+    """Widget to insert new author records in the database."""
 
     def __init__(self, *args, **kwargs):
         super(InsertAuthorForm, self).__init__(*args, **kwargs)
@@ -105,7 +105,7 @@ class InsertAuthorForm(QWidget):
 
 # Form to insert publishers
 class InsertPublisherForm(QWidget):
-    """Widget to insert new publisher records in the database"""
+    """Widget to insert new publisher records in the database."""
 
     def __init__(self, *args, **kwargs):
         super(InsertPublisherForm, self).__init__(*args, **kwargs)
@@ -122,7 +122,7 @@ class InsertPublisherForm(QWidget):
 
 # Form to insert series
 class InsertSeriesForm(QWidget):
-    """Widget to insert new series records in the database"""
+    """Widget to insert new series records in the database."""
 
     def __init__(self, *args, **kwargs):
         super(InsertSeriesForm, self).__init__(*args, **kwargs)
@@ -209,6 +209,8 @@ class InsertRecord(QWidget):
 
     # Function to clear all insert fields
     def clear_text(self):
+        """Clear the text in the insert form."""
+
         self.book_insert.isbn.clear()
         self.book_insert.title.clear()
         self.book_insert.author.clear()
@@ -236,6 +238,8 @@ class InsertRecord(QWidget):
 
     # Function to set insert form according to database table selected
     def change_table(self, table_name):
+        """Select the insert form (Books, Authors, Publishers or Series)."""
+
         # Clear all fields
         self.clear_text()
 
@@ -254,6 +258,13 @@ class InsertRecord(QWidget):
 
     # Function to insert record in database
     def insert_record(self):
+        """Insert record in the database
+
+        The method reads the informations in the active insert form
+        (Books, Authors, Publishers or Series) and uses them to insert
+        a new record in the database.
+        """
+
         if self.layout_insert.currentIndex() == 0:
             # Get text from insert form
             isbn = self.book_insert.isbn.text()
