@@ -1,8 +1,12 @@
-# Program: library_manager
-Simple program to manage my Library database, written in Python and PyQt5
+library_manager
+==============
+Library_manager is a simple program I wrote to manage my Library database
+
+## Build
+A PKGBUILD for Arch Linux is provided.
 
 ## Usage
-The program work with the Library database I created to manage my books. I included an Sql file to recreate the database structure.
+Library_manager works with the Library database I created to manage my books. I included the Sql file that allows to recreate the database structure.
 
 ## Dependencies
-The program is a python3 script, using PyQt5 for the GUI and mysql-connector to connect to the database. A mysql database must be running.
+The program is written in `Python3` and uses `PyQt5` for the GUI. The database connection is made through `mysql-connector`.
