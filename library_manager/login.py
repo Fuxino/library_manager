@@ -93,7 +93,7 @@ class LoginDialog(QDialog):
                                                           user=_globals.USER,
                                                           password=_globals.PWD)
 
-            _globals.CURSOR = _globals.CONNECTION.CURSOR(prepared=True)
+            _globals.CURSOR = _globals.CONNECTION.cursor(prepared=True)
 
             # Close login dialog
             self.accept()
