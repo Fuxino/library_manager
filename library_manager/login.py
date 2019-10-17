@@ -9,6 +9,8 @@ and hostname and allows to connect to the Library database.
 # Import libraries
 import os
 
+import sys
+
 from functools import partial
 
 from PyQt5.QtWidgets import QDialog, QDialogButtonBox, QLabel, QLineEdit,\
@@ -34,7 +36,8 @@ class Login_dialog(QDialog):
         if os.name == 'nt':
             self.setWindowIcon(QIcon('Icon.ico'))
         elif os.name == 'posix':
-            self.setWindowIcon(QIcon('/usr/share/icons/hicolor/32x32/apps/library_manager.png'))
+            self.setWindowIcon(QIcon(f'{sys.prefix}' +\
+                    '/share/icons/hicolor/32x32/apps/library_manager.png'))
 
         # Define layouts
         layout = QVBoxLayout()

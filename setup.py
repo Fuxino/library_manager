@@ -14,6 +14,9 @@ setup(name='library_manager',
       license='GPL3',
       url='https://github.com/Fuxino/library_manager',
       packages=['library_manager'],
+      data_files=[('share/icons/hicolor/32x32/apps', ['library_manager/icons/library_manager.png']),
+                  ('share/applications', ['library_manager.desktop']),
+                 ],
       entry_points={
           'gui_scripts':[
               'library_manager=library_manager.__main__:main'

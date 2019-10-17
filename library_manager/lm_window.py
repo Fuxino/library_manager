@@ -4,6 +4,8 @@
 
 import os
 
+import sys
+
 from PyQt5.QtWidgets import QMainWindow, QWidget, QPushButton, QTabWidget, QVBoxLayout
 from PyQt5.QtGui import QIcon
 from PyQt5.QtCore import Qt
@@ -36,7 +38,8 @@ class MainWindow(QMainWindow):
         if os.name == 'nt':
             self.setWindowIcon(QIcon('Icon.ico'))
         elif os.name == 'posix':
-            self.setWindowIcon(QIcon('/usr/share/icons/hicolor/32x32/apps/library_manager.png'))
+            self.setWindowIcon(QIcon(f'{sys.prefix}' +\
+                    '/share/icons/hicolor/32x32/apps/library_manager.png'))
 
         # Define main layout
         layout = QVBoxLayout()
