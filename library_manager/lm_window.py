@@ -58,12 +58,14 @@ class MainWindow(QMainWindow):
         exit_button.clicked.connect(self.close)
 
         # Define main window tabs
-        tabs = QTabWidget()
-        tabs.addTab(SearchDatabase(), 'Search')
-        tabs.addTab(InsertRecord(), 'Insert')
-        tabs.setDocumentMode(True)
+        self.tabs = QTabWidget()
+        self.tabs.addTab(SearchDatabase(), 'Search')
+        self.tabs.addTab(InsertRecord(), 'Insert')
+        self.tabs.setDocumentMode(True)
 
-        layout.addWidget(tabs)
+        self.tabs.currentChanged.connect(self.clear)
+
+        layout.addWidget(self.tabs)
         layout.addWidget(exit_button)
         layout.setAlignment(exit_button, Qt.AlignRight)
 
@@ -75,3 +77,12 @@ class MainWindow(QMainWindow):
 
         # Maximize window size
         self.showMaximized()
+
+    def clear(self):
+        """Clear tabs"""
+
+        search_tab = self.tabs.widget(0)
+        insert_tab = self.tabs.widget(1)
+
+        search_tab.clear()
+        insert_tab.clear()

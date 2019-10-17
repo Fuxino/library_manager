@@ -199,7 +199,7 @@ class InsertRecord(QWidget):
 
         # Define buttons behavior
         insert_button.clicked.connect(self.insert_record)
-        clear_button.clicked.connect(self.clear_text)
+        clear_button.clicked.connect(self.clear)
 
         # Add buttons to layout
         layout_button.addWidget(insert_button)
@@ -214,7 +214,7 @@ class InsertRecord(QWidget):
         self.setLayout(layout)
 
     # Function to clear all insert fields
-    def clear_text(self):
+    def clear(self):
         """Clear the text in the insert form."""
 
         self.book_insert.isbn.clear()
@@ -247,7 +247,7 @@ class InsertRecord(QWidget):
         """Select the insert form (Books, Authors, Publishers or Series)."""
 
         # Clear all fields
-        self.clear_text()
+        self.clear()
 
         # Books
         if table_name == 'Books':
