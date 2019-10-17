@@ -23,8 +23,12 @@ from PyQt5.QtCore import Qt
 
 from mysql.connector import Error
 
-import library_manager._globals as _globals
-from library_manager.info_dialogs import ErrorDialog, InfoDialog
+if os.name == 'nt':
+    import _globals
+    from info_dialogs import ErrorDialog, InfoDialog
+elif os.name == 'posix':
+    import library_manager._globals as _globals
+    from library_manager.info_dialogs import ErrorDialog, InfoDialog
 
 try:
     from isbnlib import canonical, is_isbn10, is_isbn13, mask

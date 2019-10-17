@@ -6,14 +6,20 @@ This module creates the layout and the functions that allow
 to insert new records in the database.
 """
 
+import os
+
 from PyQt5.QtWidgets import QWidget, QLineEdit, QComboBox, QPushButton,\
         QHBoxLayout, QVBoxLayout, QFormLayout, QStackedLayout
 from PyQt5.QtCore import Qt
 
 from mysql.connector import Error
 
-import library_manager._globals as _globals
-from library_manager.info_dialogs import ErrorDialog, WarningDialog, InfoDialog
+if os.name == 'nt':
+    import _globals
+    from info_dialogs import ErrorDialog, WarningDialog, InfoDialog
+elif os.name == 'posix':
+    import library_manager._globals as _globals
+    from library_manager.info_dialogs import ErrorDialog, WarningDialog, InfoDialog
 
 try:
     from isbnlib import canonical, is_isbn10, is_isbn13

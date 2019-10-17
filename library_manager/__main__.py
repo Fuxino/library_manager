@@ -3,16 +3,23 @@
 """Main module."""
 
 # Import libraries
+import os
+
 from sys import argv
 
 from PyQt5.QtWidgets import QApplication
 
-from library_manager.lm_window import MainWindow
-
-import library_manager._globals as _globals
+if os.name == 'nt':
+    from lm_window import MainWindow
+    import _globals
+    from fbs_runtime.application_context.PyQt5 import ApplicationContext
+elif os.name == 'posix':
+    from library_manager.lm_window import MainWindow
+    import library_manager._globals as _globals
 
 def main():
     """Main."""
+
     app = QApplication(argv)
 
     window = MainWindow()

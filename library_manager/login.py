@@ -20,8 +20,12 @@ from PyQt5.QtGui import QIcon
 import mysql.connector
 from mysql.connector import Error
 
-import library_manager._globals as _globals
-from library_manager.info_dialogs import ErrorDialog
+if os.name == 'nt':
+    import _globals
+    from info_dialogs import ErrorDialog
+elif os.name == 'posix':
+    import library_manager._globals as _globals
+    from library_manager.info_dialogs import ErrorDialog
 
 # Login dialog box
 class LoginDialog(QDialog):
