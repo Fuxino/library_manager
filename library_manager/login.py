@@ -23,6 +23,7 @@ from mysql.connector import Error
 if os.name == 'nt':
     import _globals
     from info_dialogs import ErrorDialog
+    from sys import exit
 elif os.name == 'posix':
     import library_manager._globals as _globals
     from library_manager.info_dialogs import ErrorDialog
