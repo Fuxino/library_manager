@@ -13,7 +13,6 @@ makedepends=("python-setuptools"
              "git")
 depends=("python3"
          "mariadb"
-         "python-mysql-connector"
          "python-pyqt5")
 optdepends=('python-isbnlib: check if isbn inserted is valid')
 conflicts=('library_manager-dev')
