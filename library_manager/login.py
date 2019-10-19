@@ -16,17 +16,17 @@ from functools import partial
 from PyQt5.QtWidgets import QDialog, QDialogButtonBox, QLabel, QLineEdit,\
         QComboBox, QVBoxLayout, QFormLayout
 from PyQt5.QtGui import QIcon
-
-import mysql.connector
-from mysql.connector import Error
+from PyQt5.QtSql import QSqlDatabase
 
 if os.name == 'nt':
     import _globals
     from info_dialogs import ErrorDialog
     from sys import exit
 elif os.name == 'posix':
-    import library_manager._globals as _globals
-    from library_manager.info_dialogs import ErrorDialog
+#    import library_manager._globals as _globals
+#    from library_manager.info_dialogs import ErrorDialog
+    import _globals
+    from info_dialogs import ErrorDialog
 
 # Login dialog box
 class LoginDialog(QDialog):
@@ -87,24 +87,22 @@ class LoginDialog(QDialog):
         in the Login dialog  and uses them to connect to the database with mysql-connector.
         """
 
-        try:
-            _globals.HOSTNAME = self.host.currentText()
-            _globals.USER = self.username.text()
-            _globals.PWD = self.password.text()
+        _globals.HOSTNAME = self.host.currentText()
+        _globals.USER = self.username.text()
+        _globals.PWD = self.password.text()
 
-            # Create connection
-            _globals.CONNECTION = mysql.connector.connect(host=_globals.HOSTNAME,
-                                                          database='Library',
-                                                          user=_globals.USER,
-                                                          password=_globals.PWD)
+        # Create connection
+        _globals.DB = QSqlDatabase.addDatabase('QMYSQL')
+        _globals.DB.setDatabaseName('Library')
+        _globals.DB.setHostName(_globals.HOSTNAME)
+        _globals.DB.setUserName(_globals.USER)
+        _globals.DB.setPassword(_globals.PWD)
 
-            _globals.CURSOR = _globals.CONNECTION.cursor(prepared=True)
-
+        if _globals.DB.open():
             # Close login dialog
             self.accept()
-
         # If error occurred during connection
-        except Error as err:
+        else:
             # Create error message box
-            error = ErrorDialog(str(err))
+            error = ErrorDialog(str(_globals.DB.lastError().databaseText()))
             error.show()

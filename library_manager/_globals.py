@@ -3,8 +3,7 @@
 """Global variables."""
 
 # Initialize global variables
-CONNECTION = None
-CURSOR = None
+DB = None
 USER = ''
 PWD = ''
 HOSTNAME = ''

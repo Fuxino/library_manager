@@ -20,15 +20,16 @@ from PyQt5.QtWidgets import QFileDialog, QWidget, QLineEdit, QComboBox,\
         QPushButton, QTableWidget, QTableWidgetItem, QFormLayout,\
         QHBoxLayout, QVBoxLayout, QStackedLayout
 from PyQt5.QtCore import Qt
-
-from mysql.connector import Error
+from PyQt5.QtSql import QSqlQuery
 
 if os.name == 'nt':
     import _globals
     from info_dialogs import ErrorDialog, InfoDialog
 elif os.name == 'posix':
-    import library_manager._globals as _globals
-    from library_manager.info_dialogs import ErrorDialog, InfoDialog
+#    import library_manager._globals as _globals
+#    from library_manager.info_dialogs import ErrorDialog, InfoDialog
+    import _globals
+    from info_dialogs import ErrorDialog, InfoDialog
 
 try:
     from isbnlib import canonical, is_isbn10, is_isbn13, mask
@@ -474,6 +475,8 @@ class SearchDatabase(QWidget):
 
         self.table.blockSignals(True)
 
+        sql_query = QSqlQuery()
+
         # Query Books
         if self.layout_search.currentIndex() == 0:
             query = 'SELECT Books.Id, ISBN, Title, Authors.Name, OtherAuthors, Publishers.Name, \
@@ -541,47 +544,46 @@ class SearchDatabase(QWidget):
 
             query = query + 'ORDER BY Authors.Name, Series.Name, Year'
 
-            try:
-                # Execute the query
-                _globals.CURSOR.execute(query)
-                results = _globals.CURSOR.fetchall()
+            sql_query.prepare(query)
 
+            # Execute the query
+            if sql_query.exec_():
                 # Clear the results table
                 self.table.setRowCount(0)
 
                 # Get values for each result of the query
-                for row in results:
-                    Id = row[0]
-                    ISBN = row[1]
-                    Title = row[2]
-                    Author = row[3]
-                    OtherAuthors = row[4]
-                    Publisher = row[5]
-                    Series = row[6]
-                    Subseries = row[7]
-                    Category = row[8]
-                    Language = row[9]
-                    Year = row[10]
-                    Pages = row[11]
-                    Owner = row[12]
-                    Type = row[13]
+                while sql_query.next():
+                    record = sql_query.record()
+                    Id = str(record.value(0))
+                    ISBN = str(record.value(1))
+                    Title = str(record.value(2))
+                    Author = str(record.value(3))
+                    OtherAuthors = str(record.value(4))
+                    Publisher = str(record.value(5))
+                    Series = str(record.value(6))
+                    Subseries = str(record.value(7))
+                    Category = str(record.value(8))
+                    Language = str(record.value(9))
+                    Year = str(record.value(10))
+                    Pages = str(record.value(11))
+                    Owner = str(record.value(12))
+                    Type = str(record.value(13))
 
                     # Hyphenate ISBN
-                    if ISBN is not None and ISBN_CHECK:
+                    if ISBN != '' and ISBN_CHECK:
                         ISBN = mask(ISBN, '-')
 
-                    # If Year and/or Pages is NULL, show empty string
-                    if Year is None:
+                    if Year == '0':
                         Year = ''
 
-                    if Pages is None:
+                    if Pages == '0':
                         Pages = ''
 
                     # Insert values in table
                     i = self.table.rowCount()
                     self.table.insertRow(i)
 
-                    id_item = QTableWidgetItem(str(Id))
+                    id_item = QTableWidgetItem(Id)
                     id_item.setFlags(id_item.flags() & ~Qt.ItemIsEditable)
                     self.table.setItem(i, 0, id_item)
                     self.table.setItem(i, 1, QTableWidgetItem(ISBN))
@@ -593,8 +595,8 @@ class SearchDatabase(QWidget):
                     self.table.setItem(i, 7, QTableWidgetItem(Subseries))
                     self.table.setItem(i, 8, QTableWidgetItem(Category))
                     self.table.setItem(i, 9, QTableWidgetItem(Language))
-                    self.table.setItem(i, 10, QTableWidgetItem(str(Year)))
-                    self.table.setItem(i, 11, QTableWidgetItem(str(Pages)))
+                    self.table.setItem(i, 10, QTableWidgetItem(Year))
+                    self.table.setItem(i, 11, QTableWidgetItem(Pages))
                     self.table.setItem(i, 12, QTableWidgetItem(Owner))
                     self.table.setItem(i, 13, QTableWidgetItem(Type))
 
@@ -606,9 +608,9 @@ class SearchDatabase(QWidget):
 
                 if self.table.columnWidth(4) > 300:
                     self.table.setColumnWidth(4, 300)
-            except Error as err:
+            else:
                 # Create error message box
-                error = ErrorDialog(str(err))
+                error = ErrorDialog(sql_query.lastError().databaseText())
                 error.show()
 
                 self.table.blockSignals(False)
@@ -642,48 +644,47 @@ class SearchDatabase(QWidget):
 
             query = query + 'ORDER BY Name'
 
-            try:
-                # Execute the query
-                _globals.CURSOR.execute(query)
-                results = _globals.CURSOR.fetchall()
+            sql_query.prepare(query)
+
+            # Execute the query
+            if sql_query.exec_():
 
                 # Clear the results table
                 self.table.setRowCount(0)
 
                 # Get values for each result of the query
-                for row in results:
-                    Id = row[0]
-                    Name = row[1]
-                    Gender = row[2]
-                    Nationality = row[3]
-                    BirthYear = row[4]
-                    DeathYear = row[5]
+                while sql_query.next():
+                    Id = str(sql_query.value(0))
+                    Name = str(sql_query.value(1))
+                    Gender = str(sql_query.value(2))
+                    Nationality = str(sql_query.value(3))
+                    BirthYear = str(sql_query.value(4))
+                    DeathYear = str(sql_query.value(5))
 
-                    # If BirthYear and/or DeathYear is NULL, show empty string
-                    if BirthYear is None:
+                    if BirthYear == '0':
                         BirthYear = ''
 
-                    if DeathYear is None:
+                    if DeathYear == '0':
                         DeathYear = ''
 
                     # Insert values in table
                     i = self.table.rowCount()
                     self.table.insertRow(i)
 
-                    id_item = QTableWidgetItem(str(Id))
+                    id_item = QTableWidgetItem(Id)
                     id_item.setFlags(id_item.flags() & ~Qt.ItemIsEditable)
                     self.table.setItem(i, 0, id_item)
                     self.table.setItem(i, 1, QTableWidgetItem(Name))
                     self.table.setItem(i, 2, QTableWidgetItem(Gender))
                     self.table.setItem(i, 3, QTableWidgetItem(Nationality))
-                    self.table.setItem(i, 4, QTableWidgetItem(str(BirthYear)))
-                    self.table.setItem(i, 5, QTableWidgetItem(str(DeathYear)))
+                    self.table.setItem(i, 4, QTableWidgetItem(BirthYear))
+                    self.table.setItem(i, 5, QTableWidgetItem(DeathYear))
 
                 # Resize columns
                 self.table.resizeColumnsToContents()
-            except Error as err:
+            else:
                 # Create error message box
-                error = ErrorDialog(str(err))
+                error = ErrorDialog(sql_query.lastError().databaseText())
                 error.show()
 
                 self.table.blockSignals(False)
@@ -705,33 +706,32 @@ class SearchDatabase(QWidget):
 
             query = query + 'ORDER BY Name'
 
-            try:
-                # Execute the query
-                _globals.CURSOR.execute(query)
-                results = _globals.CURSOR.fetchall()
+            sql_query.prepare(query)
 
+            # Execute the query
+            if sql_query.exec_():
                 # Clear the results table
                 self.table.setRowCount(0)
 
                 # Get values for each result of the query
-                for row in results:
-                    Id = row[0]
-                    Name = row[1]
+                while sql_query.next():
+                    Id = str(sql_query.value(0))
+                    Name = str(sql_query.value(1))
 
                     i = self.table.rowCount()
                     self.table.insertRow(i)
 
                     # Insert values in table
-                    id_item = QTableWidgetItem(str(Id))
+                    id_item = QTableWidgetItem(Id)
                     id_item.setFlags(id_item.flags() & ~Qt.ItemIsEditable)
                     self.table.setItem(i, 0, id_item)
                     self.table.setItem(i, 1, QTableWidgetItem(Name))
 
                 # Resize columns
                 self.table.resizeColumnsToContents()
-            except Error as err:
+            else:
                 # Create error message box
-                error = ErrorDialog(str(err))
+                error = ErrorDialog(sql_query.lastError().databaseText())
                 error.show()
 
                 self.table.blockSignals(False)
@@ -760,25 +760,24 @@ class SearchDatabase(QWidget):
 
             query = query + 'ORDER BY Authors.Name, Series.Name'
 
-            try:
-                # Execute the query
-                _globals.CURSOR.execute(query)
-                results = _globals.CURSOR.fetchall()
+            sql_query.prepare(query)
 
+            # Execute the query
+            if sql_query.exec_():
                 # Clear the results table
                 self.table.setRowCount(0)
 
                 # Get values for each result of the query
-                for row in results:
-                    Id = row[0]
-                    Name = row[1]
-                    Author = row[2]
+                while sql_query.next():
+                    Id = str(sql_query.value(0))
+                    Name = str(sql_query.value(1))
+                    Author = str(sql_query.value(2))
 
                     i = self.table.rowCount()
                     self.table.insertRow(i)
 
                     # Insert values in table
-                    id_item = QTableWidgetItem(str(Id))
+                    id_item = QTableWidgetItem(Id)
                     id_item.setFlags(id_item.flags() & ~Qt.ItemIsEditable)
                     self.table.setItem(i, 0, id_item)
                     self.table.setItem(i, 1, QTableWidgetItem(Name))
@@ -786,9 +785,9 @@ class SearchDatabase(QWidget):
 
                 # Resize columns
                 self.table.resizeColumnsToContents()
-            except Error as err:
+            else:
                 # Create error message box
-                error = ErrorDialog(str(err))
+                error = ErrorDialog(sql_query.lastError().databaseText())
                 error.show()
 
                 self.table.blockSignals(False)
@@ -812,6 +811,8 @@ class SearchDatabase(QWidget):
         in the search results table, this method automatically updates the database
         with the new value.
         """
+
+        sql_query = QSqlQuery()
 
         field_index = self.table.currentColumn()
         field = self.table.horizontalHeaderItem(field_index).text()
@@ -882,10 +883,11 @@ class SearchDatabase(QWidget):
 
                 return
 
-            mysql_select_query = """SELECT Id FROM Authors WHERE Name LIKE %s"""
-            _globals.CURSOR.execute(mysql_select_query, ('%'+value+'%',))
-            author = _globals.CURSOR.fetchall()
-            if not author:
+            query = f'SELECT Id FROM Authors WHERE Name LIKE \'%{value}%\''
+            sql_query.prepare(query)
+            sql_query.exec_()
+
+            if sql_query.size() == 0:
                 # Author cannot be NULL, show error
                 error = ErrorDialog('Author not found in Authors table. Operation failed')
                 error.show()
@@ -899,8 +901,9 @@ class SearchDatabase(QWidget):
 
                 return
 
-            if len(author) == 1:
-                value = author[0][0]
+            if sql_query.size() == 1:
+                sql_query.next()
+                value = sql_query.value(0)
             else:
                 # Create error message box
                 error = ErrorDialog('Multiple authors match name string. Operation failed')
@@ -916,11 +919,11 @@ class SearchDatabase(QWidget):
                 return
         elif field == 'Publisher':
             if value != '':
-                mysql_select_query = """SELECT Id FROM Publishers WHERE Name LIKE %s"""
-                _globals.CURSOR.execute(mysql_select_query, ('%'+value+'%',))
-                publisher = _globals.CURSOR.fetchall()
+                query = f'SELECT Id FROM Publishers WHERE Name LIKE \'%{value}%\''
+                sql_query.prepare(query)
+                sql_query.exec_()
 
-                if not publisher:
+                if sql_query.size() == 0:
                     error = ErrorDialog('No publisher matches name string. Operation failed')
                     error.show()
 
@@ -934,8 +937,9 @@ class SearchDatabase(QWidget):
 
                     return
 
-                if len(publisher) == 1:
-                    value = publisher[0][0]
+                if sql_query.size() == 1:
+                    sql_query.next()
+                    value = sql_query.value(0)
                 else:
                     # Create error message box
                     error = ErrorDialog('Multiple publishers match name string. Operation failed')
@@ -952,11 +956,11 @@ class SearchDatabase(QWidget):
                     return
         elif field == 'Series':
             if value != '':
-                mysql_select_query = """SELECT Id FROM Series WHERE Name LIKE %s"""
-                _globals.CURSOR.execute(mysql_select_query, ('%'+value+'%',))
-                series = _globals.CURSOR.fetchall()
+                query = f'SELECT Id FROM Series WHERE Name LIKE \'%{value}%\''
+                sql_query.prepare(query)
+                sql_query.exec_()
 
-                if not series:
+                if sql_query.size() == 0:
                     error = ErrorDialog('No series matches name string. Operation failed')
                     error.show()
 
@@ -970,8 +974,9 @@ class SearchDatabase(QWidget):
 
                     return
 
-                if len(series) == 1:
-                    value = series[0][0]
+                if sql_query.size() == 1:
+                    sql_query.next()
+                    value = sql_query.value(0)
                 else:
                     # Create error message box
                     error = ErrorDialog('Multiple series match name string. Operation failed.')
@@ -1008,10 +1013,9 @@ class SearchDatabase(QWidget):
             else:
                 query = f'UPDATE Series SET {field}=NULL WHERE Id={id_n}'
 
-        try:
-            _globals.CURSOR.execute(query)
-            _globals.CONNECTION.commit()
+        sql_query.prepare(query)
 
+        if sql_query.exec_():
             if field == 'ISBN':
                 if value != '':
                     value = mask(value, '-')
@@ -1023,10 +1027,13 @@ class SearchDatabase(QWidget):
 
                     self.table.blockSignals(False)
             elif field == 'Author':
-                mysql_select_query = """SELECT Name FROM Authors WHERE Id=%s"""
-                _globals.CURSOR.execute(mysql_select_query, (value,))
-                author = _globals.CURSOR.fetchall()
-                value = author[0][0]
+                query = f'SELECT Name FROM Authors WHERE Id={value}'
+                sql_query.prepare(query)
+                sql_query.exec_()
+
+                author = sql_query.result()
+                author.fetchFirst()
+                value = author.boundValue(0)
 
                 self.table.blockSignals(True)
 
@@ -1035,10 +1042,13 @@ class SearchDatabase(QWidget):
 
                 self.table.blockSignals(False)
             elif field == 'Publisher':
-                mysql_select_query = """SELECT Name FROM Publishers WHERE Id=%s"""
-                _globals.CURSOR.execute(mysql_select_query, (value,))
-                publisher = _globals.CURSOR.fetchall()
-                value = publisher[0][0]
+                query = f'SELECT Name FROM Publishers WHERE Id={value}'
+                sql_query.prepare(query)
+                sql_query.exec_()
+
+                publisher = sql_query.result()
+                publisher.fetchFirst()
+                value = publisher.boundValue(0)
 
                 self.table.blockSignals(True)
 
@@ -1047,10 +1057,13 @@ class SearchDatabase(QWidget):
 
                 self.table.blockSignals(False)
             elif field == 'Series':
-                mysql_select_query = """SELECT Name FROM Series WHERE Id=%s"""
-                _globals.CURSOR.execute(mysql_select_query, (value,))
-                series = _globals.CURSOR.fetchall()
-                value = series[0][0]
+                query = f'SELECT Name FROM Series WHERE Id={value}'
+                sql_query.prepare(query)
+                sql_query.exec_()
+
+                series = sql_query.result()
+                series.fetchFirst()
+                value = series.boundValue(0)
 
                 self.table.blockSignals(True)
 
@@ -1070,9 +1083,9 @@ class SearchDatabase(QWidget):
 
             info = InfoDialog('Record modified successfully')
             info.show()
-        except Error as err:
+        else:
             # Create error message box
-            error = ErrorDialog(str(err))
+            error = ErrorDialog(sql_query.lastError().databaseText())
             error.show()
 
             self.table.blockSignals(True)

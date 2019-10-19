@@ -10,16 +10,16 @@ import os
 
 from PyQt5.QtWidgets import QWidget, QLineEdit, QComboBox, QPushButton,\
         QHBoxLayout, QVBoxLayout, QFormLayout, QStackedLayout
-from PyQt5.QtCore import Qt
-
-from mysql.connector import Error
+from PyQt5.QtCore import Qt, QVariant
+from PyQt5.QtSql import QSqlQuery
 
 if os.name == 'nt':
-    import _globals
+#    import _globals
     from info_dialogs import ErrorDialog, WarningDialog, InfoDialog
 elif os.name == 'posix':
-    import library_manager._globals as _globals
-    from library_manager.info_dialogs import ErrorDialog, WarningDialog, InfoDialog
+#    import library_manager._globals as _globals
+#    from library_manager.info_dialogs import ErrorDialog, WarningDialog, InfoDialog
+    from info_dialogs import ErrorDialog, WarningDialog, InfoDialog
 
 try:
     from isbnlib import canonical, is_isbn10, is_isbn13
@@ -271,26 +271,31 @@ class InsertRecord(QWidget):
         a new record in the database.
         """
 
+        sql_query = QSqlQuery()
+
         if self.layout_insert.currentIndex() == 0:
             # Get text from insert form
-            isbn = self.book_insert.isbn.text()
-            title = self.book_insert.title.text()
-            author = self.book_insert.author.text()
-            otherauthors = self.book_insert.otherauthors.text()
-            publisher = self.book_insert.publisher.text()
-            series = self.book_insert.series.text()
-            subseries = self.book_insert.subseries.text()
-            category = self.book_insert.category.text()
-            language = self.book_insert.language.text()
-            year = self.book_insert.year.text()
-            pages = self.book_insert.pages.text()
-            owner = self.book_insert.owner.currentText()
-            booktype = self.book_insert.booktype.currentText()
+            isbn = QVariant(self.book_insert.isbn.text())
+            title = QVariant(self.book_insert.title.text())
+            author = QVariant(self.book_insert.author.text())
+            otherauthors = QVariant(self.book_insert.otherauthors.text())
+            publisher = QVariant(self.book_insert.publisher.text())
+            series = QVariant(self.book_insert.series.text())
+            subseries = QVariant(self.book_insert.subseries.text())
+            category = QVariant(self.book_insert.category.text())
+            language = QVariant(self.book_insert.language.text())
+            year = QVariant(self.book_insert.year.text())
+            pages = QVariant(self.book_insert.pages.text())
+            owner = QVariant(self.book_insert.owner.currentText())
+            booktype = QVariant(self.book_insert.booktype.currentText())
 
             # Set values to None where strings are empty
-            if isbn == '':
-                isbn = None
+#            if isbn.value() == '':
+#                isbn = QVariant()
+            if isbn.value() == '':
+                isbn = QVariant()
             else:
+                isbn = isbn.value()
                 # Check is the ISBN is valid
                 if ISBN_CHECK:
                     if '-' in isbn:
@@ -315,280 +320,348 @@ class InsertRecord(QWidget):
                         error.show()
 
                         return
-            if title == '':
+
+                    isbn = QVariant(isbn)
+            if title.value() == '':
                 # Title cannot be NULL, show error
-                error = ErrorDialog('Title cannot be NULL. Operation failed.')
-                error.show()
-
-                return
-            if author == '':
+#                error = ErrorDialog('Title cannot be NULL. Operation failed.')
+#                error.show()
+                title = QVariant()
+#                return
+            if author.value() == '':
                 # Author cannot be NULL, show error
-                error = ErrorDialog('Author cannot be NULL. Operation failed')
-                error.show()
-
-                return
-            if otherauthors == '':
-                otherauthors = None
-            if publisher == '':
-                publisher = None
-            if series == '':
-                series = None
-            if subseries == '':
-                subseries = None
-            if category == '':
-                category = None
-            if language == '':
-                language = None
-            if year == '':
-                year = None
-            if pages == '':
-                pages = None
-            if owner == '':
-                owner = None
-            if booktype == '':
-                booktype = None
+#                error = ErrorDialog('Author cannot be NULL. Operation failed')
+#                error.show()
+                author = QVariant()
+#                return
+            if otherauthors.value() == '':
+                otherauthors = QVariant()
+            if publisher.value() == '':
+                publisher = QVariant()
+            if series.value() == '':
+                series = QVariant()
+            if subseries.value() == '':
+                subseries = QVariant()
+            if category.value() == '':
+                category = QVariant()
+            if language.value() == '':
+                language = QVariant()
+            if year.value() == '':
+                year = QVariant()
+            if pages.value() == '':
+                pages = QVariant()
+            if owner.value() == '':
+                owner = QVariant()
+            if booktype.value() == '':
+                booktype = QVariant()
 
             # Get Author Id from Name
-            mysql_select_query = """SELECT Id FROM Authors WHERE Name LIKE %s"""
-            _globals.CURSOR.execute(mysql_select_query, ('%'+author+'%',))
-            author_id = _globals.CURSOR.fetchall()
-            if not author_id:
-                # Author cannot be NULL, show error
-                error = ErrorDialog('Author not found in Authors table. Operation failed')
-                error.show()
+            if not author.isNull():
+                sql_query.prepare(f'SELECT Id FROM Authors WHERE Name LIKE \'%{author.value()}%\'')
 
-                return
-
-            if len(author_id) == 1:
-                author = author_id[0][0]
-            else:
-                # Show warning if string matches multiple authors
-                warning = WarningDialog('String matches multiple authors. Using exact match')
-                warning.show()
-
-                # Get Author Id from Name using exact match
-                mysql_select_query = """SELECT Id FROM Authors WHERE Name=%s"""
-                _globals.CURSOR.execute(mysql_select_query, (author,))
-                author_id = _globals.CURSOR.fetchall()
-                if not author_id:
-                    # Author cannot be NULL, show error
-                    error = ErrorDialog('No exact match found in table Authors. Operation failed')
-                    error.show()
-
-                    return
-
-                if len(author_id) == 1:
-                    author = author_id[0][0]
-
-            # Get Publisher Id from Name
-            if publisher is not None:
-                mysql_select_query = """SELECT Id FROM Publishers WHERE Name LIKE %s"""
-                _globals.CURSOR.execute(mysql_select_query, ('%'+publisher+'%',))
-                publisher_id = _globals.CURSOR.fetchall()
-                if not publisher_id:
-                    publisher = None
-                    # Show warning if string doesn't match any Publisher
-                    warning = WarningDialog('Publisher not found, set to \'NULL\'')
-                    warning.show()
-                elif len(publisher_id) == 1:
-                    publisher = publisher_id[0][0]
-                else:
-                    # Show warning if string matches multiple publishers
-                    warning = WarningDialog('String matches multiple publishers. Using exact match')
-                    warning.show()
-
-                    # Get Publisher Id from Name using exact match
-                    mysql_select_query = """SELECT Id FROM Publishers WHERE Name=%s"""
-                    _globals.CURSOR.execute(mysql_select_query, (publisher,))
-                    publisher_id = _globals.CURSOR.fetchall()
-                    if not publisher_id:
-                        publisher = None
-                        # Show warning if exact match is not found
-                        warning = WarningDialog('Publisher not found, set to \'NULL\'')
-                        warning.show()
-                    elif len(publisher_id) == 1:
-                        publisher = publisher_id[0][0]
-
-            # Get Series Id from Name
-            if series is not None:
-                mysql_select_query = """SELECT Id FROM Series WHERE Name LIKE %s"""
-                _globals.CURSOR.execute(mysql_select_query, ('%'+series+'%',))
-                series_id = _globals.CURSOR.fetchall()
-                if not series_id:
-                    series = None
-                    # Show warning if string doesn't match any Series
-                    warning = WarningDialog('Series not found, set to \'NULL\'')
-                    warning.show()
-                elif len(series_id) == 1:
-                    series = series_id[0][0]
-                else:
-                    # Show warning is string matches multiple Series
-                    warning = WarningDialog('String matches multiple series. Using exact match')
-                    warning.show()
-
-                    # Get Series Id from Name using exact match
-                    mysql_select_query = """SELECT Id FROM Series WHERE Name=%s"""
-                    _globals.CURSOR.execute(mysql_select_query, (series,))
-                    series_id = _globals.CURSOR.fetchall()
-                    if not series_id:
-                        series = None
-                        # Show warning if exact match is not found
-                        warning = WarningDialog('Series not found, set to \'NULL\'')
-                        warning.show()
-                    elif len(series_id) == 1:
-                        series = series_id[0][0]
-
-            mysql_insert_query = """INSERT INTO Books(ISBN, Title, Author, OtherAuthors,
-            Publisher, Series, Subseries, Category, Language, Year, Pages, Owner, Type)
-            Values(%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)"""
-
-            values = (isbn, title, author, otherauthors, publisher, series, subseries,\
-                    category, language, year, pages, owner, booktype)
-
-            # Execute the query
-            try:
-                _globals.CURSOR.execute(mysql_insert_query, values)
-                _globals.CONNECTION.commit()
-
-                # Show message if insertion succeeded
-                info = InfoDialog('Record inserted successfully into Books')
-                info.show()
-            except Error as err:
-                # Create error message box
-                error = ErrorDialog(str(err))
-                error.show()
-
-        elif self.layout_insert.currentIndex() == 1:
-            # Get text from insert form
-            name = self.author_insert.name.text()
-            gender = self.author_insert.gender.currentText()
-            nationality = self.author_insert.nationality.text()
-            birthyear = self.author_insert.birthyear.text()
-            deathyear = self.author_insert.deathyear.text()
-
-            # Set values to None where strings are empty
-            if name == '':
-                # Name cannot be NULL, show error
-                error = ErrorDialog('Name cannot be NULL. Operation failed')
-                error.show()
-
-                return
-            if gender == '':
-                gender = None
-            if nationality == '':
-                nationality = None
-            if birthyear == '':
-                birthyear = None
-            if deathyear == '':
-                deathyear = None
-
-            mysql_insert_query = """INSERT INTO Authors(Name, Gender, Nationality,
-            BirthYear, DeathYear) Values(%s, %s, %s, %s, %s)"""
-            values = (name, gender, nationality, birthyear, deathyear)
-
-            # Execute the query
-            try:
-                _globals.CURSOR.execute(mysql_insert_query, values)
-                _globals.CONNECTION.commit()
-
-                # Show message if insertion succeeded
-                info = InfoDialog('Record inserted successfully into Authors')
-                info.show()
-            except Error as err:
-                # Create error message box
-                error = ErrorDialog(str(err))
-                error.show()
-
-        elif self.layout_insert.currentIndex() == 2:
-            # Get text from insert form
-            name = self.publisher_insert.name.text()
-
-            # Set value to None if string is empty
-            if name == '':
-                # Name cannot be NULL, show error
-                error = ErrorDialog('Name cannot be NULL. Operation failed')
-                error.show()
-
-                return
-
-            mysql_insert_query = """INSERT INTO Publishers(Name) Values(%s)"""
-
-            # Execute the query
-            try:
-                _globals.CURSOR.execute(mysql_insert_query, (name,))
-                _globals.CONNECTION.commit()
-
-                # Show message if insertion succeeded
-                info = InfoDialog('Record inserted successfully into Publishers')
-                info.show()
-            except Error as err:
-                # Create error message box
-                error = ErrorDialog(str(err))
-                error.show()
-
-        elif self.layout_insert.currentIndex() == 3:
-            # Get text from insert form
-            name = self.series_insert.name.text()
-            author = self.series_insert.author.text()
-
-            # Set values to None where strings are empty
-            if name == '':
-                # Name cannot be NULL, show error
-                error = ErrorDialog('Name cannot be NULL. Operation failed')
-                error.show()
-
-                return
-
-            if author == '':
-                author = None
-
-            if author is not None:
-                # Get Author Id from Name
-                mysql_select_query = """SELECT Id FROM Authors WHERE Name LIKE %s"""
-                _globals.CURSOR.execute(mysql_select_query, ('%'+author+'%',))
-                author_id = _globals.CURSOR.fetchall()
-                if not author_id:
-                    # Author cannot be NULL, show error
-                    error = ErrorDialog('Author not found in Authors table. Operation failed')
-                    error.show()
-
-                    return
-
-                if len(author_id) == 1:
-                    author = author_id[0][0]
-                else:
-                    # Show warning if string matches multiple authors
-                    warning = WarningDialog('String matches multiple authors. Using exact match')
-                    warning.show()
-
-                    # Get Author Id from Name using exact match
-                    mysql_select_query = """SELECT Id FROM Authors WHERE Name=%s"""
-                    _globals.CURSOR.execute(mysql_select_query, (author,))
-                    author_id = _globals.CURSOR.fetchall()
-
-                    if not author_id:
+                if sql_query.exec_():
+                    if sql_query.size() == 0:
                         # Author cannot be NULL, show error
-                        error = ErrorDialog('No exact match found in table Authors. ' +\
-                                'Operation failed')
+                        error = ErrorDialog('Author not found. Operation failed')
                         error.show()
 
                         return
 
-                    if len(author_id) == 1:
-                        author = author_id[0][0]
+                    if sql_query.size() == 1:
+                        sql_query.next()
+                        author = sql_query.value(0)
+                    else:
+                        # Show warning if string matches multiple authors
+                        warning = WarningDialog('String matches multiple authors. ' +\
+                                'Using exact match')
+                        warning.show()
 
-            mysql_insert_query = """INSERT INTO Series(Name, Author) Values(%s, %s)"""
-            values = (name, author)
+                        # Get Author Id from Name using exact match
+                        sql_query.prepare(f'SELECT Id FROM Authors WHERE Name=\'{author.value()}\'')
+
+                        if sql_query.exec_():
+                            if sql_query.size() == 0:
+                                # Author cannot be NULL, show error
+                                error = ErrorDialog('Author not found. Operation failed')
+                                error.show()
+
+                                return
+
+                            if sql_query.size() == 1:
+                                sql_query.next()
+                                author = sql_query.value(0)
+                        else:
+                            #Show error if query failed
+                            error = ErrorDialog(str(sql_query.lastError().databaseText()))
+                            error.show()
+
+                            return
+                else:
+                    #Show error if query failed
+                    error = ErrorDialog(str(sql_query.lastError().databaseText()))
+                    error.show()
+
+                    return
+
+            # Get Publisher Id from Name
+            if not publisher.isNull():
+                sql_query.prepare('SELECT Id FROM Publishers WHERE ' +\
+                        f'Name LIKE \'%{publisher.value()}%\'')
+
+                if sql_query.exec_():
+                    if sql_query.size() == 0:
+                        publisher = QVariant()
+                        # Show warning if string doesn't match any Publisher
+                        warning = WarningDialog('Publisher not found, set to \'NULL\'')
+                        warning.show()
+                    elif sql_query.size() == 1:
+                        sql_query.next()
+                        publisher = sql_query.value(0)
+                    else:
+                        # Show warning if string matches multiple publishers
+                        warning = WarningDialog('String matches multiple publishers.' +\
+                                'Using exact match')
+                        warning.show()
+
+                        # Get Publisher Id from Name using exact match
+                        sql_query.prepare('SELECT Id FROM Publishers WHERE ' +\
+                                'Name=\'{publisher.value()}\'')
+
+                        if sql_query.exec_():
+                            if sql_query.size() == 0:
+                                publisher = QVariant()
+                                # Show warning if exact match is not found
+                                warning = WarningDialog('Publisher not found, set to \'NULL\'')
+                                warning.show()
+                            elif sql_query.size() == 1:
+                                sql_query.next()
+                                publisher = sql_query.value(0)
+                        else:
+                            #Show error if query failed
+                            error = ErrorDialog(str(sql_query.lastError().databaseText()))
+                            error.show()
+
+                            return
+                else:
+                    #Show error if query failed
+                    error = ErrorDialog(str(sql_query.lastError().databaseText()))
+                    error.show()
+
+                    return
+
+
+            # Get Series Id from Name
+            if not series.isNull():
+                sql_query.prepare(f'SELECT Id FROM Series WHERE Name LIKE \'%{series.value()}%\'')
+
+                if sql_query.exec_():
+                    if sql_query.size() == 0:
+                        series = QVariant()
+                        # Show warning if string doesn't match any Series
+                        warning = WarningDialog('Series not found, set to \'NULL\'')
+                        warning.show()
+                    elif sql_query.size() == 1:
+                        sql_query.next()
+                        series = sql_query.value(0)
+                    else:
+                        # Show warning is string matches multiple Series
+                        warning = WarningDialog('String matches multiple series. Using exact match')
+                        warning.show()
+
+                        # Get Series Id from Name using exact match
+                        sql_query.prepare(f'SELECT Id FROM Series WHERE Name=\'{series.value()}\'')
+
+                        if sql_query.exec_():
+                            if sql_query.size() == 0:
+                                series = QVariant()
+                                # Show warning if exact match is not found
+                                warning = WarningDialog('Series not found, set to \'NULL\'')
+                                warning.show()
+                            elif sql_query.size() == 1:
+                                sql_query.next()
+                                series = sql_query.value(0)
+                        else:
+                            #Show error if query failed
+                            error = ErrorDialog(str(sql_query.lastError().databaseText()))
+                            error.show()
+
+                            return
+                else:
+                    #Show error if query failed
+                    error = ErrorDialog(str(sql_query.lastError().databaseText()))
+                    error.show()
+
+                    return
+
+            sql_query.prepare('INSERT INTO Books(ISBN, Title, Author, OtherAuthors, Publisher, ' +\
+                    'Series, Subseries, Category, Language, Year, Pages, Owner, Type) ' +\
+                    'Values(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)')
+            sql_query.bindValue(0, isbn)
+            sql_query.bindValue(1, title)
+            sql_query.bindValue(2, author)
+            sql_query.bindValue(3, otherauthors)
+            sql_query.bindValue(4, publisher)
+            sql_query.bindValue(5, series)
+            sql_query.bindValue(6, subseries)
+            sql_query.bindValue(7, category)
+            sql_query.bindValue(8, language)
+            sql_query.bindValue(9, year)
+            sql_query.bindValue(10, pages)
+            sql_query.bindValue(11, owner)
+            sql_query.bindValue(12, booktype)
 
             # Execute the query
-            try:
-                _globals.CURSOR.execute(mysql_insert_query, values)
-                _globals.CONNECTION.commit()
+            if sql_query.exec_():
+                # Show message if insertion succeeded
+                info = InfoDialog('Record inserted successfully into Books')
+                info.show()
+            else:
+                # Create error message box
+                error = ErrorDialog(str(sql_query.lastError().databaseText()))
+                error.show()
 
+        elif self.layout_insert.currentIndex() == 1:
+            # Get text from insert form
+            name = QVariant(self.author_insert.name.text())
+            gender = QVariant(self.author_insert.gender.currentText())
+            nationality = QVariant(self.author_insert.nationality.text())
+            birthyear = QVariant(self.author_insert.birthyear.text())
+            deathyear = QVariant(self.author_insert.deathyear.text())
+
+            # Set values to None where strings are empty
+            if name.value() == '':
+                name = QVariant()
+                # Name cannot be NULL, show error
+#                error = ErrorDialog('Name cannot be NULL. Operation failed')
+#                error.show()
+
+#                return
+            if gender.value() == '':
+                gender = QVariant()
+            if nationality.value() == '':
+                nationality = QVariant()
+            if birthyear.value() == '':
+                birthyear = QVariant()
+            if deathyear.value() == '':
+                deathyear = QVariant()
+
+            sql_query.prepare('INSERT INTO Authors(' +\
+                    'Name, Gender, Nationality, BirthYear, DeathYear) ' +\
+                    'Values(?, ?, ?, ?, ?)')
+            sql_query.bindValue(0, name)
+            sql_query.bindValue(1, gender)
+            sql_query.bindValue(2, nationality)
+            sql_query.bindValue(3, birthyear)
+            sql_query.bindValue(4, deathyear)
+
+            # Execute the query
+            if sql_query.exec_():
+                # Show message if insertion succeeded
+                info = InfoDialog('Record inserted successfully into Authors')
+                info.show()
+            else:
+                # Create error message box
+                error = ErrorDialog(str(sql_query.lastError().databaseText()))
+                error.show()
+
+        elif self.layout_insert.currentIndex() == 2:
+            # Get text from insert form
+            name = QVariant(self.publisher_insert.name.text())
+
+            # Set value to None if string is empty
+            if name.value() == '':
+                name = QVariant()
+                # Name cannot be NULL, show error
+#                error = ErrorDialog('Name cannot be NULL. Operation failed')
+#                error.show()
+
+#                return
+
+            sql_query.prepare('INSERT INTO Publishers(Name) Values(?)')
+            sql_query.bindValue(0, name)
+
+            # Execute the query
+            if sql_query.exec_():
+                # Show message if insertion succeeded
+                info = InfoDialog('Record inserted successfully into Publishers')
+                info.show()
+            else:
+                # Create error message box
+                error = ErrorDialog(str(sql_query.lastError().databaseText()))
+                error.show()
+
+        elif self.layout_insert.currentIndex() == 3:
+            # Get text from insert form
+            name = QVariant(self.series_insert.name.text())
+            author = QVariant(self.series_insert.author.text())
+
+            # Set values to None where strings are empty
+            if name.value() == '':
+                name = QVariant()
+                # Name cannot be NULL, show error
+#                error = ErrorDialog('Name cannot be NULL. Operation failed')
+#                error.show()
+
+#                return
+
+            if author.value() == '':
+                author = QVariant()
+
+            if not author.isNull():
+                # Get Author Id from Name
+                sql_query.prepare(f'SELECT Id FROM Authors WHERE Name LIKE \'%{author.value()}%\'')
+
+                if sql_query.exec_():
+                    if sql_query.size() == 0:
+                        # Author cannot be NULL, show error
+                        error = ErrorDialog('Author not found. Operation failed')
+                        error.show()
+
+                        return
+
+                    if sql_query.size() == 1:
+                        sql_query.next()
+                        author = sql_query.value(0)
+                    else:
+                        # Show warning if string matches multiple authors
+                        warning = WarningDialog('String matches multiple authors. ' +\
+                                'Using exact match')
+                        warning.show()
+
+                        # Get Author Id from Name using exact match
+                        sql_query.prepare(f'SELECT Id FROM Authors WHERE ' +\
+                                'Name = \'{author.value()}\'')
+
+                        if sql_query.exec_():
+                            if sql_query.size() == 0:
+                                # Author cannot be NULL, show error
+                                error = ErrorDialog('Author not found. Operation failed')
+                                error.show()
+
+                                return
+
+                            if sql_query.size() == 1:
+                                sql_query.next()
+                                author = sql_query.value(0)
+                        else:
+                            #Show error if query failed
+                            error = ErrorDialog(str(sql_query.lastError().databaseText()))
+                            error.show()
+                else:
+                    #Show error if query failed
+                    error = ErrorDialog(str(sql_query.lastError().databaseText()))
+                    error.show()
+
+            sql_query.prepare('INSERT INTO Series(Name, Author) Values(?, ?)')
+            sql_query.bindValue(0, name)
+            sql_query.bindValue(1, author)
+
+            # Execute the query
+            if sql_query.exec_():
                 # Show message if insertion succeeded
                 info = InfoDialog('Record inserted successfully into Series')
                 info.show()
-            except Error as err:
+            else:
                 # Create error message box
-                error = ErrorDialog(str(err))
+                error = ErrorDialog(str(sql_query.lastError().databaseText()))
                 error.show()

@@ -14,8 +14,10 @@ if os.name == 'nt':
     import _globals
     from fbs_runtime.application_context.PyQt5 import ApplicationContext
 elif os.name == 'posix':
-    from library_manager.lm_window import MainWindow
-    import library_manager._globals as _globals
+#    from library_manager.lm_window import MainWindow
+#    import library_manager._globals as _globals
+    from lm_window import MainWindow
+    import _globals
 
 def main():
     """Main."""
@@ -27,9 +29,7 @@ def main():
 
     app.exec_()
 
-    if _globals.CONNECTION.is_connected():
-        _globals.CURSOR.close()
-        _globals.CONNECTION.close()
+    _globals.DB.close()
 
 if __name__ == '__main__':
     main()
