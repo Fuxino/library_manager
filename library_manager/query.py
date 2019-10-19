@@ -16,8 +16,8 @@ import os
 import subprocess
 from subprocess import CalledProcessError
 
-from PyQt5.QtWidgets import QFileDialog, QWidget, QLineEdit, QComboBox,\
-        QPushButton, QTableWidget, QTableWidgetItem, QFormLayout,\
+from PyQt5.QtWidgets import QFileDialog, QWidget, QLabel, QLineEdit,\
+        QComboBox, QPushButton, QTableWidget, QTableWidgetItem, QFormLayout,\
         QHBoxLayout, QVBoxLayout, QStackedLayout
 from PyQt5.QtCore import Qt
 
@@ -88,6 +88,15 @@ class SearchBookForm(QWidget):
         self.language.addItem('English')
         self.language.addItem('Italian')
 
+        self.year = QHBoxLayout()
+        self.first_year = QLineEdit()
+        self.first_year.returnPressed.connect(query_db)
+        self.last_year = QLineEdit()
+        self.last_year.returnPressed.connect(query_db)
+        self.year.addWidget(self.first_year)
+        self.year.addWidget(QLabel('-'))
+        self.year.addWidget(self.last_year)
+
         self.owner = QComboBox()
         self.owner.addItem('')
         self.owner.addItem('Daniele')
@@ -109,6 +118,7 @@ class SearchBookForm(QWidget):
         layout.addRow('Subseries:', self.subseries)
         layout.addRow('Category:', self.category)
         layout.addRow('Language:', self.language)
+        layout.addRow('Year:', self.year)
         layout.addRow('Owner:', self.owner)
         layout.addRow('Type:', self.booktype)
 
@@ -352,6 +362,8 @@ class SearchDatabase(QWidget):
         self.book_search.subseries.clear()
         self.book_search.category.setCurrentIndex(0)
         self.book_search.language.setCurrentIndex(0)
+        self.book_search.first_year.clear()
+        self.book_search.last_year.clear()
         self.book_search.owner.setCurrentIndex(0)
         self.book_search.booktype.setCurrentIndex(0)
 
@@ -492,6 +504,8 @@ class SearchDatabase(QWidget):
             subseries = self.book_search.subseries.text()
             category = self.book_search.category.currentText()
             language = self.book_search.language.currentText()
+            first_year = self.book_search.first_year.text()
+            last_year = self.book_search.last_year.text()
             owner = self.book_search.owner.currentText()
             booktype = self.book_search.booktype.currentText()
 
@@ -527,6 +541,10 @@ class SearchDatabase(QWidget):
                     query = query + 'Category LIKE \'%' + category + '%\' AND '
             if language != '':
                 query = query + 'Language LIKE \'%' + language + '%\' AND '
+            if first_year != '':
+                query = query + 'Year>=' + first_year + ' AND '
+            if last_year != '':
+                query = query + 'Year<=' + last_year + ' AND '
             if owner != '':
                 query = query + 'Owner LIKE \'%' + owner + '%\' AND '
             if booktype != '':
