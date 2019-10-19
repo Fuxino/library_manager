@@ -740,7 +740,7 @@ class SearchDatabase(QWidget):
 
             # Prepare SQL query
             if name != '':
-                query = query + 'Name LIKE \'%' + name + '%\' AND '
+                query = query + 'Series.Name LIKE \'%' + name + '%\' AND '
             if author != '':
                 query = query + 'Authors.Name LIKE \'%' + author + '%\' '
 
