@@ -1053,29 +1053,31 @@ class SearchDatabase(QWidget):
 
                 self.table.blockSignals(False)
             elif field == 'Publisher':
-                mysql_select_query = """SELECT Name FROM Publishers WHERE Id=%s"""
-                _globals.CURSOR.execute(mysql_select_query, (value,))
-                publisher = _globals.CURSOR.fetchall()
-                value = publisher[0][0]
+                if value != '':
+                    mysql_select_query = """SELECT Name FROM Publishers WHERE Id=%s"""
+                    _globals.CURSOR.execute(mysql_select_query, (value,))
+                    publisher = _globals.CURSOR.fetchall()
+                    value = publisher[0][0]
 
-                self.table.blockSignals(True)
+                    self.table.blockSignals(True)
 
-                self.table.removeCellWidget(record_index, field_index)
-                self.table.setItem(record_index, field_index, QTableWidgetItem(value))
+                    self.table.removeCellWidget(record_index, field_index)
+                    self.table.setItem(record_index, field_index, QTableWidgetItem(value))
 
-                self.table.blockSignals(False)
+                    self.table.blockSignals(False)
             elif field == 'Series':
-                mysql_select_query = """SELECT Name FROM Series WHERE Id=%s"""
-                _globals.CURSOR.execute(mysql_select_query, (value,))
-                series = _globals.CURSOR.fetchall()
-                value = series[0][0]
+                if value != '':
+                    mysql_select_query = """SELECT Name FROM Series WHERE Id=%s"""
+                    _globals.CURSOR.execute(mysql_select_query, (value,))
+                    series = _globals.CURSOR.fetchall()
+                    value = series[0][0]
 
-                self.table.blockSignals(True)
+                    self.table.blockSignals(True)
 
-                self.table.removeCellWidget(record_index, field_index)
-                self.table.setItem(record_index, field_index, QTableWidgetItem(value))
+                    self.table.removeCellWidget(record_index, field_index)
+                    self.table.setItem(record_index, field_index, QTableWidgetItem(value))
 
-                self.table.blockSignals(False)
+                    self.table.blockSignals(False)
 
             # Resize columns
             self.table.resizeColumnsToContents()
