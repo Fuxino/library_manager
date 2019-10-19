@@ -867,7 +867,7 @@ class SearchDatabase(QWidget):
 
                     return
         elif field == 'Author':
-            if value == '':
+            if self.layout_search.currentIndex() == 0 and value == '':
                 # Author cannot be NULL, show error
                 error = ErrorDialog('Author cannot be NULL. Operation failed')
                 error.show()
@@ -881,112 +881,131 @@ class SearchDatabase(QWidget):
 
                 return
 
-            query = f'SELECT Id FROM Authors WHERE Name LIKE \'%{value}%\''
-            sql_query.prepare(query)
-            sql_query.exec_()
+            if value != '':
+                query = f'SELECT Id FROM Authors WHERE Name LIKE \'%{value}%\''
+                sql_query.prepare(query)
 
-            if sql_query.size() == 0:
-                # Author cannot be NULL, show error
-                error = ErrorDialog('Author not found in Authors table. Operation failed')
-                error.show()
+                if sql_query.exec_():
+                    if sql_query.size() == 0:
+                        # Author cannot be NULL, show error
+                        error = ErrorDialog('Author not found in Authors table. Operation failed')
+                        error.show()
 
-                self.table.blockSignals(True)
+                        self.table.blockSignals(True)
 
-                self.table.removeCellWidget(record_index, field_index)
-                self.table.setItem(record_index, field_index, QTableWidgetItem(self.current_item))
+                        self.table.removeCellWidget(record_index, field_index)
+                        self.table.setItem(record_index, field_index,\
+                                QTableWidgetItem(self.current_item))
 
-                self.table.blockSignals(False)
+                        self.table.blockSignals(False)
 
-                return
+                        return
 
-            if sql_query.size() == 1:
-                sql_query.next()
-                value = sql_query.value(0)
-            else:
-                # Create error message box
-                error = ErrorDialog('Multiple authors match name string. Operation failed')
-                error.show()
+                    if sql_query.size() == 1:
+                        sql_query.next()
+                        value = sql_query.value(0)
+                    else:
+                        # Create error message box
+                        error = ErrorDialog('Multiple authors match name string. Operation failed')
+                        error.show()
 
-                self.table.blockSignals(True)
+                        self.table.blockSignals(True)
 
-                self.table.removeCellWidget(record_index, field_index)
-                self.table.setItem(record_index, field_index, QTableWidgetItem(self.current_item))
+                        self.table.removeCellWidget(record_index, field_index)
+                        self.table.setItem(record_index, field_index,\
+                                QTableWidgetItem(self.current_item))
 
-                self.table.blockSignals(False)
+                        self.table.blockSignals(False)
 
-                return
+                        return
+                else:
+                    error = ErrorDialog(str(sql_query.lastError().databaseText()))
+                    error.show()
+
+                    return
         elif field == 'Publisher':
             if value != '':
                 query = f'SELECT Id FROM Publishers WHERE Name LIKE \'%{value}%\''
                 sql_query.prepare(query)
-                sql_query.exec_()
 
-                if sql_query.size() == 0:
-                    error = ErrorDialog('No publisher matches name string. Operation failed')
-                    error.show()
+                if sql_query.exec_():
+                    if sql_query.size() == 0:
+                        error = ErrorDialog('No publisher matches name string. Operation failed')
+                        error.show()
 
-                    self.table.blockSignals(True)
+                        self.table.blockSignals(True)
 
-                    self.table.removeCellWidget(record_index, field_index)
-                    self.table.setItem(record_index, field_index,\
-                            QTableWidgetItem(self.current_item))
+                        self.table.removeCellWidget(record_index, field_index)
+                        self.table.setItem(record_index, field_index,\
+                                QTableWidgetItem(self.current_item))
 
-                    self.table.blockSignals(False)
+                        self.table.blockSignals(False)
 
-                    return
+                        return
 
-                if sql_query.size() == 1:
-                    sql_query.next()
-                    value = sql_query.value(0)
+                    if sql_query.size() == 1:
+                        sql_query.next()
+                        value = sql_query.value(0)
+                    else:
+                        # Create error message box
+                        error = ErrorDialog('Multiple publishers match name string. ' +\
+                                'Operation failed')
+                        error.show()
+
+                        self.table.blockSignals(True)
+
+                        self.table.removeCellWidget(record_index, field_index)
+                        self.table.setItem(record_index, field_index,\
+                                QTableWidgetItem(self.current_item))
+
+                        self.table.blockSignals(False)
+
+                        return
                 else:
-                    # Create error message box
-                    error = ErrorDialog('Multiple publishers match name string. Operation failed')
+                    error = ErrorDialog(str(sql_query.lastError().databaseText()))
                     error.show()
-
-                    self.table.blockSignals(True)
-
-                    self.table.removeCellWidget(record_index, field_index)
-                    self.table.setItem(record_index, field_index,\
-                            QTableWidgetItem(self.current_item))
-
-                    self.table.blockSignals(False)
 
                     return
         elif field == 'Series':
             if value != '':
                 query = f'SELECT Id FROM Series WHERE Name LIKE \'%{value}%\''
                 sql_query.prepare(query)
-                sql_query.exec_()
 
-                if sql_query.size() == 0:
-                    error = ErrorDialog('No series matches name string. Operation failed')
-                    error.show()
+                if sql_query.exec_():
+                    if sql_query.size() == 0:
+                        error = ErrorDialog('No series matches name string. Operation failed')
+                        error.show()
 
-                    self.table.blockSignals(True)
+                        self.table.blockSignals(True)
 
-                    self.table.removeCellWidget(record_index, field_index)
-                    self.table.setItem(record_index, field_index,\
-                            QTableWidgetItem(self.current_item))
+                        self.table.removeCellWidget(record_index, field_index)
+                        self.table.setItem(record_index, field_index,\
+                                QTableWidgetItem(self.current_item))
 
-                    self.table.blockSignals(False)
+                        self.table.blockSignals(False)
 
-                    return
+                        return
 
-                if sql_query.size() == 1:
-                    sql_query.next()
-                    value = sql_query.value(0)
+                    if sql_query.size() == 1:
+                        sql_query.next()
+                        value = sql_query.value(0)
+                    else:
+                        # Create error message box
+                        error = ErrorDialog('Multiple series match name string. Operation failed.')
+                        error.show()
+
+                        self.table.blockSignals(True)
+
+                        self.table.removeCellWidget(record_index, field_index)
+                        self.table.setItem(record_index, field_index,\
+                                QTableWidgetItem(self.current_item))
+
+                        self.table.blockSignals(False)
+
+                        return
                 else:
-                    # Create error message box
-                    error = ErrorDialog('Multiple series match name string. Operation failed.')
+                    error = ErrorDialog(str(sql_query.lastError().databaseText()))
                     error.show()
-
-                    self.table.blockSignals(True)
-
-                    self.table.removeCellWidget(record_index, field_index)
-                    self.table.setItem(record_index, field_index,\
-                            QTableWidgetItem(self.current_item))
-
-                    self.table.blockSignals(False)
 
                     return
 
@@ -1025,50 +1044,56 @@ class SearchDatabase(QWidget):
 
                     self.table.blockSignals(False)
             elif field == 'Author':
-                query = f'SELECT Name FROM Authors WHERE Id={value}'
-                sql_query.prepare(query)
-                sql_query.exec_()
+                if value != '':
+                    sql_query.prepare(f'SELECT Name FROM Authors WHERE Id={value}')
 
-                author = sql_query.result()
-                author.fetchFirst()
-                value = author.boundValue(0)
+                    if sql_query.exec_():
+                        sql_query.next()
+                        value = sql_query.value(0)
 
-                self.table.blockSignals(True)
+                        self.table.blockSignals(True)
 
-                self.table.removeCellWidget(record_index, field_index)
-                self.table.setItem(record_index, field_index, QTableWidgetItem(value))
+                        self.table.removeCellWidget(record_index, field_index)
+                        self.table.setItem(record_index, field_index, QTableWidgetItem(value))
 
-                self.table.blockSignals(False)
+                        self.table.blockSignals(False)
+                    else:
+                        error = ErrorDialog(str(sql_query.lastError().databaseText()))
+                        error.show()
             elif field == 'Publisher':
-                query = f'SELECT Name FROM Publishers WHERE Id={value}'
-                sql_query.prepare(query)
-                sql_query.exec_()
+                if value != '':
+                    sql_query.prepare(f'SELECT Name FROM Publishers WHERE Id={value}')
 
-                publisher = sql_query.result()
-                publisher.fetchFirst()
-                value = publisher.boundValue(0)
+                    if sql_query.exec_():
+                        sql_query.next()
+                        value = sql_query.value(0)
 
-                self.table.blockSignals(True)
+                        self.table.blockSignals(True)
 
-                self.table.removeCellWidget(record_index, field_index)
-                self.table.setItem(record_index, field_index, QTableWidgetItem(value))
+                        self.table.removeCellWidget(record_index, field_index)
+                        self.table.setItem(record_index, field_index, QTableWidgetItem(value))
 
-                self.table.blockSignals(False)
+                        self.table.blockSignals(False)
+                    else:
+                        error = ErrorDialog(str(sql_query.lastError().databaseText()))
+                        error.show()
             elif field == 'Series':
-                query = f'SELECT Name FROM Series WHERE Id={value}'
-                sql_query.prepare(query)
-                sql_query.exec_()
+                if value != '':
+                    sql_query.prepare(f'SELECT Name FROM Series WHERE Id={value}')
 
-                series = sql_query.result()
-                series.fetchFirst()
-                value = series.boundValue(0)
+                    if sql_query.exec_():
+                        sql_query.next()
+                        value = sql_query.value(0)
 
-                self.table.blockSignals(True)
+                        self.table.blockSignals(True)
 
-                self.table.removeCellWidget(record_index, field_index)
-                self.table.setItem(record_index, field_index, QTableWidgetItem(value))
+                        self.table.removeCellWidget(record_index, field_index)
+                        self.table.setItem(record_index, field_index, QTableWidgetItem(value))
 
-                self.table.blockSignals(False)
+                        self.table.blockSignals(False)
+                    else:
+                        error = ErrorDialog(str(sql_query.lastError().databaseText()))
+                        error.show()
 
             # Resize columns
             self.table.resizeColumnsToContents()

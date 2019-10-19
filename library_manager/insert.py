@@ -14,7 +14,6 @@ from PyQt5.QtCore import Qt, QVariant
 from PyQt5.QtSql import QSqlQuery
 
 if os.name == 'nt':
-#    import _globals
     from info_dialogs import ErrorDialog, WarningDialog, InfoDialog
 elif os.name == 'posix':
     from library_manager.info_dialogs import ErrorDialog, WarningDialog, InfoDialog
