@@ -16,14 +16,10 @@ if os.name == 'nt':
     from query import SearchDatabase
     from insert import InsertRecord
 elif os.name == 'posix':
-#    from library_manager.login import LoginDialog
-#    from library_manager.query import SearchDatabase
-#    from library_manager.insert import InsertRecord
-#    import library_manager._globals as _globals
-    import _globals
-    from login import LoginDialog
-    from query import SearchDatabase
-    from insert import InsertRecord
+    from library_manager.login import LoginDialog
+    from library_manager.query import SearchDatabase
+    from library_manager.insert import InsertRecord
+    import library_manager._globals as _globals
 
 # Main window
 class MainWindow(QMainWindow):

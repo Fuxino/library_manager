@@ -23,10 +23,8 @@ if os.name == 'nt':
     from info_dialogs import ErrorDialog
     from sys import exit
 elif os.name == 'posix':
-#    import library_manager._globals as _globals
-#    from library_manager.info_dialogs import ErrorDialog
-    import _globals
-    from info_dialogs import ErrorDialog
+    import library_manager._globals as _globals
+    from library_manager.info_dialogs import ErrorDialog
 
 # Login dialog box
 class LoginDialog(QDialog):

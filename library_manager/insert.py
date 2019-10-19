@@ -17,9 +17,7 @@ if os.name == 'nt':
 #    import _globals
     from info_dialogs import ErrorDialog, WarningDialog, InfoDialog
 elif os.name == 'posix':
-#    import library_manager._globals as _globals
-#    from library_manager.info_dialogs import ErrorDialog, WarningDialog, InfoDialog
-    from info_dialogs import ErrorDialog, WarningDialog, InfoDialog
+    from library_manager.info_dialogs import ErrorDialog, WarningDialog, InfoDialog
 
 try:
     from isbnlib import canonical, is_isbn10, is_isbn13
@@ -290,8 +288,6 @@ class InsertRecord(QWidget):
             booktype = QVariant(self.book_insert.booktype.currentText())
 
             # Set values to None where strings are empty
-#            if isbn.value() == '':
-#                isbn = QVariant()
             if isbn.value() == '':
                 isbn = QVariant()
             else:
@@ -323,17 +319,9 @@ class InsertRecord(QWidget):
 
                     isbn = QVariant(isbn)
             if title.value() == '':
-                # Title cannot be NULL, show error
-#                error = ErrorDialog('Title cannot be NULL. Operation failed.')
-#                error.show()
                 title = QVariant()
-#                return
             if author.value() == '':
-                # Author cannot be NULL, show error
-#                error = ErrorDialog('Author cannot be NULL. Operation failed')
-#                error.show()
                 author = QVariant()
-#                return
             if otherauthors.value() == '':
                 otherauthors = QVariant()
             if publisher.value() == '':
@@ -531,11 +519,6 @@ class InsertRecord(QWidget):
             # Set values to None where strings are empty
             if name.value() == '':
                 name = QVariant()
-                # Name cannot be NULL, show error
-#                error = ErrorDialog('Name cannot be NULL. Operation failed')
-#                error.show()
-
-#                return
             if gender.value() == '':
                 gender = QVariant()
             if nationality.value() == '':
@@ -571,11 +554,6 @@ class InsertRecord(QWidget):
             # Set value to None if string is empty
             if name.value() == '':
                 name = QVariant()
-                # Name cannot be NULL, show error
-#                error = ErrorDialog('Name cannot be NULL. Operation failed')
-#                error.show()
-
-#                return
 
             sql_query.prepare('INSERT INTO Publishers(Name) Values(?)')
             sql_query.bindValue(0, name)
@@ -598,11 +576,6 @@ class InsertRecord(QWidget):
             # Set values to None where strings are empty
             if name.value() == '':
                 name = QVariant()
-                # Name cannot be NULL, show error
-#                error = ErrorDialog('Name cannot be NULL. Operation failed')
-#                error.show()
-
-#                return
 
             if author.value() == '':
                 author = QVariant()
