@@ -1109,6 +1109,9 @@ class SearchDatabase(QWidget):
                 file_p.write('\n')
 
             file_p.close()
+
+            info = InfoDialog(f'{filename[0]} saved successfully')
+            info.show()
         except PermissionError as err:
             # Create error message box
             error = ErrorDialog(str(err))
