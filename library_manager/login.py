@@ -77,6 +77,9 @@ class LoginDialog(QDialog):
         # Set layout
         self.setLayout(layout)
 
+        self.db = QSqlDatabase.addDatabase('QMYSQL')
+        self.db.setDatabaseName('Library')
+
     # Function to connect to the database
     def db_connect(self):
         """Connect to the database
@@ -90,17 +93,16 @@ class LoginDialog(QDialog):
         _globals.PWD = self.password.text()
 
         # Create connection
-        _globals.DB = QSqlDatabase.addDatabase('QMYSQL')
-        _globals.DB.setDatabaseName('Library')
-        _globals.DB.setHostName(_globals.HOSTNAME)
-        _globals.DB.setUserName(_globals.USER)
-        _globals.DB.setPassword(_globals.PWD)
+        self.db.setHostName(_globals.HOSTNAME)
+        self.db.setUserName(_globals.USER)
+        self.db.setPassword(_globals.PWD)
 
-        if _globals.DB.open():
+        if self.db.open():
             # Close login dialog
             self.accept()
         # If error occurred during connection
         else:
             # Create error message box
-            error = ErrorDialog(str(_globals.DB.lastError().databaseText()))
+            self.db.close()
+            error = ErrorDialog(str(self.db.lastError().databaseText()))
             error.show()
