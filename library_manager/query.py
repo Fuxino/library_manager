@@ -517,7 +517,14 @@ class SearchDatabase(QWidget):
             if subseries != '':
                 query = query + 'Subseries LIKE \'%' + subseries + '%\' AND '
             if category != '':
-                query = query + 'Category LIKE \'%' + category + '%\' AND '
+                if category == 'Fiction':
+                    query = query + 'Category LIKE \'%Fiction%\' AND ' +\
+                            'Category NOT LIKE \'%Non-fiction%\' AND '
+                elif category == 'Novel':
+                    query = query + 'Category LIKE \'%Novel%\' AND ' +\
+                            'Category NOT LIKE \'%Graphic novel%\' AND '
+                else:
+                    query = query + 'Category LIKE \'%' + category + '%\' AND '
             if language != '':
                 query = query + 'Language LIKE \'%' + language + '%\' AND '
             if owner != '':
