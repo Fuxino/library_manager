@@ -391,6 +391,8 @@ class SearchDatabase(QWidget):
         self.book_search.last_year.clear()
         self.book_search.owner.setCurrentIndex(0)
         self.book_search.booktype.setCurrentIndex(0)
+        self.book_search.order.setCurrentIndex(0)
+        self.book_search.direction.setCurrentIndex(0)
 
         self.author_search.name.clear()
         self.author_search.gender.setCurrentIndex(0)
