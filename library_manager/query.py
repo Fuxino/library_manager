@@ -16,9 +16,9 @@ import os
 import subprocess
 from subprocess import CalledProcessError
 
-from PyQt5.QtWidgets import QFileDialog, QWidget, QLabel, QLineEdit,\
-        QComboBox, QPushButton, QTableWidget, QTableWidgetItem, QFormLayout,\
-        QHBoxLayout, QVBoxLayout, QStackedLayout
+from PyQt5.QtWidgets import QFileDialog, QWidget, QFrame, QLabel,\
+        QLineEdit, QComboBox, QPushButton, QTableWidget, QTableWidgetItem,\
+        QFormLayout, QHBoxLayout, QVBoxLayout, QStackedLayout
 from PyQt5.QtCore import Qt
 from PyQt5.QtSql import QSqlQuery
 
@@ -44,7 +44,10 @@ class SearchBookForm(QWidget):
         super(SearchBookForm, self).__init__(*args, **kwargs)
 
         # Define layout
-        layout = QFormLayout()
+        layout = QVBoxLayout()
+
+        # Define search form
+        layout_form = QFormLayout()
         self.isbn = QLineEdit()
         self.isbn.returnPressed.connect(query_db)
         self.title = QLineEdit()
@@ -107,19 +110,42 @@ class SearchBookForm(QWidget):
         self.booktype.addItem('E-book')
 
         # Add fields to layout
-        layout.addRow('ISBN:', self.isbn)
-        layout.addRow('Title:', self.title)
-        layout.addRow('Author:', self.author)
-        layout.addRow('Author\'s gender:', self.author_gender)
-        layout.addRow('Author\'s nationality:', self.author_nationality)
-        layout.addRow('Publisher:', self.publisher)
-        layout.addRow('Series:', self.series)
-        layout.addRow('Subseries:', self.subseries)
-        layout.addRow('Category:', self.category)
-        layout.addRow('Language:', self.language)
-        layout.addRow('Year:', self.year)
-        layout.addRow('Owner:', self.owner)
-        layout.addRow('Type:', self.booktype)
+        layout_form.addRow('ISBN:', self.isbn)
+        layout_form.addRow('Title:', self.title)
+        layout_form.addRow('Author:', self.author)
+        layout_form.addRow('Author\'s gender:', self.author_gender)
+        layout_form.addRow('Author\'s nationality:', self.author_nationality)
+        layout_form.addRow('Publisher:', self.publisher)
+        layout_form.addRow('Series:', self.series)
+        layout_form.addRow('Subseries:', self.subseries)
+        layout_form.addRow('Category:', self.category)
+        layout_form.addRow('Language:', self.language)
+        layout_form.addRow('Year:', self.year)
+        layout_form.addRow('Owner:', self.owner)
+        layout_form.addRow('Type:', self.booktype)
+
+        line = QFrame()
+        line.setFrameShape(QFrame().HLine)
+
+        order_layout = QFormLayout()
+        order_form = QHBoxLayout()
+
+        self.order = QComboBox()
+        self.order.addItem('Author')
+        self.order.addItem('Year')
+        self.order.addItem('Pages')
+        self.direction = QComboBox()
+        self.direction.addItem('ASC')
+        self.direction.addItem('DESC')
+
+        order_form.addWidget(self.order)
+        order_form.addWidget(self.direction)
+
+        order_layout.addRow('Order:', order_form)
+
+        layout.addLayout(layout_form)
+        layout.addWidget(line)
+        layout.addLayout(order_layout)
 
         # Set layout
         self.setLayout(layout)
@@ -509,6 +535,8 @@ class SearchDatabase(QWidget):
             last_year = self.book_search.last_year.text()
             owner = self.book_search.owner.currentText()
             booktype = self.book_search.booktype.currentText()
+            order = self.book_search.order.currentText()
+            direction = self.book_search.direction.currentText()
 
             # Prepare SQL query
             if isbn != '':
@@ -558,7 +586,27 @@ class SearchDatabase(QWidget):
             if query[-6:] == 'WHERE ':
                 query = query[:-6]
 
-            query = query + 'ORDER BY Authors.Name, Series.Name, Year'
+            if order == 'Author':
+                query = query + 'ORDER BY Authors.Name'
+
+                if direction == 'ASC':
+                    query = query + ', Series.Name, Year'
+                else:
+                    query = query + ' DESC, Series.Name, Year'
+            elif order == 'Year':
+                query = query + 'ORDER BY Year'
+
+                if direction == 'ASC':
+                    query = query + ', Authors.Name'
+                else:
+                    query = query + ' DESC, Authors.Name'
+            elif order == 'Pages':
+                query = query + 'ORDER BY Pages'
+
+                if direction == 'ASC':
+                    query = query + ', Authors.Name'
+                else:
+                    query = query + ' DESC, Authors.Name'
 
             sql_query.prepare(query)
 
