@@ -2,6 +2,7 @@
 
 """Setup script"""
 
+from os.path import dirname, join
 from setuptools import setup
 
 from library_manager import __version__
@@ -9,6 +10,8 @@ from library_manager import __version__
 setup(name='library_manager',
       version=__version__,
       description='Manage Library database',
+      long_description=open(
+          join(dirname(__file__), 'README.md')).read(),
       author='Daniele Fucini',
       author_email='dfucini@gmail.com',
       license='GPL3',
@@ -22,4 +25,14 @@ setup(name='library_manager',
               'library_manager=library_manager.__main__:main'
           ],
       },
+      classifiers=[
+          'Development Status :: 5 - Production/Stable',
+          'Environment :: X11 Applications :: Qt',
+          'License :: OSI Approved :: GNU General Public License v3 (GPLv3)',
+          'Natural Language :: English',
+          'Operating System :: Microsoft :: Windows',
+          'Operating System :: POSIX :: Linux',
+          'Programming Language :: Python :: 3.7',
+          'Topic :: Database :: Front-Ends',
+          ],
       )
