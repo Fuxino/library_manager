@@ -90,14 +90,24 @@ class SearchBookForm(QWidget):
         self.language.addItem('English')
         self.language.addItem('Italian')
 
-        self.year = QHBoxLayout()
+        year = QHBoxLayout()
         self.first_year = QLineEdit()
         self.first_year.returnPressed.connect(query_db)
         self.last_year = QLineEdit()
         self.last_year.returnPressed.connect(query_db)
-        self.year.addWidget(self.first_year)
-        self.year.addWidget(QLabel('-'))
-        self.year.addWidget(self.last_year)
+        year.addWidget(self.first_year)
+        year.addWidget(QLabel('-'))
+        year.addWidget(self.last_year)
+
+        pages = QHBoxLayout()
+        self.more_less = QComboBox()
+        self.more_less.addItem('')
+        self.more_less.addItem('More than')
+        self.more_less.addItem('Fewer than')
+        self.n_pages = QLineEdit()
+        self.n_pages.returnPressed.connect(query_db)
+        pages.addWidget(self.more_less)
+        pages.addWidget(self.n_pages)
 
         self.owner = QComboBox()
         self.owner.addItem('')
@@ -120,7 +130,8 @@ class SearchBookForm(QWidget):
         layout_form.addRow('Subseries:', self.subseries)
         layout_form.addRow('Category:', self.category)
         layout_form.addRow('Language:', self.language)
-        layout_form.addRow('Year:', self.year)
+        layout_form.addRow('Year:', year)
+        layout_form.addRow('Pages:', pages)
         layout_form.addRow('Owner:', self.owner)
         layout_form.addRow('Type:', self.booktype)
 
@@ -390,6 +401,8 @@ class SearchDatabase(QWidget):
         self.book_search.language.setCurrentIndex(0)
         self.book_search.first_year.clear()
         self.book_search.last_year.clear()
+        self.book_search.more_less.setCurrentIndex(0)
+        self.book_search.n_pages.clear()
         self.book_search.owner.setCurrentIndex(0)
         self.book_search.booktype.setCurrentIndex(0)
         self.book_search.order.setCurrentIndex(0)
@@ -536,6 +549,8 @@ class SearchDatabase(QWidget):
             language = self.book_search.language.currentText()
             first_year = self.book_search.first_year.text()
             last_year = self.book_search.last_year.text()
+            n_pages = self.book_search.n_pages.text()
+            more_less = self.book_search.more_less.currentText()
             owner = self.book_search.owner.currentText()
             booktype = self.book_search.booktype.currentText()
             order = self.book_search.order.currentText()
@@ -577,6 +592,13 @@ class SearchDatabase(QWidget):
                 query = query + 'Year>=' + first_year + ' AND '
             if last_year != '':
                 query = query + 'Year<=' + last_year + ' AND '
+            if n_pages != '':
+                if more_less == 'More than':
+                    query = query + 'Pages>' + n_pages + ' AND '
+                elif more_less == 'Fewer than':
+                    query = query + 'Pages<' + n_pages + ' AND '
+                else:
+                    query = query + 'Pages=' + n_pages + ' AND '
             if owner != '':
                 query = query + 'Owner LIKE \'%' + owner + '%\' AND '
             if booktype != '':
