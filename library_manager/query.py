@@ -288,6 +288,7 @@ class SearchDatabase(QWidget):
         self.current_item = None
 
         self.table.cellDoubleClicked.connect(self.get_current_item)
+        self.table.cellClicked.connect(self.get_current_item)
         self.table.cellChanged.connect(self.update_db)
 
         # Add table to layout
