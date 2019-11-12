@@ -14,7 +14,7 @@ records in the database.
 import subprocess
 from subprocess import CalledProcessError
 
-from PyQt5.QtWidgets import QFileDialog, QWidget, QFrame, QLabel,\
+from PyQt5.QtWidgets import QFileDialog, QWidget, QFrame, QLabel, QCheckBox,\
         QLineEdit, QComboBox, QPushButton, QTableWidget, QTableWidgetItem,\
         QFormLayout, QHBoxLayout, QVBoxLayout, QStackedLayout
 from PyQt5.QtCore import Qt
@@ -256,7 +256,7 @@ class SearchDatabase(QWidget):
         # Create table to show database queries results
         self.table = QTableWidget()
         self.table.setRowCount(0)
-        self.table.setColumnCount(14)
+        self.table.setColumnCount(15)
 
         id_header = QTableWidgetItem('Id')
         isbn_header = QTableWidgetItem('ISBN')
@@ -273,20 +273,20 @@ class SearchDatabase(QWidget):
         owner_header = QTableWidgetItem('Owner')
         type_header = QTableWidgetItem('Type')
 
-        self.table.setHorizontalHeaderItem(0, id_header)
-        self.table.setHorizontalHeaderItem(1, isbn_header)
-        self.table.setHorizontalHeaderItem(2, title_header)
-        self.table.setHorizontalHeaderItem(3, author_header)
-        self.table.setHorizontalHeaderItem(4, otherauthors_header)
-        self.table.setHorizontalHeaderItem(5, publisher_header)
-        self.table.setHorizontalHeaderItem(6, series_header)
-        self.table.setHorizontalHeaderItem(7, subseries_header)
-        self.table.setHorizontalHeaderItem(8, category_header)
-        self.table.setHorizontalHeaderItem(9, language_header)
-        self.table.setHorizontalHeaderItem(10, year_header)
-        self.table.setHorizontalHeaderItem(11, pages_header)
-        self.table.setHorizontalHeaderItem(12, owner_header)
-        self.table.setHorizontalHeaderItem(13, type_header)
+        self.table.setHorizontalHeaderItem(1, id_header)
+        self.table.setHorizontalHeaderItem(2, isbn_header)
+        self.table.setHorizontalHeaderItem(3, title_header)
+        self.table.setHorizontalHeaderItem(4, author_header)
+        self.table.setHorizontalHeaderItem(5, otherauthors_header)
+        self.table.setHorizontalHeaderItem(6, publisher_header)
+        self.table.setHorizontalHeaderItem(7, series_header)
+        self.table.setHorizontalHeaderItem(8, subseries_header)
+        self.table.setHorizontalHeaderItem(9, category_header)
+        self.table.setHorizontalHeaderItem(10, language_header)
+        self.table.setHorizontalHeaderItem(11, year_header)
+        self.table.setHorizontalHeaderItem(12, pages_header)
+        self.table.setHorizontalHeaderItem(13, owner_header)
+        self.table.setHorizontalHeaderItem(14, type_header)
 
         self.table.resizeColumnsToContents()
 
@@ -423,7 +423,7 @@ class SearchDatabase(QWidget):
 
         # Books
         if table_name == 'Books':
-            self.table.setColumnCount(14)
+            self.table.setColumnCount(15)
 
             id_header = QTableWidgetItem('Id')
             isbn_header = QTableWidgetItem('ISBN')
@@ -440,27 +440,27 @@ class SearchDatabase(QWidget):
             owner_header = QTableWidgetItem('Owner')
             type_header = QTableWidgetItem('Type')
 
-            self.table.setHorizontalHeaderItem(0, id_header)
-            self.table.setHorizontalHeaderItem(1, isbn_header)
-            self.table.setHorizontalHeaderItem(2, title_header)
-            self.table.setHorizontalHeaderItem(3, author_header)
-            self.table.setHorizontalHeaderItem(4, otherauthors_header)
-            self.table.setHorizontalHeaderItem(5, publisher_header)
-            self.table.setHorizontalHeaderItem(6, series_header)
-            self.table.setHorizontalHeaderItem(7, subseries_header)
-            self.table.setHorizontalHeaderItem(8, category_header)
-            self.table.setHorizontalHeaderItem(9, language_header)
-            self.table.setHorizontalHeaderItem(10, year_header)
-            self.table.setHorizontalHeaderItem(11, pages_header)
-            self.table.setHorizontalHeaderItem(12, owner_header)
-            self.table.setHorizontalHeaderItem(13, type_header)
+            self.table.setHorizontalHeaderItem(1, id_header)
+            self.table.setHorizontalHeaderItem(2, isbn_header)
+            self.table.setHorizontalHeaderItem(3, title_header)
+            self.table.setHorizontalHeaderItem(4, author_header)
+            self.table.setHorizontalHeaderItem(5, otherauthors_header)
+            self.table.setHorizontalHeaderItem(6, publisher_header)
+            self.table.setHorizontalHeaderItem(7, series_header)
+            self.table.setHorizontalHeaderItem(8, subseries_header)
+            self.table.setHorizontalHeaderItem(9, category_header)
+            self.table.setHorizontalHeaderItem(10, language_header)
+            self.table.setHorizontalHeaderItem(11, year_header)
+            self.table.setHorizontalHeaderItem(12, pages_header)
+            self.table.setHorizontalHeaderItem(13, owner_header)
+            self.table.setHorizontalHeaderItem(14, type_header)
 
             self.table.resizeColumnsToContents()
 
             self.layout_search.setCurrentIndex(0)
         # Authors
         elif table_name == 'Authors':
-            self.table.setColumnCount(6)
+            self.table.setColumnCount(7)
 
             id_header = QTableWidgetItem('Id')
             name_header = QTableWidgetItem('Name')
@@ -469,40 +469,40 @@ class SearchDatabase(QWidget):
             birthyear_header = QTableWidgetItem('BirthYear')
             deathyear_header = QTableWidgetItem('DeathYear')
 
-            self.table.setHorizontalHeaderItem(0, id_header)
-            self.table.setHorizontalHeaderItem(1, name_header)
-            self.table.setHorizontalHeaderItem(2, gender_header)
-            self.table.setHorizontalHeaderItem(3, nationality_header)
-            self.table.setHorizontalHeaderItem(4, birthyear_header)
-            self.table.setHorizontalHeaderItem(5, deathyear_header)
+            self.table.setHorizontalHeaderItem(1, id_header)
+            self.table.setHorizontalHeaderItem(2, name_header)
+            self.table.setHorizontalHeaderItem(3, gender_header)
+            self.table.setHorizontalHeaderItem(4, nationality_header)
+            self.table.setHorizontalHeaderItem(5, birthyear_header)
+            self.table.setHorizontalHeaderItem(6, deathyear_header)
 
             self.table.resizeColumnsToContents()
 
             self.layout_search.setCurrentIndex(1)
         # Publishers
         elif table_name == 'Publishers':
-            self.table.setColumnCount(2)
+            self.table.setColumnCount(3)
 
             id_header = QTableWidgetItem('Id')
             name_header = QTableWidgetItem('Name')
 
-            self.table.setHorizontalHeaderItem(0, id_header)
-            self.table.setHorizontalHeaderItem(1, name_header)
+            self.table.setHorizontalHeaderItem(1, id_header)
+            self.table.setHorizontalHeaderItem(2, name_header)
 
             self.table.resizeColumnsToContents()
 
             self.layout_search.setCurrentIndex(2)
         # Series
         else:
-            self.table.setColumnCount(3)
+            self.table.setColumnCount(4)
 
             id_header = QTableWidgetItem('Id')
             name_header = QTableWidgetItem('Name')
             author_header = QTableWidgetItem('Author')
 
-            self.table.setHorizontalHeaderItem(0, id_header)
-            self.table.setHorizontalHeaderItem(1, name_header)
-            self.table.setHorizontalHeaderItem(2, author_header)
+            self.table.setHorizontalHeaderItem(1, id_header)
+            self.table.setHorizontalHeaderItem(2, name_header)
+            self.table.setHorizontalHeaderItem(3, author_header)
 
             self.table.resizeColumnsToContents()
 
@@ -662,35 +662,37 @@ class SearchDatabase(QWidget):
                     if Pages == '0':
                         Pages = ''
 
+                    self.table.setCellWidget(i, 0, QCheckBox())
+
                     # Insert values in table
                     i = self.table.rowCount()
                     self.table.insertRow(i)
 
                     id_item = QTableWidgetItem(Id)
                     id_item.setFlags(id_item.flags() & ~Qt.ItemIsEditable)
-                    self.table.setItem(i, 0, id_item)
-                    self.table.setItem(i, 1, QTableWidgetItem(ISBN))
-                    self.table.setItem(i, 2, QTableWidgetItem(Title))
-                    self.table.setItem(i, 3, QTableWidgetItem(Author))
-                    self.table.setItem(i, 4, QTableWidgetItem(OtherAuthors))
-                    self.table.setItem(i, 5, QTableWidgetItem(Publisher))
-                    self.table.setItem(i, 6, QTableWidgetItem(Series))
-                    self.table.setItem(i, 7, QTableWidgetItem(Subseries))
-                    self.table.setItem(i, 8, QTableWidgetItem(Category))
-                    self.table.setItem(i, 9, QTableWidgetItem(Language))
-                    self.table.setItem(i, 10, QTableWidgetItem(Year))
-                    self.table.setItem(i, 11, QTableWidgetItem(Pages))
-                    self.table.setItem(i, 12, QTableWidgetItem(Owner))
-                    self.table.setItem(i, 13, QTableWidgetItem(Type))
+                    self.table.setItem(i, 1, id_item)
+                    self.table.setItem(i, 2, QTableWidgetItem(ISBN))
+                    self.table.setItem(i, 3, QTableWidgetItem(Title))
+                    self.table.setItem(i, 4, QTableWidgetItem(Author))
+                    self.table.setItem(i, 5, QTableWidgetItem(OtherAuthors))
+                    self.table.setItem(i, 6, QTableWidgetItem(Publisher))
+                    self.table.setItem(i, 7, QTableWidgetItem(Series))
+                    self.table.setItem(i, 8, QTableWidgetItem(Subseries))
+                    self.table.setItem(i, 9, QTableWidgetItem(Category))
+                    self.table.setItem(i, 10, QTableWidgetItem(Language))
+                    self.table.setItem(i, 11, QTableWidgetItem(Year))
+                    self.table.setItem(i, 12, QTableWidgetItem(Pages))
+                    self.table.setItem(i, 13, QTableWidgetItem(Owner))
+                    self.table.setItem(i, 14, QTableWidgetItem(Type))
 
                 # Resize columns
                 self.table.resizeColumnsToContents()
 
-                if self.table.columnWidth(2) > 300:
-                    self.table.setColumnWidth(2, 300)
+                if self.table.columnWidth(3) > 300:
+                    self.table.setColumnWidth(3, 300)
 
-                if self.table.columnWidth(4) > 300:
-                    self.table.setColumnWidth(4, 300)
+                if self.table.columnWidth(5) > 300:
+                    self.table.setColumnWidth(5, 300)
             else:
                 # Create error message box
                 error = ErrorDialog(sql_query.lastError().databaseText())
@@ -750,18 +752,20 @@ class SearchDatabase(QWidget):
                     if DeathYear == '0':
                         DeathYear = ''
 
+                    self.table.setCellWidget(i, 0, QCheckBox())
+
                     # Insert values in table
                     i = self.table.rowCount()
                     self.table.insertRow(i)
 
                     id_item = QTableWidgetItem(Id)
                     id_item.setFlags(id_item.flags() & ~Qt.ItemIsEditable)
-                    self.table.setItem(i, 0, id_item)
-                    self.table.setItem(i, 1, QTableWidgetItem(Name))
-                    self.table.setItem(i, 2, QTableWidgetItem(Gender))
-                    self.table.setItem(i, 3, QTableWidgetItem(Nationality))
-                    self.table.setItem(i, 4, QTableWidgetItem(BirthYear))
-                    self.table.setItem(i, 5, QTableWidgetItem(DeathYear))
+                    self.table.setItem(i, 1, id_item)
+                    self.table.setItem(i, 2, QTableWidgetItem(Name))
+                    self.table.setItem(i, 3, QTableWidgetItem(Gender))
+                    self.table.setItem(i, 4, QTableWidgetItem(Nationality))
+                    self.table.setItem(i, 5, QTableWidgetItem(BirthYear))
+                    self.table.setItem(i, 6, QTableWidgetItem(DeathYear))
 
                 # Resize columns
                 self.table.resizeColumnsToContents()
@@ -804,11 +808,13 @@ class SearchDatabase(QWidget):
                     i = self.table.rowCount()
                     self.table.insertRow(i)
 
+                    self.table.setCellWidget(i, 0, QCheckBox())
+
                     # Insert values in table
                     id_item = QTableWidgetItem(Id)
                     id_item.setFlags(id_item.flags() & ~Qt.ItemIsEditable)
-                    self.table.setItem(i, 0, id_item)
-                    self.table.setItem(i, 1, QTableWidgetItem(Name))
+                    self.table.setItem(i, 1, id_item)
+                    self.table.setItem(i, 2, QTableWidgetItem(Name))
 
                 # Resize columns
                 self.table.resizeColumnsToContents()
@@ -859,12 +865,14 @@ class SearchDatabase(QWidget):
                     i = self.table.rowCount()
                     self.table.insertRow(i)
 
+                    self.table.setCellWidget(i, 0, QCheckBox())
+
                     # Insert values in table
                     id_item = QTableWidgetItem(Id)
                     id_item.setFlags(id_item.flags() & ~Qt.ItemIsEditable)
-                    self.table.setItem(i, 0, id_item)
-                    self.table.setItem(i, 1, QTableWidgetItem(Name))
-                    self.table.setItem(i, 2, QTableWidgetItem(Author))
+                    self.table.setItem(i, 1, id_item)
+                    self.table.setItem(i, 2, QTableWidgetItem(Name))
+                    self.table.setItem(i, 3, QTableWidgetItem(Author))
 
                 # Resize columns
                 self.table.resizeColumnsToContents()
@@ -901,7 +909,7 @@ class SearchDatabase(QWidget):
         field = self.table.horizontalHeaderItem(field_index).text()
         value = self.table.currentItem().text()
         record_index = self.table.currentRow()
-        id_n = self.table.item(record_index, 0).text()
+        id_n = self.table.item(record_index, 1).text()
 
         if field == 'ISBN':
             if value != '' and ISBN_CHECK:
@@ -1183,11 +1191,11 @@ class SearchDatabase(QWidget):
             # Resize columns
             self.table.resizeColumnsToContents()
 
-            if self.table.columnWidth(2) > 300:
-                self.table.setColumnWidth(2, 300)
+            if self.table.columnWidth(3) > 300:
+                self.table.setColumnWidth(3, 300)
 
-            if self.table.columnWidth(4) > 300:
-                self.table.setColumnWidth(4, 300)
+            if self.table.columnWidth(5) > 300:
+                self.table.setColumnWidth(5, 300)
 
             info = InfoDialog('Record modified successfully')
             info.show()
@@ -1221,7 +1229,7 @@ class SearchDatabase(QWidget):
             file_p.write('\n')
 
             for row in range(self.table.rowCount()):
-                for col in range(self.table.columnCount()):
+                for col in range(1, self.table.columnCount()):
                     text = str(self.table.item(row, col).text())
                     if text.find(',') != -1:
                         text = '\"' + text + '\"'
