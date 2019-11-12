@@ -16,12 +16,12 @@ from subprocess import CalledProcessError
 
 from PyQt5.QtWidgets import QFileDialog, QWidget, QFrame, QLabel, QCheckBox,\
         QLineEdit, QComboBox, QPushButton, QTableWidget, QTableWidgetItem,\
-        QFormLayout, QHBoxLayout, QVBoxLayout, QStackedLayout
+        QFormLayout, QHBoxLayout, QVBoxLayout, QStackedLayout, QMessageBox
 from PyQt5.QtCore import Qt
 from PyQt5.QtSql import QSqlQuery
 
 import library_manager._globals as _globals
-from library_manager.info_dialogs import ErrorDialog, InfoDialog
+from library_manager.info_dialogs import ErrorDialog, InfoDialog, ConfirmDialog
 
 try:
     from isbnlib import canonical, is_isbn10, is_isbn13, mask
@@ -755,6 +755,7 @@ class SearchDatabase(QWidget):
                     BirthYear = str(sql_query.value(4))
                     DeathYear = str(sql_query.value(5))
 
+                    # If BirthYear and/or DeathYear is NULL, show empty string
                     if BirthYear == '0':
                         BirthYear = ''
 
@@ -1277,23 +1278,27 @@ class SearchDatabase(QWidget):
 
         sql_query.prepare(query)
 
-        if sql_query.exec_():
-            info = InfoDialog('Selected records successfully deleted')
-            info.show()
-        else:
-            error = ErrorDialog(sql_query.lastError().databaseText())
-            error.show()
+        confirm = ConfirmDialog('Are you sure you want to delete the selected records?')
+        action = confirm.show()
 
-        self.table.blockSignals(True)
+        if action == QMessageBox.Yes:
+            if sql_query.exec_():
+                info = InfoDialog('Selected records successfully deleted')
+                info.show()
+            else:
+                error = ErrorDialog(sql_query.lastError().databaseText())
+                error.show()
 
-        offset = 0
+            self.table.blockSignals(True)
+
+            offset = 0
         
-        for i in range(n):
-            if self.table.cellWidget(i-offset, 0).isChecked():
-                self.table.removeRow(i-offset)
-                offset += 1
+            for i in range(n):
+                if self.table.cellWidget(i-offset, 0).isChecked():
+                    self.table.removeRow(i-offset)
+                    offset += 1
 
-        self.table.blockSignals(False)
+            self.table.blockSignals(False)
 
     # Function to save query result to file
     def save_to_file(self):

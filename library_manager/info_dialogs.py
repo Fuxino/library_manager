@@ -66,4 +66,4 @@ class ConfirmDialog(QMessageBox):
     def show(self):
         """Show the dialog."""
 
-        self.exec_()
+        return self.exec_()
