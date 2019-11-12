@@ -1286,22 +1286,22 @@ class SearchDatabase(QWidget):
 
         if action == QMessageBox.Yes:
             if sql_query.exec_():
+                self.table.blockSignals(True)
+
+                offset = 0
+        
+                for i in range(n):
+                    if self.table.cellWidget(i-offset, 0).isChecked():
+                        self.table.removeRow(i-offset)
+                        offset += 1
+
+                self.table.blockSignals(False)
+
                 info = InfoDialog('Selected records successfully deleted')
                 info.show()
             else:
                 error = ErrorDialog(sql_query.lastError().databaseText())
                 error.show()
-
-            self.table.blockSignals(True)
-
-            offset = 0
-        
-            for i in range(n):
-                if self.table.cellWidget(i-offset, 0).isChecked():
-                    self.table.removeRow(i-offset)
-                    offset += 1
-
-            self.table.blockSignals(False)
 
     # Function to save query result to file
     def save_to_file(self):
