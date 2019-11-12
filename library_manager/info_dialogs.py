@@ -51,3 +51,19 @@ class InfoDialog(QMessageBox):
         """Show the dialog."""
 
         self.exec_()
+
+class ConfirmDialog(QMessageBox):
+    """Show a confirmation dialog box."""
+
+    def __init__(self, message, *args, **kwargs):
+        super(ConfirmDialog, self).__init__(*args, **kwargs)
+
+        self.setIcon(QMessageBox.Warning)
+        self.setWindowTitle('Confirm')
+        self.setText(message)
+        self.setStandardButtons(QMessageBox.Yes | QMessageBox.No)
+
+    def show(self):
+        """Show the dialog."""
+
+        self.exec_()
