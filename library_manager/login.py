@@ -7,8 +7,6 @@ and hostname and allows to connect to the Library database.
 """
 
 # Import libraries
-import os
-
 import sys
 
 from functools import partial
@@ -18,13 +16,8 @@ from PyQt5.QtWidgets import QDialog, QDialogButtonBox, QLabel, QLineEdit,\
 from PyQt5.QtGui import QIcon
 from PyQt5.QtSql import QSqlDatabase
 
-if os.name == 'nt':
-    import _globals
-    from info_dialogs import ErrorDialog
-    from sys import exit
-elif os.name == 'posix':
-    import library_manager._globals as _globals
-    from library_manager.info_dialogs import ErrorDialog
+import library_manager._globals as _globals
+from library_manager.info_dialogs import ErrorDialog
 
 # Login dialog box
 class LoginDialog(QDialog):
@@ -36,11 +29,8 @@ class LoginDialog(QDialog):
         # Set dialog title
         self.setWindowTitle('Login to Library')
 
-        if os.name == 'nt':
-            self.setWindowIcon(QIcon('Icon.ico'))
-        elif os.name == 'posix':
-            self.setWindowIcon(QIcon(f'{sys.prefix}' +\
-                    '/share/icons/hicolor/32x32/apps/library_manager.png'))
+        self.setWindowIcon(QIcon(f'{sys.prefix}' +\
+                '/share/icons/hicolor/32x32/apps/library_manager.png'))
 
         # Define layouts
         layout = QVBoxLayout()

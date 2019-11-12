@@ -11,8 +11,6 @@ It also implements the function to update existing
 records in the database.
 """
 
-import os
-
 import subprocess
 from subprocess import CalledProcessError
 
@@ -22,12 +20,8 @@ from PyQt5.QtWidgets import QFileDialog, QWidget, QFrame, QLabel,\
 from PyQt5.QtCore import Qt
 from PyQt5.QtSql import QSqlQuery
 
-if os.name == 'nt':
-    import _globals
-    from info_dialogs import ErrorDialog, InfoDialog
-elif os.name == 'posix':
-    import library_manager._globals as _globals
-    from library_manager.info_dialogs import ErrorDialog, InfoDialog
+import library_manager._globals as _globals
+from library_manager.info_dialogs import ErrorDialog, InfoDialog
 
 try:
     from isbnlib import canonical, is_isbn10, is_isbn13, mask
@@ -1251,22 +1245,13 @@ class SearchDatabase(QWidget):
 
         file_dialog = QFileDialog()
 
-        if os.name == 'nt':
-            file_dialog.setDefaultSuffix('.sql')
-            filename = file_dialog.getSaveFileName(self, 'Backup database', 'Library.sql')
+        file_dialog.setDefaultSuffix('.gz')
+        filename = file_dialog.getSaveFileName(self, 'Backup database', 'Library.sql.gz')
 
-            # Define backup command
-            cmd = 'mysqldump.exe --single-transaction --master-data=2 ' +\
-                    f'--host={_globals.HOSTNAME} --databases Library -u {_globals.USER} ' +\
-                    f'-p{_globals.PWD} > {filename[0]}'
-        elif os.name == 'posix':
-            file_dialog.setDefaultSuffix('.gz')
-            filename = file_dialog.getSaveFileName(self, 'Backup database', 'Library.sql.gz')
-
-            # Define backup command
-            cmd = 'mysqldump --single-transaction --master-data=2 ' +\
-                    f'--host={_globals.HOSTNAME} --databases Library -u {_globals.USER} ' +\
-                    f'-p{_globals.PWD} | gzip > {filename[0]}'
+        # Define backup command
+        cmd = 'mysqldump --single-transaction --master-data=2 ' +\
+                f'--host={_globals.HOSTNAME} --databases Library -u {_globals.USER} ' +\
+                f'-p{_globals.PWD} | gzip > {filename[0]}'
 
         # Execute the backup command
         try:

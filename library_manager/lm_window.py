@@ -2,24 +2,16 @@
 
 """Create the main window."""
 
-import os
-
 import sys
 
 from PyQt5.QtWidgets import QMainWindow, QWidget, QPushButton, QTabWidget, QVBoxLayout
 from PyQt5.QtGui import QIcon
 from PyQt5.QtCore import Qt
 
-if os.name == 'nt':
-    import _globals
-    from login import LoginDialog
-    from query import SearchDatabase
-    from insert import InsertRecord
-elif os.name == 'posix':
-    import library_manager._globals as _globals
-    from library_manager.login import LoginDialog
-    from library_manager.query import SearchDatabase
-    from library_manager.insert import InsertRecord
+import library_manager._globals as _globals
+from library_manager.login import LoginDialog
+from library_manager.query import SearchDatabase
+from library_manager.insert import InsertRecord
 
 # Main window
 class MainWindow(QMainWindow):
@@ -40,11 +32,8 @@ class MainWindow(QMainWindow):
 
         self.setWindowTitle(window_title)
 
-        if os.name == 'nt':
-            self.setWindowIcon(QIcon('Icon.ico'))
-        elif os.name == 'posix':
-            self.setWindowIcon(QIcon(f'{sys.prefix}' +\
-                    '/share/icons/hicolor/32x32/apps/library_manager.png'))
+        self.setWindowIcon(QIcon(f'{sys.prefix}' +\
+                '/share/icons/hicolor/32x32/apps/library_manager.png'))
 
         # Define main layout
         layout = QVBoxLayout()
