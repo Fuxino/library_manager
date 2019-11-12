@@ -902,7 +902,10 @@ class SearchDatabase(QWidget):
         Used to restore the value displayed when update command fails.
         """
 
-        self.current_item = self.table.currentItem().text()
+        try:
+            self.current_item = self.table.currentItem().text()
+        except AttributeError:
+            pass
 
     # Function to update database
     def update_db(self):
