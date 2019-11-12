@@ -665,6 +665,7 @@ class SearchDatabase(QWidget):
                     if ISBN != '' and ISBN_CHECK:
                         ISBN = mask(ISBN, '-')
 
+                    # If Year and/or Pages is 0, show empty string
                     if Year == '0':
                         Year = ''
 
@@ -755,7 +756,7 @@ class SearchDatabase(QWidget):
                     BirthYear = str(sql_query.value(4))
                     DeathYear = str(sql_query.value(5))
 
-                    # If BirthYear and/or DeathYear is NULL, show empty string
+                    # If BirthYear and/or DeathYear is 0, show empty string
                     if BirthYear == '0':
                         BirthYear = ''
 
