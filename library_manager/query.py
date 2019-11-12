@@ -324,7 +324,6 @@ class SearchDatabase(QWidget):
         layout_button_l.addWidget(backup_button)
         layout_button_l.addWidget(delete_button)
         layout_button_l.addWidget(QWidget())
-#        layout_button_l.addWidget(QWidget())
         layout_button_l.setAlignment(save_button, Qt.AlignLeft)
         layout_button_l.setAlignment(backup_button, Qt.AlignLeft)
         layout_left.addLayout(layout_button_l)
@@ -1226,54 +1225,49 @@ class SearchDatabase(QWidget):
         """Delete selected records from the database."""
 
         n = self.table.rowCount()
-        
+        sql_query = QSqlQuery()
+
         if self.layout_search.currentIndex() == 0:
             query = 'DELETE FROM Books WHERE Id IN ('
 
             for i in range(n):
-                if self.table.item(i, 0).isChecked():
+                if self.table.cellWidget(i, 0).isChecked():
                     query = query + self.table.item(i, 1).text() + ', '
 
             if query[-2:] == ', ':
                 query = query[:-2]
 
             query = query + ')'
-
-            print(query)
 
         if self.layout_search.currentIndex() == 1:
             query = 'DELETE FROM Authors WHERE Id IN ('
 
             for i in range(n):
-                if self.table.item(i, 0).isChecked():
+                if self.table.cellWidget(i, 0).isChecked():
                     query = query + self.table.item(i, 1).text() + ', '
 
             if query[-2:] == ', ':
                 query = query[:-2]
 
             query = query + ')'
-
-            print(query)
 
         if self.layout_search.currentIndex() == 2:
             query = 'DELETE FROM Publishers WHERE Id IN ('
 
             for i in range(n):
-                if self.table.item(i, 0).isChecked():
+                if self.table.cellWidget(i, 0).isChecked():
                     query = query + self.table.item(i, 1).text() + ', '
 
             if query[-2:] == ', ':
                 query = query[:-2]
 
             query = query + ')'
-
-            print(query)
 
         if self.layout_search.currentIndex() == 3:
             query = 'DELETE FROM Series WHERE Id IN ('
 
             for i in range(n):
-                if self.table.item(i, 0).isChecked():
+                if self.table.cellWidget(i, 0).isChecked():
                     query = query + self.table.item(i, 1).text() + ', '
 
             if query[-2:] == ', ':
@@ -1281,7 +1275,25 @@ class SearchDatabase(QWidget):
 
             query = query + ')'
 
-            print(query)
+        sql_query.prepare(query)
+
+        if sql_query.exec_():
+            info = InfoDialog('Selected records successfully deleted')
+            info.show()
+        else:
+            error = ErrorDialog(sql_query.lastError().databaseText())
+            error.show()
+
+        self.table.blockSignals(True)
+
+        offset = 0
+        
+        for i in range(n):
+            if self.table.cellWidget(i-offset, 0).isChecked():
+                self.table.removeRow(i-offset)
+                offset += 1
+
+        self.table.blockSignals(False)
 
     # Function to save query result to file
     def save_to_file(self):
