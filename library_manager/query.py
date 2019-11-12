@@ -273,6 +273,7 @@ class SearchDatabase(QWidget):
         owner_header = QTableWidgetItem('Owner')
         type_header = QTableWidgetItem('Type')
 
+        self.table.setHorizontalHeaderItem(0, QTableWidgetItem(''))
         self.table.setHorizontalHeaderItem(1, id_header)
         self.table.setHorizontalHeaderItem(2, isbn_header)
         self.table.setHorizontalHeaderItem(3, title_header)
@@ -302,23 +303,28 @@ class SearchDatabase(QWidget):
         # Add buttons
         layout_button_l = QHBoxLayout()
 
-        # Add backup and save buttons
+        # Add backup, save, and delete buttons
         save_button = QPushButton('Save to file')
         backup_button = QPushButton('Backup database')
+        delete_button = QPushButton('Delete')
         save_button.setMinimumSize(200, 30)
         save_button.setMaximumSize(200, 30)
         backup_button.setMinimumSize(200, 30)
         backup_button.setMaximumSize(200, 30)
+        delete_button.setMinimumSize(200, 30)
+        delete_button.setMaximumSize(200, 30)
 
         # Define buttons behavior
         save_button.clicked.connect(self.save_to_file)
         backup_button.clicked.connect(self.backup_db)
+        delete_button.clicked.connect(self.delete_record)
 
         # Add buttons to layout
         layout_button_l.addWidget(save_button)
         layout_button_l.addWidget(backup_button)
+        layout_button_l.addWidget(delete_button)
         layout_button_l.addWidget(QWidget())
-        layout_button_l.addWidget(QWidget())
+#        layout_button_l.addWidget(QWidget())
         layout_button_l.setAlignment(save_button, Qt.AlignLeft)
         layout_button_l.setAlignment(backup_button, Qt.AlignLeft)
         layout_left.addLayout(layout_button_l)
@@ -440,6 +446,7 @@ class SearchDatabase(QWidget):
             owner_header = QTableWidgetItem('Owner')
             type_header = QTableWidgetItem('Type')
 
+            self.table.setHorizontalHeaderItem(0, QTableWidgetItem(''))
             self.table.setHorizontalHeaderItem(1, id_header)
             self.table.setHorizontalHeaderItem(2, isbn_header)
             self.table.setHorizontalHeaderItem(3, title_header)
@@ -469,6 +476,7 @@ class SearchDatabase(QWidget):
             birthyear_header = QTableWidgetItem('BirthYear')
             deathyear_header = QTableWidgetItem('DeathYear')
 
+            self.table.setHorizontalHeaderItem(0, QTableWidgetItem(''))
             self.table.setHorizontalHeaderItem(1, id_header)
             self.table.setHorizontalHeaderItem(2, name_header)
             self.table.setHorizontalHeaderItem(3, gender_header)
@@ -486,6 +494,7 @@ class SearchDatabase(QWidget):
             id_header = QTableWidgetItem('Id')
             name_header = QTableWidgetItem('Name')
 
+            self.table.setHorizontalHeaderItem(0, QTableWidgetItem(''))
             self.table.setHorizontalHeaderItem(1, id_header)
             self.table.setHorizontalHeaderItem(2, name_header)
 
@@ -500,6 +509,7 @@ class SearchDatabase(QWidget):
             name_header = QTableWidgetItem('Name')
             author_header = QTableWidgetItem('Author')
 
+            self.table.setHorizontalHeaderItem(0, QTableWidgetItem(''))
             self.table.setHorizontalHeaderItem(1, id_header)
             self.table.setHorizontalHeaderItem(2, name_header)
             self.table.setHorizontalHeaderItem(3, author_header)
@@ -1210,6 +1220,12 @@ class SearchDatabase(QWidget):
             self.table.setItem(record_index, field_index, QTableWidgetItem(self.current_item))
 
             self.table.blockSignals(False)
+
+    # Function to delete records from the database
+    def delete_record(self):
+        """Delete selected records from the database."""
+#       To do
+        pass
 
     # Function to save query result to file
     def save_to_file(self):
