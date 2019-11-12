@@ -1229,6 +1229,7 @@ class SearchDatabase(QWidget):
         """Delete selected records from the database."""
 
         n = self.table.rowCount()
+        count = 0
         sql_query = QSqlQuery()
 
         if self.layout_search.currentIndex() == 0:
@@ -1237,6 +1238,7 @@ class SearchDatabase(QWidget):
             for i in range(n):
                 if self.table.cellWidget(i, 0).isChecked():
                     query = query + self.table.item(i, 1).text() + ', '
+                    count += 1
 
             if query[-2:] == ', ':
                 query = query[:-2]
@@ -1279,29 +1281,33 @@ class SearchDatabase(QWidget):
 
             query = query + ')'
 
-        sql_query.prepare(query)
+        if count > 0:
+            sql_query.prepare(query)
 
-        confirm = ConfirmDialog('Are you sure you want to delete the selected records?')
-        action = confirm.show()
+            confirm = ConfirmDialog('Are you sure you want to delete the selected records?')
+            action = confirm.show()
 
-        if action == QMessageBox.Yes:
-            if sql_query.exec_():
-                self.table.blockSignals(True)
+            if action == QMessageBox.Yes:
+                if sql_query.exec_():
+                    self.table.blockSignals(True)
 
-                offset = 0
+                    offset = 0
         
-                for i in range(n):
-                    if self.table.cellWidget(i-offset, 0).isChecked():
-                        self.table.removeRow(i-offset)
-                        offset += 1
+                    for i in range(n):
+                        if self.table.cellWidget(i-offset, 0).isChecked():
+                            self.table.removeRow(i-offset)
+                            offset += 1
 
-                self.table.blockSignals(False)
+                    self.table.blockSignals(False)
 
-                info = InfoDialog('Selected records successfully deleted')
-                info.show()
-            else:
-                error = ErrorDialog(sql_query.lastError().databaseText())
-                error.show()
+                    info = InfoDialog('Selected records successfully deleted')
+                    info.show()
+                else:
+                    error = ErrorDialog(sql_query.lastError().databaseText())
+                    error.show()
+        else:
+            error = ErrorDialog('No records selected')
+            error.show()
 
     # Function to save query result to file
     def save_to_file(self):
