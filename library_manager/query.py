@@ -662,11 +662,11 @@ class SearchDatabase(QWidget):
                     if Pages == '0':
                         Pages = ''
 
-                    self.table.setCellWidget(i, 0, QCheckBox())
-
                     # Insert values in table
                     i = self.table.rowCount()
                     self.table.insertRow(i)
+                    
+                    self.table.setCellWidget(i, 0, QCheckBox())
 
                     id_item = QTableWidgetItem(Id)
                     id_item.setFlags(id_item.flags() & ~Qt.ItemIsEditable)
@@ -752,11 +752,11 @@ class SearchDatabase(QWidget):
                     if DeathYear == '0':
                         DeathYear = ''
 
-                    self.table.setCellWidget(i, 0, QCheckBox())
-
                     # Insert values in table
                     i = self.table.rowCount()
                     self.table.insertRow(i)
+
+                    self.table.setCellWidget(i, 0, QCheckBox())
 
                     id_item = QTableWidgetItem(Id)
                     id_item.setFlags(id_item.flags() & ~Qt.ItemIsEditable)
