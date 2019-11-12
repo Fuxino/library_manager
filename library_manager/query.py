@@ -1224,8 +1224,64 @@ class SearchDatabase(QWidget):
     # Function to delete records from the database
     def delete_record(self):
         """Delete selected records from the database."""
-#       To do
-        pass
+
+        n = self.table.rowCount()
+        
+        if self.layout_search.currentIndex() == 0:
+            query = 'DELETE FROM Books WHERE Id IN ('
+
+            for i in range(n):
+                if self.table.item(i, 0).isChecked():
+                    query = query + self.table.item(i, 1).text() + ', '
+
+            if query[-2:] == ', ':
+                query = query[:-2]
+
+            query = query + ')'
+
+            print(query)
+
+        if self.layout_search.currentIndex() == 1:
+            query = 'DELETE FROM Authors WHERE Id IN ('
+
+            for i in range(n):
+                if self.table.item(i, 0).isChecked():
+                    query = query + self.table.item(i, 1).text() + ', '
+
+            if query[-2:] == ', ':
+                query = query[:-2]
+
+            query = query + ')'
+
+            print(query)
+
+        if self.layout_search.currentIndex() == 2:
+            query = 'DELETE FROM Publishers WHERE Id IN ('
+
+            for i in range(n):
+                if self.table.item(i, 0).isChecked():
+                    query = query + self.table.item(i, 1).text() + ', '
+
+            if query[-2:] == ', ':
+                query = query[:-2]
+
+            query = query + ')'
+
+            print(query)
+
+        if self.layout_search.currentIndex() == 3:
+            query = 'DELETE FROM Series WHERE Id IN ('
+
+            for i in range(n):
+                if self.table.item(i, 0).isChecked():
+                    query = query + self.table.item(i, 1).text() + ', '
+
+            if query[-2:] == ', ':
+                query = query[:-2]
+
+            query = query + ')'
+
+            print(query)
 
     # Function to save query result to file
     def save_to_file(self):
