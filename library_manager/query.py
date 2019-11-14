@@ -1252,6 +1252,7 @@ class SearchDatabase(QWidget):
             for i in range(n):
                 if self.table.cellWidget(i, 0).isChecked():
                     query = query + self.table.item(i, 1).text() + ', '
+                    count += 1
 
             if query[-2:] == ', ':
                 query = query[:-2]
@@ -1264,6 +1265,7 @@ class SearchDatabase(QWidget):
             for i in range(n):
                 if self.table.cellWidget(i, 0).isChecked():
                     query = query + self.table.item(i, 1).text() + ', '
+                    count += 1
 
             if query[-2:] == ', ':
                 query = query[:-2]
@@ -1276,6 +1278,7 @@ class SearchDatabase(QWidget):
             for i in range(n):
                 if self.table.cellWidget(i, 0).isChecked():
                     query = query + self.table.item(i, 1).text() + ', '
+                    count += 1
 
             if query[-2:] == ', ':
                 query = query[:-2]
