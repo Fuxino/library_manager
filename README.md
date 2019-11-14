@@ -19,6 +19,8 @@ python3 setup.py clean --all
 
 For Arch Linux, a PKGBUILD that automates this process is provided.
 
+An installer for Windows is also provided.
+
 ## Usage
 Library_manager works with the Library database I created to manage my books. I included the Sql file that allows to recreate the database structure.
 
