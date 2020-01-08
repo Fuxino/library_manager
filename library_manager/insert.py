@@ -407,7 +407,7 @@ class InsertRecord(QWidget):
 
                         # Get Publisher Id from Name using exact match
                         sql_query.prepare('SELECT Id FROM Publishers WHERE ' +\
-                                'Name=\'{publisher.value()}\'')
+                                f'Name=\'{publisher.value()}\'')
 
                         if sql_query.exec_():
                             if sql_query.size() == 0:

@@ -675,7 +675,7 @@ class SearchDatabase(QWidget):
                     # Insert values in table
                     i = self.table.rowCount()
                     self.table.insertRow(i)
-                    
+
                     self.table.setCellWidget(i, 0, QCheckBox())
 
                     id_item = QTableWidgetItem(Id)
@@ -1296,7 +1296,7 @@ class SearchDatabase(QWidget):
                     self.table.blockSignals(True)
 
                     offset = 0
-        
+
                     for i in range(n):
                         if self.table.cellWidget(i-offset, 0).isChecked():
                             self.table.removeRow(i-offset)
