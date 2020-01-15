@@ -1004,6 +1004,7 @@ class SearchDatabase(QWidget):
                 return
 
             if value != '':
+                value = value.replace("'", "\\'")
                 query = f'SELECT Id FROM Authors WHERE Name LIKE \'%{value}%\''
                 sql_query.prepare(query)
 
@@ -1047,6 +1048,7 @@ class SearchDatabase(QWidget):
                     return
         elif field == 'Publisher':
             if value != '':
+                value = value.replace("'", "\\'")
                 query = f'SELECT Id FROM Publishers WHERE Name LIKE \'%{value}%\''
                 sql_query.prepare(query)
 
@@ -1090,6 +1092,7 @@ class SearchDatabase(QWidget):
                     return
         elif field == 'Series':
             if value != '':
+                value = value.replace("'", "\\'")
                 query = f'SELECT Id FROM Series WHERE Name LIKE \'%{value}%\''
                 sql_query.prepare(query)
 
