@@ -730,9 +730,9 @@ class SearchDatabase(QWidget):
             query = 'SELECT Id, Name, Gender, Nationality, BirthYear, DeathYear FROM Authors WHERE '
 
             # Get text from search form
-            name = self.author_search.name.text()
+            name = self.author_search.name.text().replace("'", "\\'")
             gender = self.author_search.gender.currentText()
-            nationality = self.author_search.nationality.text()
+            nationality = self.author_search.nationality.text().replace("'", "\\'")
 
             # Prepare SQL query
             if name != '':
@@ -807,7 +807,7 @@ class SearchDatabase(QWidget):
             query = 'SELECT Id, Name FROM Publishers WHERE '
 
             # Get text from search form
-            name = self.publisher_search.name.text()
+            name = self.publisher_search.name.text().replace("'", "\\'")
 
             # Prepare SQL query
             if name != '':
@@ -857,8 +857,8 @@ class SearchDatabase(QWidget):
                     LEFT JOIN Authors ON Series.Author=Authors.Id WHERE '
 
             # Get text from search form
-            name = self.series_search.name.text()
-            author = self.series_search.author.text()
+            name = self.series_search.name.text().replace("'", "\\'")
+            author = self.series_search.author.text().replace("'", "\\'")
 
             # Prepare SQL query
             if name != '':
