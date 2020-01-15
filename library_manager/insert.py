@@ -339,7 +339,8 @@ class InsertRecord(QWidget):
 
             # Get Author Id from Name
             if not author.isNull():
-                sql_query.prepare(f'SELECT Id FROM Authors WHERE Name LIKE \'%{author.value()}%\'')
+                value = author.value().replace("'", "\\'")
+                sql_query.prepare(f'SELECT Id FROM Authors WHERE Name LIKE \'%{value}%\'')
 
                 if sql_query.exec_():
                     if sql_query.size() == 0:
@@ -387,8 +388,9 @@ class InsertRecord(QWidget):
 
             # Get Publisher Id from Name
             if not publisher.isNull():
+                value = publisher.value().replace("'", "\\'")
                 sql_query.prepare('SELECT Id FROM Publishers WHERE ' +\
-                        f'Name LIKE \'%{publisher.value()}%\'')
+                        f'Name LIKE \'%{value}%\'')
 
                 if sql_query.exec_():
                     if sql_query.size() == 0:
@@ -434,7 +436,8 @@ class InsertRecord(QWidget):
 
             # Get Series Id from Name
             if not series.isNull():
-                sql_query.prepare(f'SELECT Id FROM Series WHERE Name LIKE \'%{series.value()}%\'')
+                value = series.value().replace("'", "\\'")
+                sql_query.prepare(f'SELECT Id FROM Series WHERE Name LIKE \'%{value}%\'')
 
                 if sql_query.exec_():
                     if sql_query.size() == 0:
@@ -576,7 +579,8 @@ class InsertRecord(QWidget):
 
             if not author.isNull():
                 # Get Author Id from Name
-                sql_query.prepare(f'SELECT Id FROM Authors WHERE Name LIKE \'%{author.value()}%\'')
+                value = author.value().replace("'", "\\'")
+                sql_query.prepare(f'SELECT Id FROM Authors WHERE Name LIKE \'%{value}%\'')
 
                 if sql_query.exec_():
                     if sql_query.size() == 0:
