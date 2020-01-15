@@ -541,13 +541,13 @@ class SearchDatabase(QWidget):
 
             # Get text from search form
             isbn = self.book_search.isbn.text()
-            title = self.book_search.title.text()
-            author_n = self.book_search.author.text()
+            title = self.book_search.title.text().replace("'", "\\'")
+            author_n = self.book_search.author.text().replace("'", "\\'")
             author_g = self.book_search.author_gender.currentText()
-            author_c = self.book_search.author_nationality.text()
-            publisher = self.book_search.publisher.text()
-            series = self.book_search.series.text()
-            subseries = self.book_search.subseries.text()
+            author_c = self.book_search.author_nationality.text().replace("'", "\\'")
+            publisher = self.book_search.publisher.text().replace("'", "\\'")
+            series = self.book_search.series.text().replace("'", "\\'")
+            subseries = self.book_search.subseries.text().replace("'", "\\'")
             category = self.book_search.category.currentText()
             language = self.book_search.language.currentText()
             first_year = self.book_search.first_year.text()
@@ -558,6 +558,21 @@ class SearchDatabase(QWidget):
             booktype = self.book_search.booktype.currentText()
             order = self.book_search.order.currentText()
             direction = self.book_search.direction.currentText()
+
+            if (first_year != '' and not first_year.isdigit()) or\
+                    (last_year != '' and not last_year.isdigit()):
+                        error = ErrorDialog('Values for Years must be integers')
+                        error.show()
+
+                        self.table.blockSignals(False)
+                        return
+
+            if n_pages != '' and not n_pages.isdigit():
+                error = ErrorDialog('Values for Pages must be integers')
+                error.show()
+
+                self.table.blockSignals(False)
+                return
 
             # Prepare SQL query
             if isbn != '':
