@@ -23,6 +23,8 @@ from PyQt5.QtSql import QSqlQuery
 import library_manager._globals as _globals
 from library_manager.info_dialogs import ErrorDialog, InfoDialog, ConfirmDialog
 
+from numpy import zeros
+
 try:
     from isbnlib import canonical, is_isbn10, is_isbn13, mask
 
@@ -538,16 +540,17 @@ class SearchDatabase(QWidget):
                     Series.Name, Subseries, Category, Language, Year, Pages, Owner, Type FROM Books \
                     LEFT JOIN Authors ON Books.Author=Authors.Id LEFT JOIN Publishers ON \
                     Books.Publisher=Publishers.Id LEFT JOIN Series ON Books.Series=Series.Id WHERE '
+            fields = zeros(16)
 
             # Get text from search form
             isbn = self.book_search.isbn.text()
-            title = self.book_search.title.text().replace("'", "\\'")
-            author_n = self.book_search.author.text().replace("'", "\\'")
+            title = self.book_search.title.text()
+            author_n = self.book_search.author.text()
             author_g = self.book_search.author_gender.currentText()
-            author_c = self.book_search.author_nationality.text().replace("'", "\\'")
-            publisher = self.book_search.publisher.text().replace("'", "\\'")
-            series = self.book_search.series.text().replace("'", "\\'")
-            subseries = self.book_search.subseries.text().replace("'", "\\'")
+            author_c = self.book_search.author_nationality.text()
+            publisher = self.book_search.publisher.text()
+            series = self.book_search.series.text()
+            subseries = self.book_search.subseries.text()
             category = self.book_search.category.currentText()
             language = self.book_search.language.currentText()
             first_year = self.book_search.first_year.text()
@@ -576,25 +579,32 @@ class SearchDatabase(QWidget):
 
             # Prepare SQL query
             if isbn != '':
-                query = query + 'ISBN LIKE \'%' + isbn + '%\' AND '
+                query = query + 'ISBN LIKE ? AND '
+                fields[0] = 1
             if title != '':
-                query = query + 'Title LIKE \'%' + title + '%\' AND '
+                query = query + 'Title LIKE ? AND '
+                fields[1] = 1
             if author_n != '':
-                query = query + '(Authors.Name LIKE \'%' + author_n +\
-                        '%\' OR OtherAuthors LIKE \'%' + author_n + '%\') AND '
+                query = query + '(Authors.Name LIKE ? OR OtherAuthors LIKE ?) AND '
+                fields[2] = 1
             if author_g != '':
                 if author_g == 'Other':
                     query = query + 'Authors.Gender!=\'M\' AND Authors.Gender!=\'F\' AND '
                 else:
-                    query = query + 'Authors.Gender=\'' + author_g + '\' AND '
+                    query = query + 'Authors.Gender=? AND '
+                    fields[3] = 1
             if author_c != '':
-                query = query + 'Authors.Nationality LIKE \'%' + author_c + '%\' AND '
+                query = query + 'Authors.Nationality LIKE ? AND '
+                fields[4] = 1
             if publisher != '':
-                query = query + 'Publishers.Name LIKE \'%' + publisher + '%\' AND '
+                query = query + 'Publishers.Name LIKE ? AND '
+                fields[5] = 1
             if series != '':
-                query = query + 'Series.Name LIKE \'%' + series + '%\' AND '
+                query = query + 'Series.Name LIKE ? AND '
+                fields[6] = 1
             if subseries != '':
-                query = query + 'Subseries LIKE \'%' + subseries + '%\' AND '
+                query = query + 'Subseries LIKE ? AND '
+                fields[7] = 1
             if category != '':
                 if category == 'Fiction':
                     query = query + 'Category LIKE \'%Fiction%\' AND ' +\
@@ -603,24 +613,31 @@ class SearchDatabase(QWidget):
                     query = query + 'Category LIKE \'%Novel%\' AND ' +\
                             'Category NOT LIKE \'%Graphic novel%\' AND '
                 else:
-                    query = query + 'Category LIKE \'%' + category + '%\' AND '
+                    query = query + 'Category LIKE ? AND '
+                    fields[8] = 1
             if language != '':
-                query = query + 'Language LIKE \'%' + language + '%\' AND '
+                query = query + 'Language LIKE ? AND '
+                fields[9] = 1
             if first_year != '':
-                query = query + 'Year>=' + first_year + ' AND '
+                query = query + 'Year>=? AND '
+                fields[10] = 1
             if last_year != '':
-                query = query + 'Year<=' + last_year + ' AND '
+                query = query + 'Year<=? AND '
+                fields[11] = 1
             if n_pages != '':
                 if more_less == 'More than':
-                    query = query + 'Pages>' + n_pages + ' AND '
+                    query = query + 'Pages>? AND '
                 elif more_less == 'Fewer than':
-                    query = query + 'Pages<' + n_pages + ' AND '
+                    query = query + 'Pages<? AND '
                 else:
-                    query = query + 'Pages=' + n_pages + ' AND '
+                    query = query + 'Pages=? AND '
+                fields[12] = 1
             if owner != '':
-                query = query + 'Owner LIKE \'%' + owner + '%\' AND '
+                query = query + 'Owner LIKE ? AND '
+                fields[13] = 1
             if booktype != '':
-                query = query + 'Type LIKE \'%' + booktype + '%\' '
+                query = query + 'Type LIKE ? '
+                fields[14] = 1
 
             # Remove trailing 'AND' and/or 'WHERE' from query
             if query[-4:] == 'AND ':
@@ -652,6 +669,38 @@ class SearchDatabase(QWidget):
                     query = query + ' DESC, Authors.Name'
 
             sql_query.prepare(query)
+
+            if fields[0] == 1:
+                sql_query.addBindValue('%' + isbn + '%')
+            if fields[1] == 1:
+                sql_query.addBindValue('%' + title + '%')
+            if fields[2] == 1:
+                sql_query.addBindValue('%' + author_n + '%')
+                sql_query.addBindValue('%' + author_n + '%')
+            if fields[3] == 1:
+                sql_query.addBindValue(author_g)
+            if fields[4] == 1:
+                sql_query.addBindValue('%' + author_c + '%')
+            if fields[5] == 1:
+                sql_query.addBindValue('%' + publisher + '%')
+            if fields[6] == 1:
+                sql_query.addBindValue('%' + series + '%')
+            if fields[7] == 1:
+                sql_query.addBindValue('%' + subseries + '%')
+            if fields[8] == 1:
+                sql_query.addBindValue(category)
+            if fields[9] == 1:
+                sql_query.addBindValue('%' + language + '%')
+            if fields[10] == 1:
+                sql_query.addBindValue(first_year)
+            if fields[11] == 1:
+                sql_query.addBindValue(last_year)
+            if fields[12] == 1:
+                sql_query.addBindValue(n_pages)
+            if fields[13] == 1:
+                sql_query.addBindValue(owner)
+            if fields[14] == 1:
+                sql_query.addBindValue(booktype)
 
             # Execute the query
             if sql_query.exec_():
@@ -728,22 +777,26 @@ class SearchDatabase(QWidget):
         # Query Authors
         elif self.layout_search.currentIndex() == 1:
             query = 'SELECT Id, Name, Gender, Nationality, BirthYear, DeathYear FROM Authors WHERE '
+            fields = zeros(3)
 
             # Get text from search form
-            name = self.author_search.name.text().replace("'", "\\'")
+            name = self.author_search.name.text()
             gender = self.author_search.gender.currentText()
-            nationality = self.author_search.nationality.text().replace("'", "\\'")
+            nationality = self.author_search.nationality.text()
 
             # Prepare SQL query
             if name != '':
-                query = query + 'Name LIKE \'%' + name + '%\' AND '
+                query = query + 'Name LIKE ? AND '
+                fields[0] = 1
             if gender != '':
                 if gender == 'Other':
                     query = query + 'Gender!=\'M\' AND Gender !=\'F\' AND '
                 else:
-                    query = query + 'Gender =\'' + gender + '\' AND '
+                    query = query + 'Gender = ? AND '
+                    fields[1] = 1
             if nationality != '':
-                query = query + 'Nationality LIKE \'%' + nationality + '%\' '
+                query = query + 'Nationality LIKE ? '
+                fields[2] = 1
 
             # Remove trailing 'AND' and/or 'WHERE' from query
             if query[-4:] == 'AND ':
@@ -755,6 +808,13 @@ class SearchDatabase(QWidget):
             query = query + 'ORDER BY Name'
 
             sql_query.prepare(query)
+
+            if fields[0] == 1:
+                sql_query.addBindValue('%' + name + '%')
+            if fields[1] == 1:
+                sql_query.addBindValue(gender)
+            if fields[2] == 1:
+                sql_query.addBindValue('%' + nationality + '%')
 
             # Execute the query
             if sql_query.exec_():
@@ -805,13 +865,15 @@ class SearchDatabase(QWidget):
         # Query Publishers
         elif self.layout_search.currentIndex() == 2:
             query = 'SELECT Id, Name FROM Publishers WHERE '
+            fields = zeros(1)
 
             # Get text from search form
-            name = self.publisher_search.name.text().replace("'", "\\'")
+            name = self.publisher_search.name.text()
 
             # Prepare SQL query
             if name != '':
-                query = query + 'Name LIKE \'%' + name + '%\' '
+                query = query + 'Name LIKE ? '
+                fields[0] = 1
 
             # Remove trailing 'WHERE' from query
             if query[-6:] == 'WHERE ':
@@ -820,6 +882,9 @@ class SearchDatabase(QWidget):
             query = query + 'ORDER BY Name'
 
             sql_query.prepare(query)
+
+            if fields[0] == 1:
+                sql_query.addBindValue('%' + name + '%')
 
             # Execute the query
             if sql_query.exec_():
@@ -855,16 +920,19 @@ class SearchDatabase(QWidget):
         else:
             query = 'SELECT Series.Id, Series.Name, Authors.Name FROM Series \
                     LEFT JOIN Authors ON Series.Author=Authors.Id WHERE '
+            fields = zeros(2)
 
             # Get text from search form
-            name = self.series_search.name.text().replace("'", "\\'")
-            author = self.series_search.author.text().replace("'", "\\'")
+            name = self.series_search.name.text()
+            author = self.series_search.author.text()
 
             # Prepare SQL query
             if name != '':
-                query = query + 'Series.Name LIKE \'%' + name + '%\' AND '
+                query = query + 'Series.Name LIKE ? AND '
+                fields[0] = 1
             if author != '':
-                query = query + 'Authors.Name LIKE \'%' + author + '%\' '
+                query = query + 'Authors.Name LIKE ? '
+                fields[1] = 1
 
             # Remove trailing 'AND' and/or 'WHERE' from query
             if query[-4:] == 'AND ':
@@ -876,6 +944,11 @@ class SearchDatabase(QWidget):
             query = query + 'ORDER BY Authors.Name, Series.Name'
 
             sql_query.prepare(query)
+
+            if fields[0] == 1:
+                sql_query.addBindValue('%' + name + '%')
+            if fields[1] == 1:
+                sql_query.addBindValue('%' + author + '%')
 
             # Execute the query
             if sql_query.exec_():
@@ -1004,9 +1077,9 @@ class SearchDatabase(QWidget):
                 return
 
             if value != '':
-                value = value.replace("'", "\\'")
-                query = f'SELECT Id FROM Authors WHERE Name LIKE \'%{value}%\''
+                query = 'SELECT Id FROM Authors WHERE Name LIKE ?'
                 sql_query.prepare(query)
+                sql_query.addBindValue('%' + value + '%')
 
                 if sql_query.exec_():
                     if sql_query.size() == 0:
@@ -1048,9 +1121,9 @@ class SearchDatabase(QWidget):
                     return
         elif field == 'Publisher':
             if value != '':
-                value = value.replace("'", "\\'")
-                query = f'SELECT Id FROM Publishers WHERE Name LIKE \'%{value}%\''
+                query = 'SELECT Id FROM Publishers WHERE Name LIKE ?'
                 sql_query.prepare(query)
+                sql_query.addBindValue('%' + value + '%')
 
                 if sql_query.exec_():
                     if sql_query.size() == 0:
@@ -1092,9 +1165,9 @@ class SearchDatabase(QWidget):
                     return
         elif field == 'Series':
             if value != '':
-                value = value.replace("'", "\\'")
-                query = f'SELECT Id FROM Series WHERE Name LIKE \'%{value}%\''
+                query = 'SELECT Id FROM Series WHERE Name LIKE ?'
                 sql_query.prepare(query)
+                sql_query.addBindValue('%' + value + '%')
 
                 if sql_query.exec_():
                     if sql_query.size() == 0:
@@ -1136,26 +1209,27 @@ class SearchDatabase(QWidget):
 
         if self.layout_search.currentIndex() == 0:
             if value != '':
-                query = f'UPDATE Books SET {field}="{value}" WHERE Id={id_n}'
+                query = f'UPDATE Books SET {field}=? WHERE Id={id_n}'
             else:
                 query = f'UPDATE Books SET {field}=NULL WHERE Id={id_n}'
         elif self.layout_search.currentIndex() == 1:
             if value != '':
-                query = f'UPDATE Authors SET {field}="{value}" WHERE Id={id_n}'
+                query = f'UPDATE Authors SET {field}=? WHERE Id={id_n}'
             else:
                 query = f'UPDATE Authors SET {field}=NULL WHERE Id={id_n}'
         elif self.layout_search.currentIndex() == 2:
             if value != '':
-                query = f'UPDATE Publishers SET {field}="{value}" WHERE Id={id_n}'
+                query = f'UPDATE Publishers SET {field}=? WHERE Id={id_n}'
             else:
                 query = f'UPDATE Publishers SET {field}=NULL WHERE Id={id_n}'
         else:
             if value != '':
-                query = f'UPDATE Series SET {field}="{value}" WHERE Id={id_n}'
+                query = f'UPDATE Series SET {field}=? WHERE Id={id_n}'
             else:
                 query = f'UPDATE Series SET {field}=NULL WHERE Id={id_n}'
 
         sql_query.prepare(query)
+        sql_query.addBindValue(value)
 
         if sql_query.exec_():
             if field == 'ISBN':
@@ -1170,7 +1244,8 @@ class SearchDatabase(QWidget):
                     self.table.blockSignals(False)
             elif field == 'Author':
                 if value != '':
-                    sql_query.prepare(f'SELECT Name FROM Authors WHERE Id={value}')
+                    sql_query.prepare('SELECT Name FROM Authors WHERE Id=?')
+                    sql_query.addBindValue(value)
 
                     if sql_query.exec_():
                         sql_query.next()
@@ -1187,7 +1262,8 @@ class SearchDatabase(QWidget):
                         error.show()
             elif field == 'Publisher':
                 if value != '':
-                    sql_query.prepare(f'SELECT Name FROM Publishers WHERE Id={value}')
+                    sql_query.prepare('SELECT Name FROM Publishers WHERE Id=?')
+                    sql_query.addBindValue(value)
 
                     if sql_query.exec_():
                         sql_query.next()
@@ -1204,7 +1280,8 @@ class SearchDatabase(QWidget):
                         error.show()
             elif field == 'Series':
                 if value != '':
-                    sql_query.prepare(f'SELECT Name FROM Series WHERE Id={value}')
+                    sql_query.prepare('SELECT Name FROM Series WHERE Id=?')
+                    sql_query.addBindValue(value)
 
                     if sql_query.exec_():
                         sql_query.next()
