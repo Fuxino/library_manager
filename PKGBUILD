@@ -13,7 +13,8 @@ makedepends=("python-setuptools"
              "git")
 depends=("python3"
          "mariadb"
-         "python-pyqt5")
+         "python-pyqt5"
+         "python-numpy")
 optdepends=('python-isbnlib: check if isbn inserted is valid')
 conflicts=('library_manager-dev')
 source=(git+https://github.com/Fuxino/${pkgname}.git)
